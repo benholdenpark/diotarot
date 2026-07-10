@@ -1,0 +1,3473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATAMO TAROT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0c0a15;
+    --void-2:#150f22;
+    --panel:#1a1428;
+    --panel-light:#241c38;
+    --wine:#4a1c3d;
+    --wine-2:#611f3e;
+    --gold:#c9a35a;
+    --gold-bright:#e8cd8f;
+    --ink:#f3ecdd;
+    --muted:#a89bc0;
+    --muted-dim:#6f628c;
+    --line: rgba(201,163,90,0.22);
+    --danger:#d97878;
+
+    --card-w: 64px;
+    --card-h: 110px;
+    --fan-radius: 300px;
+    --fan-height: 340px;
+    --tray-card-w: 108px;
+    --tray-card-h: 184px;
+  }
+
+  @media (max-width: 720px){
+    :root{
+      --card-w: 38px;
+      --card-h: 66px;
+      --fan-radius: 155px;
+      --fan-height: 210px;
+      --tray-card-w: 78px;
+      --tray-card-h: 132px;
+    }
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(97,31,62,0.38), transparent 60%),
+      radial-gradient(ellipse 750px 550px at 88% 8%, rgba(120,70,180,0.14), transparent 58%),
+      radial-gradient(ellipse 700px 500px at 85% 15%, rgba(201,163,90,0.07), transparent 55%),
+      radial-gradient(ellipse 600px 460px at 8% 85%, rgba(80,50,140,0.12), transparent 55%),
+      var(--void);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* faint starfield, gently twinkling */
+  body::before{
+    content:'';
+    position: fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, rgba(243,236,221,0.35) 0, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(243,236,221,0.25) 0, transparent 100%),
+      radial-gradient(1.5px 1.5px at 60% 35%, rgba(201,163,90,0.3) 0, transparent 100%),
+      radial-gradient(1px 1px at 25% 60%, rgba(243,236,221,0.2) 0, transparent 100%),
+      radial-gradient(1px 1px at 92% 55%, rgba(243,236,221,0.3) 0, transparent 100%),
+      radial-gradient(1.5px 1.5px at 45% 80%, rgba(201,163,90,0.25) 0, transparent 100%),
+      radial-gradient(1px 1px at 70% 90%, rgba(243,236,221,0.2) 0, transparent 100%),
+      radial-gradient(1px 1px at 35% 12%, rgba(243,236,221,0.22) 0, transparent 100%),
+      radial-gradient(1px 1px at 55% 68%, rgba(243,236,221,0.18) 0, transparent 100%);
+    opacity: 0.8;
+    animation: twinkle 6s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%, 100% { opacity: 0.65; }
+    50% { opacity: 0.95; }
+  }
+
+  .wrap{ position:relative; z-index:1; max-width: 980px; margin: 0 auto; padding: 56px 24px 120px; }
+
+  /* ---------- Header ---------- */
+  header{ text-align:center; margin-bottom: 26px; }
+  .eyebrow{
+    font-family:'Nanum Myeongjo', serif;
+    font-size: 13px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    opacity: 0.85;
+    margin-bottom: 14px;
+  }
+  h1{
+    font-family:'Cinzel', serif;
+    font-weight: 600;
+    font-size: clamp(34px, 7vw, 58px);
+    letter-spacing: 0.12em;
+    margin: 0;
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold) 60%, #8a6f34);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 40px rgba(201,163,90,0.25);
+  }
+  .tagline{
+    font-family:'Nanum Myeongjo', serif;
+    color: var(--muted);
+    font-size: 16px;
+    margin-top: 14px;
+    letter-spacing: 0.04em;
+  }
+  .creator-credit{
+    font-family:'Cinzel', serif;
+    color: var(--muted-dim);
+    font-size: 10.5px;
+    letter-spacing: 0.15em;
+    margin-top: 8px;
+  }
+  .divider{
+    width: 220px; height: 1px; margin: 26px auto 0;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    position: relative;
+  }
+  .divider::after{
+    content:'✦'; position:absolute; top:50%; left:50%;
+    transform: translate(-50%,-50%);
+    color: var(--gold); background: var(--void); padding: 0 10px; font-size: 12px;
+  }
+
+  /* ---------- Mode toggle ---------- */
+  .mode-toggle{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap: 14px; margin: -12px 0 20px;
+  }
+  @media (max-width: 560px){
+    .mode-toggle{ flex-direction:column; }
+  }
+  .mode-btn{
+    background: linear-gradient(180deg, var(--panel), var(--panel-light));
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 18px;
+    cursor:pointer;
+    text-align:left;
+    max-width: 250px;
+    transition: border-color .2s ease, background .2s ease, transform .15s ease;
+    font-family:'Noto Sans KR', sans-serif;
+  }
+  @media (max-width: 560px){ .mode-btn{ max-width: none; text-align:center; } }
+  .mode-btn:hover{ border-color: var(--gold); transform: translateY(-1px); }
+  .mode-btn.active{
+    border-color: var(--gold);
+    background: linear-gradient(180deg, rgba(201,163,90,0.16), rgba(201,163,90,0.05));
+    box-shadow: 0 6px 18px rgba(201,163,90,0.18);
+  }
+  .mode-btn .mode-name{ display:block; font-size: 14.5px; font-weight:700; color: var(--ink); margin-bottom: 4px; }
+  .mode-btn.active .mode-name{ color: var(--gold-bright); }
+  .mode-btn .mode-desc{ display:block; font-size: 11.5px; color: var(--muted); line-height:1.4; }
+
+  /* ---------- Fan section ---------- */
+  .fan-section{ position: relative; margin-top: 70px; margin-bottom: 52px; }
+  @media (max-width: 720px){
+    .fan-section{ margin-top: 30px; }
+  }
+
+  .fan-outer{
+    position: relative;
+    display:flex; align-items:flex-end; justify-content:center; gap: 22px;
+  }
+  /* ---------- Background music ---------- */
+  /* ---------- Intro popup ---------- */
+  .intro-overlay{
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(8,6,14,0.72);
+    backdrop-filter: blur(3px);
+    display:flex; align-items:center; justify-content:center;
+    cursor: pointer;
+    animation: introFadeIn .3s ease;
+  }
+  .intro-overlay.hidden{ display:none; }
+  @keyframes introFadeIn{ from{ opacity:0; } to{ opacity:1; } }
+  .intro-popup{
+    background: linear-gradient(180deg, var(--panel), var(--panel-light));
+    border: 1px solid var(--gold);
+    border-radius: 18px;
+    padding: 36px 40px;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.55), 0 0 40px rgba(201,163,90,0.15);
+    cursor: default;
+  }
+  .intro-icon{ font-size: 22px; color: var(--gold); margin-bottom: 14px; }
+  .intro-popup p{
+    font-family:'Nanum Myeongjo', serif;
+    font-size: 15px; line-height:1.7; color: var(--ink);
+    margin: 0 0 14px;
+  }
+  .intro-popup p strong{ color: var(--gold-bright); }
+  .intro-hint{ font-size: 11.5px; color: var(--muted-dim); }
+
+  .bgm-toggle{
+    position: fixed; right: 20px; bottom: 20px; z-index: 60;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--panel-light); border: 1px solid var(--gold);
+    color: var(--muted); font-size: 18px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    transition: color .2s ease, transform .15s ease, box-shadow .2s ease;
+  }
+  .bgm-toggle:hover{ transform: translateY(-2px); }
+  .bgm-toggle.playing{
+    color: var(--gold-bright);
+    animation: bgmPulse 2s ease-in-out infinite;
+  }
+  @keyframes bgmPulse{
+    0%, 100%{ box-shadow: 0 6px 18px rgba(0,0,0,0.4), 0 0 0 0 rgba(201,163,90,0.4); }
+    50%{ box-shadow: 0 6px 18px rgba(0,0,0,0.4), 0 0 0 8px rgba(201,163,90,0); }
+  }
+
+  .fan-logo{
+    position:absolute; left:50%; bottom:70px;
+    transform: translateX(-50%);
+    width:116px; height:116px; z-index:5;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(circle, var(--wine-2) 0%, #1a0d20 80%);
+    border:1px solid var(--gold);
+    box-shadow: 0 0 26px rgba(201,163,90,0.35);
+    overflow:hidden;
+    cursor: pointer;
+    transition: box-shadow .2s ease, transform .2s ease;
+  }
+  .fan-logo:hover{
+    box-shadow: 0 0 34px rgba(201,163,90,0.55);
+    transform: translateX(-50%) translateY(-2px);
+  }
+  .fan-logo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .fan-logo .logo-fallback{
+    display:none; align-items:center; justify-content:center;
+    font-family:'Cinzel', serif; color: var(--gold-bright); font-size: 12px; letter-spacing:0.03em;
+  }
+  .fan-wrap{
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    height: var(--fan-height);
+  }
+  .card-slot{
+    position:absolute;
+    left:50%; bottom:0;
+    width: var(--card-w); height: var(--card-h);
+    margin-left: calc(var(--card-w) / -2);
+    transform-origin: 50% 100%;
+    cursor: pointer;
+    transition: filter .2s ease;
+  }
+  .card-slot[data-locked="1"]{ cursor: default; }
+  .card-slot:hover:not([data-locked="1"]) .tarot-card{ filter: brightness(1.15) translateY(-4px); }
+  .card-slot.picked{ filter: grayscale(0.35); }
+  .card-slot.picked .tarot-card{ transform: translateY(-32px); filter: brightness(1.05) drop-shadow(0 8px 14px rgba(0,0,0,0.5)); }
+
+  .tarot-card{
+    position:relative; width:100%; height:100%;
+    perspective: 600px;
+    transition: transform .2s ease, filter .2s ease;
+  }
+  .tarot-card-inner{
+    position:relative; width:100%; height:100%;
+    transform-style: preserve-3d;
+    transition: transform .7s cubic-bezier(.4,.2,.15,1);
+  }
+  .card-slot.revealed .tarot-card-inner{ transform: rotateY(180deg); }
+
+  .card-face{
+    position:absolute; inset:0;
+    border-radius: 5px;
+    backface-visibility: hidden;
+    overflow:hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.45);
+  }
+  .card-back{
+    background:
+      repeating-linear-gradient(45deg, transparent 0 3px, rgba(201,163,90,0.09) 3px 4px),
+      radial-gradient(circle at 50% 50%, var(--wine-2) 0%, #23102a 75%);
+    border: 1px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card-back::after{
+    content:'✦';
+    color: var(--gold);
+    font-size: 11px;
+    opacity: 0.85;
+  }
+  .card-front{
+    transform: rotateY(180deg);
+    background: var(--panel-light);
+    border: 1px solid var(--gold-bright);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card-front img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .card-front .fallback{
+    display:none; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding: 4px; height:100%; width:100%;
+    font-family:'Nanum Myeongjo', serif; color: var(--gold-bright); font-size: 10px; line-height:1.4;
+  }
+
+  .shuffle-btn{
+    align-self: center;
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+    color: #241305;
+    border: none;
+    font-family:'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    padding: 14px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 6px 18px rgba(201,163,90,0.25);
+    transition: transform .15s ease, box-shadow .15s ease;
+    margin-bottom: 40px;
+  }
+  .shuffle-btn:hover{ transform: translateY(-2px); box-shadow: 0 10px 22px rgba(201,163,90,0.35); }
+  .shuffle-btn:active{ transform: translateY(0); }
+
+  .fan-hint{
+    text-align:center; color: var(--muted); font-size: 13px; margin-top: 4px;
+    min-height: 18px;
+  }
+
+  /* ---------- Pick method toggle (practice mode) ---------- */
+  .pick-method-toggle{
+    display:flex; justify-content:center; gap: 10px; margin-bottom: 24px;
+  }
+  .pm-btn{
+    background: var(--void-2); border: 1px solid var(--line); color: var(--muted);
+    font-family:'Noto Sans KR', sans-serif; font-size: 13px; font-weight:600;
+    padding: 9px 16px; border-radius: 999px; cursor:pointer;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .pm-btn:hover{ border-color: var(--gold); color: var(--gold-bright); }
+  .pm-btn.active{
+    border-color: var(--gold); color: var(--gold-bright);
+    background: linear-gradient(180deg, rgba(201,163,90,0.14), rgba(201,163,90,0.05));
+  }
+
+  /* ---------- Choose-grid (pick any of the 78 cards directly) ---------- */
+  .choose-grid{
+    display:grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 8px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  @media (max-width: 860px){ .choose-grid{ grid-template-columns: repeat(6, 1fr); } }
+  @media (max-width: 520px){ .choose-grid{ grid-template-columns: repeat(4, 1fr); } }
+  .choose-card{
+    cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap: 3px;
+  }
+  .choose-card-img{
+    width:100%; aspect-ratio: 64 / 110;
+    border-radius: 5px; overflow:hidden;
+    border: 1px solid var(--gold-bright);
+    background: var(--panel-light);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    transition: transform .15s ease, filter .15s ease;
+  }
+  .choose-card:hover .choose-card-img{ transform: translateY(-3px); filter: brightness(1.12); }
+  .choose-card-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .choose-card-fallback{
+    display:none; align-items:center; justify-content:center; text-align:center;
+    width:100%; height:100%; padding: 3px;
+    font-family:'Nanum Myeongjo', serif; color: var(--gold-bright); font-size: 8.5px; line-height:1.25;
+  }
+  .choose-card-name{ font-size: 9px; color: var(--muted); text-align:center; line-height:1.3; }
+  .choose-card.used{ cursor: default; }
+  .choose-card.used .choose-card-img{ opacity: 0.3; filter: grayscale(0.6); }
+  .choose-card.used:hover .choose-card-img{ transform:none; filter: grayscale(0.6); }
+  .choose-card.used .choose-card-name{ opacity: 0.4; }
+
+  details.legend{
+    max-width: 640px; margin: 18px auto 0; text-align:center;
+  }
+  details.legend summary{
+    color: var(--muted-dim); font-size: 12px; cursor:pointer; letter-spacing: 0.02em;
+  }
+  .legend-body{
+    margin-top: 12px; text-align:left; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px;
+    max-height: 220px; overflow-y: auto; font-size: 12px; color: var(--muted);
+    columns: 2; column-gap: 24px;
+  }
+  .legend-body code{ color: var(--gold-bright); font-size: 11px; }
+  .legend-body p{ margin: 0 0 10px; break-inside: avoid; }
+
+  /* ---------- Panel sections ---------- */
+  .panel{
+    background: linear-gradient(180deg, rgba(26,20,40,0.88), rgba(36,28,56,0.88));
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 32px clamp(18px, 4vw, 40px);
+    margin-bottom: 28px;
+    box-shadow: 0 18px 40px -20px rgba(0,0,0,0.55);
+    transition: border-color .25s ease, box-shadow .25s ease;
+  }
+  .panel:hover{
+    border-color: rgba(201,163,90,0.35);
+    box-shadow: 0 22px 48px -18px rgba(0,0,0,0.6);
+  }
+  .panel h2{
+    font-family:'Nanum Myeongjo', serif;
+    font-weight: 400;
+    font-size: 19px;
+    color: var(--gold-bright);
+    margin: 0 0 6px;
+    letter-spacing: 0.02em;
+  }
+  .panel .sub{ color: var(--muted); font-size: 13px; margin: 0 0 20px; }
+
+  textarea{
+    width:100%; min-height: 96px; resize: vertical;
+    background: var(--void-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--ink);
+    font-family:'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    outline: none;
+    transition: border-color .2s ease;
+  }
+  textarea::placeholder{ color: var(--muted-dim); }
+  textarea:focus{ border-color: var(--gold); }
+
+  .example-picker{ margin-bottom: 16px; }
+  .example-picker label{
+    display:block; font-size: 12.5px; color: var(--gold-bright);
+    margin-bottom: 8px; font-weight:600;
+  }
+  .example-picker select{
+    width:100%;
+    background: var(--void-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--ink);
+    font-family:'Noto Sans KR', sans-serif;
+    font-size: 13.5px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color .2s ease;
+  }
+  .example-picker select:focus{ border-color: var(--gold); }
+  .example-picker select option{ background: var(--panel); color: var(--ink); }
+
+  .spread-grid{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 12px;
+  }
+  .spread-btn{
+    background: var(--void-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 14px;
+    color: var(--ink);
+    cursor:pointer;
+    text-align:left;
+    transition: border-color .2s ease, background .2s ease;
+    font-family:'Noto Sans KR', sans-serif;
+  }
+  .spread-btn:hover{ border-color: var(--gold); }
+  .spread-btn.active{
+    border-color: var(--gold);
+    background: linear-gradient(180deg, rgba(201,163,90,0.14), rgba(201,163,90,0.05));
+  }
+  .spread-btn .name{ font-weight:700; font-size: 14.5px; display:block; margin-bottom: 4px; }
+  .spread-btn .count{ font-size: 12px; color: var(--muted); }
+
+  .variant-grid{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+    gap: 10px; margin-top: 12px; padding-top: 14px; border-top: 1px dashed var(--line);
+  }
+  .variant-btn{
+    background: var(--void-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--muted);
+    cursor:pointer;
+    text-align:left;
+    font-family:'Noto Sans KR', sans-serif;
+    font-size: 12.5px;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .variant-btn:hover{ border-color: var(--gold); color: var(--ink); }
+  .variant-btn.active{
+    border-color: var(--gold); color: var(--gold-bright);
+    background: linear-gradient(180deg, rgba(201,163,90,0.14), rgba(201,163,90,0.05));
+  }
+
+  .timing-config{
+    margin-top: 12px; padding-top: 14px; border-top: 1px dashed var(--line);
+  }
+  .timing-count-row{ display:flex; align-items:center; flex-wrap:wrap; gap: 10px; margin-bottom: 10px; }
+  .timing-label{ font-size: 12.5px; color: var(--muted); }
+  .timing-count-btns{ display:flex; gap: 8px; }
+  .tc-btn{
+    background: var(--void-2); border: 1px solid var(--line); color: var(--muted);
+    font-family:'Noto Sans KR', sans-serif; font-size: 13px; font-weight:600;
+    width: 38px; height: 38px; border-radius: 999px; cursor:pointer;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .tc-btn:hover{ border-color: var(--gold); color: var(--ink); }
+  .tc-btn.active{
+    border-color: var(--gold); color: var(--gold-bright);
+    background: linear-gradient(180deg, rgba(201,163,90,0.14), rgba(201,163,90,0.05));
+  }
+  .timing-label-hint{ font-size: 11.5px; color: var(--muted-dim); margin-bottom: 12px; line-height:1.5; }
+  .timing-inputs{ display:grid; grid-template-columns: repeat(auto-fit, minmax(90px,1fr)); gap: 10px; }
+  .timing-input-wrap{ display:flex; flex-direction:column; gap: 5px; }
+  .timing-input-wrap span{ font-size: 10.5px; color: var(--muted-dim); text-align:center; }
+  .timing-input-wrap input{
+    background: var(--void-2); border: 1px solid var(--line); border-radius: 8px;
+    padding: 8px 6px; color: var(--ink); font-family:'Noto Sans KR', sans-serif;
+    font-size: 13px; text-align:center; outline:none;
+  }
+  .timing-input-wrap input:focus{ border-color: var(--gold); }
+
+  .progress-row{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top: 22px; flex-wrap: wrap; gap: 10px;
+  }
+  .progress-text{ font-size: 13.5px; color: var(--muted); }
+  .progress-text strong{ color: var(--gold-bright); }
+
+  .tray{
+    display:flex; gap: 12px; flex-wrap: wrap; margin-top: 16px;
+  }
+  .tray.tray-either-mode{ display:block; }
+  .either-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "ec3 ec5"
+      "ec2 ec4"
+      "ec1 ec1";
+    justify-items:center;
+    align-items:end;
+    row-gap: 18px; column-gap: 28px;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+  .either-grid .ec1{ grid-area: ec1; }
+  .either-grid .ec2{ grid-area: ec2; }
+  .either-grid .ec3{ grid-area: ec3; }
+  .either-grid .ec4{ grid-area: ec4; }
+  .either-grid .ec5{ grid-area: ec5; }
+  .tray-extra-row{ display:flex; justify-content:center; margin-top: 18px; }
+  @media (max-width: 480px){
+    .either-grid{ column-gap: 14px; row-gap: 12px; max-width: 280px; }
+  }
+
+  /* ---------- Celtic Cross layout ---------- */
+  .tray.tray-celtic-mode{ display:block; overflow-x:auto; padding-bottom: 6px; }
+  .celtic-grid{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(70px, 1fr)) 30px minmax(70px, 1fr);
+    grid-template-rows: repeat(4, auto);
+    grid-template-areas:
+      ".   cc5   .   .   cc10"
+      "cc4 ccx   cc6 .   cc9"
+      ".   cc3   .   .   cc8"
+      ".   .     .   .   cc7";
+    align-items: center;
+    justify-items: center;
+    gap: 22px 14px;
+    width: max-content;
+    min-width: 100%;
+    margin: 0 auto;
+  }
+  .celtic-grid .cc3{ grid-area: cc3; }
+  .celtic-grid .cc4{ grid-area: cc4; }
+  .celtic-grid .cc5{ grid-area: cc5; }
+  .celtic-grid .cc6{ grid-area: cc6; }
+  .celtic-grid .cc7{ grid-area: cc7; }
+  .celtic-grid .cc8{ grid-area: cc8; }
+  .celtic-grid .cc9{ grid-area: cc9; }
+  .celtic-grid .cc10{ grid-area: cc10; }
+  .cc-cross-wrap{
+    grid-area: ccx;
+    position: relative;
+    width: calc(var(--tray-card-w) + 24px);
+    height: calc(var(--tray-card-h) + 40px);
+  }
+  .cc-cross-wrap .cc-base{ position:absolute; top:0; left:0; }
+  .cc-cross-wrap .cc-cross{
+    position:absolute; left:50%; top: calc(var(--tray-card-h) / 2);
+    transform: translate(-50%, -50%) rotate(90deg);
+    transform-origin: center center;
+    z-index: 3;
+  }
+  .cc-cross-wrap .cc-cross .tray-card{ box-shadow: 0 4px 14px rgba(0,0,0,0.5); }
+  @media (max-width: 720px){
+    .celtic-grid{ gap: 14px 8px; grid-template-columns: repeat(3, minmax(50px, 1fr)) 18px minmax(50px, 1fr); }
+  }
+  .celtic-grid.mini-celtic-grid{
+    grid-template-columns: repeat(3, minmax(70px, 1fr));
+    grid-template-areas:
+      ".   cc5   ."
+      "cc4 ccx   cc6"
+      ".   cc3   .";
+  }
+  @media (max-width: 720px){
+    .celtic-grid.mini-celtic-grid{ grid-template-columns: repeat(3, minmax(50px, 1fr)); }
+  }
+
+  /* ---------- Magic Seven (hexagram) layout ---------- */
+  .tray.tray-magic7-mode{ display:block; }
+  .magic7-grid{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(70px, 1fr));
+    grid-template-rows: 92px 118px 118px 118px 92px;
+    grid-template-areas:
+      ".  m1 ."
+      "m5 .  m6"
+      ".  m7 ."
+      "m3 .  m2"
+      ".  m4 .";
+    align-items: center;
+    justify-items: center;
+    row-gap: 0; column-gap: 8px;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  .magic7-grid .m1{ grid-area: m1; z-index:1; }
+  .magic7-grid .m5{ grid-area: m5; z-index:2; }
+  .magic7-grid .m6{ grid-area: m6; z-index:2; }
+  .magic7-grid .m7{ grid-area: m7; z-index:3; }
+  .magic7-grid .m3{ grid-area: m3; z-index:4; }
+  .magic7-grid .m2{ grid-area: m2; z-index:4; }
+  .magic7-grid .m4{ grid-area: m4; z-index:5; }
+  @media (max-width: 480px){
+    .magic7-grid{
+      grid-template-columns: repeat(3, minmax(50px, 1fr));
+      grid-template-rows: 66px 84px 84px 84px 66px;
+      column-gap: 4px; max-width: 240px;
+    }
+  }
+  .tray-slot{
+    width: calc(var(--tray-card-w) + 24px);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .tray-card{
+    width: var(--tray-card-w); height: var(--tray-card-h);
+    border-radius: 8px;
+    border: 1px dashed var(--line);
+    background: var(--void-2);
+    position:relative;
+  }
+  .tray-card.filled{
+    border: none;
+    cursor: pointer;
+    perspective: 700px;
+  }
+  .tray-card-inner{
+    position:relative; width:100%; height:100%;
+    transform-style: preserve-3d;
+    transition: transform .6s cubic-bezier(.4,.2,.15,1);
+  }
+  .tray-card.revealed .tray-card-inner{ transform: rotateY(180deg); }
+  .tray-face{
+    position:absolute; inset:0;
+    border-radius: 8px;
+    backface-visibility: hidden;
+    overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .tray-back{
+    background:
+      repeating-linear-gradient(45deg, transparent 0 3px, rgba(201,163,90,0.09) 3px 4px),
+      radial-gradient(circle at 50% 50%, var(--wine-2) 0%, #23102a 75%);
+    border: 1px solid var(--gold);
+  }
+  .tray-back::after{ content:'✦'; color: var(--gold); font-size: 10px; opacity: 0.85; }
+  .tray-front{
+    transform: rotateY(180deg);
+    background: var(--panel-light);
+    border: 1px solid var(--gold-bright);
+  }
+  .tray-front img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .tray-front .fallback{
+    display:none; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding: 6px; height:100%; width:100%;
+    font-family:'Nanum Myeongjo', serif; color: var(--gold-bright); font-size: 11px; line-height:1.35;
+  }
+  .tray-pos{ font-size: 12px; color: var(--muted); text-align:center; letter-spacing:0.02em; }
+  .tray-name{ font-size: 12px; color: var(--gold-bright); text-align:center; min-height: 14px; }
+
+  .tray-slot-compact{ width: var(--tray-card-w); }
+  .m7-badge{
+    position:absolute; left:0; right:0; bottom:6%;
+    display:flex; flex-direction:column; align-items:center; gap:1px;
+    z-index: 6;
+    pointer-events: none;
+  }
+  .m7-badge-pos{
+    font-size: 12px; color: var(--muted); text-align:center; letter-spacing:0.02em;
+    background: rgba(10,8,18,0.72); padding: 1px 10px; border-radius: 999px;
+  }
+  .m7-badge-name{
+    font-size: 12px; color: var(--gold-bright); text-align:center;
+    background: rgba(10,8,18,0.72); padding: 1px 10px; border-radius: 999px;
+  }
+
+  .number-results{ margin-top: 30px; }
+  .number-card-row{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  @media (max-width: 900px){ .number-card-row{ grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px){ .number-card-row{ grid-template-columns: 1fr; } }
+
+  .compat-person-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  @media (max-width: 560px){ .compat-person-grid{ grid-template-columns: 1fr; } }
+  .compat-person-input label{
+    display:block; font-size: 12px; color: var(--gold-bright); margin: 0 0 6px; font-weight:600;
+  }
+  .compat-person-input input{
+    width:100%; background: var(--void-2); border:1px solid var(--line); border-radius:10px;
+    padding: 11px 13px; color: var(--ink); font-family:'Noto Sans KR', sans-serif; font-size: 14px;
+    outline:none; margin-bottom: 14px;
+  }
+  .compat-person-input input:focus{ border-color: var(--gold); }
+  .compat-results{ margin-top: 30px; }
+  .compat-person-block{ margin-bottom: 34px; }
+  .compat-person-block h3{
+    font-family:'Nanum Myeongjo', serif; font-weight:400; font-size: 17px;
+    color: var(--gold-bright); margin: 0 0 18px; padding-bottom: 10px; border-bottom: 1px solid var(--line);
+  }
+  .number-card-block{ text-align:center; }
+  .number-card-label{
+    font-family:'Cinzel', serif; font-size: 12px; letter-spacing: 0.08em;
+    color: var(--gold); margin-bottom: 14px;
+  }
+  .number-card-img{
+    width: 140px; height: 240px; margin: 0 auto 14px;
+    border-radius: 8px; overflow:hidden;
+    border: 1px solid var(--gold-bright);
+    background: var(--panel-light);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.4);
+  }
+  .number-card-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .number-card-fallback{
+    display:none; align-items:center; justify-content:center; text-align:center;
+    width:100%; height:100%; padding: 10px;
+    font-family:'Nanum Myeongjo', serif; color: var(--gold-bright); font-size: 15px;
+  }
+  .number-card-name{
+    font-family:'Nanum Myeongjo', serif; color: var(--gold-bright); font-size: 18px; margin-bottom: 10px;
+  }
+  .number-card-keyword{
+    font-family:'Nanum Myeongjo', serif; color: var(--gold);
+    font-size: 13.5px; margin-bottom: 12px;
+  }
+  .number-card-desc{
+    font-size: 14px; line-height:1.75; color: var(--ink);
+    max-width: 300px; margin: 0 auto 16px; text-align:left;
+  }
+  .number-card-sub{ max-width: 300px; margin: 0 auto; text-align:left; }
+  .number-card-sub-row{
+    font-size: 13px; line-height:1.6; color: var(--muted);
+    margin-bottom: 10px; padding-left: 2px;
+  }
+  .number-card-sub-row .tag{
+    display:inline-block; font-size: 10.5px; font-weight:700;
+    padding: 2px 8px; border-radius: 999px; margin-right: 8px;
+    vertical-align: 1px;
+  }
+  .number-card-sub-row .tag.strength{ background: rgba(201,163,90,0.18); color: var(--gold-bright); }
+  .number-card-sub-row .tag.caution{ background: rgba(217,120,120,0.15); color: var(--danger); }
+
+  .number-ai-block{
+    margin-top: 36px; padding-top: 28px; border-top: 1px dashed var(--line);
+  }
+  .number-ai-block h3{
+    font-family:'Nanum Myeongjo', serif; font-weight:400; font-size: 17px;
+    color: var(--gold-bright); margin: 0 0 6px;
+  }
+  .number-ai-block .sub{ margin-bottom: 18px; }
+
+  .advice-btn{
+    margin-top: 14px;
+    background: var(--void-2);
+    border: 1px dashed var(--gold);
+    color: var(--gold-bright);
+    font-family:'Noto Sans KR', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    cursor:pointer;
+    transition: background .2s ease, transform .15s ease;
+  }
+  .advice-btn:hover:not(:disabled){ background: rgba(201,163,90,0.12); transform: translateY(-1px); }
+  .advice-btn:disabled{ opacity: 0.55; cursor: default; border-style: solid; }
+
+  .interpret-btn{
+    margin-top: 26px;
+    width: 100%;
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+    color:#241305;
+    border:none;
+    font-family:'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    font-size: 15.5px;
+    padding: 16px;
+    border-radius: 10px;
+    cursor:pointer;
+    transition: opacity .2s ease, transform .15s ease;
+  }
+  .interpret-btn:disabled{ opacity: 0.35; cursor: not-allowed; }
+  .interpret-btn:not(:disabled):hover{ transform: translateY(-2px); }
+
+  .validation{ color: var(--danger); font-size: 13px; margin-top: 10px; min-height: 16px; }
+
+  /* ---------- Result ---------- */
+  .result-panel{ display:none; }
+  .result-panel.show{ display:block; animation: panelIn .5s cubic-bezier(.2,.7,.3,1); }
+  @keyframes panelIn{
+    from{ opacity:0; transform: translateY(14px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+  .loading-row{ display:flex; align-items:center; gap:12px; color: var(--muted); font-size:14px; }
+  .spinner{
+    width:16px; height:16px; border-radius:50%;
+    border: 2px solid var(--muted-dim); border-top-color: var(--gold);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .result-card{
+    border-left: 2px solid var(--gold);
+    padding: 4px 0 4px 18px;
+    margin-bottom: 20px;
+  }
+  .result-card .rc-pos{ font-size: 12px; color: var(--muted); letter-spacing:0.05em; }
+  .result-card .rc-name{ font-family:'Nanum Myeongjo', serif; color: var(--gold-bright); font-size: 17px; margin: 3px 0 8px; }
+  .result-card .rc-text{ font-size: 14.5px; line-height: 1.75; color: var(--ink); }
+
+  .summary-box{
+    margin-top: 26px;
+    background: rgba(201,163,90,0.06);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .summary-box .sb-title{
+    font-family:'Nanum Myeongjo', serif; color: var(--gold); font-size: 15px; margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+  .summary-box .sb-text{ font-size: 14.5px; line-height: 1.8; color: var(--ink); }
+
+  .toast{
+    position: fixed; left:50%; bottom: 32px; transform: translate(-50%, 20px);
+    background: var(--panel-light); border:1px solid var(--gold);
+    color: var(--ink); padding: 12px 20px; border-radius: 999px;
+    font-size: 13.5px; opacity:0; pointer-events:none; transition: opacity .25s ease, transform .25s ease;
+    z-index: 50; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .toast.show{ opacity:1; transform: translate(-50%, 0); }
+
+  footer{ text-align:center; color: var(--muted-dim); font-size: 12px; margin-top: 40px; }
+
+  /* ---------- Prompt & paste-back ---------- */
+  .prompt-box{
+    width:100%; min-height: 160px; resize: vertical;
+    background: var(--void-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    color: var(--muted);
+    font-family:'Noto Sans KR', sans-serif;
+    font-size: 13.5px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+  .prompt-actions{ display:flex; flex-wrap:wrap; gap: 10px; margin-top: 16px; }
+  .action-btn{
+    background: var(--panel-light); border: 1px solid var(--line); color: var(--ink);
+    font-family:'Noto Sans KR', sans-serif; font-size: 13.5px; font-weight: 600;
+    padding: 11px 18px; border-radius: 999px; cursor:pointer;
+    transition: border-color .2s ease, color .2s ease, transform .15s ease;
+  }
+  .action-btn:hover{ border-color: var(--gold); color: var(--gold-bright); transform: translateY(-1px); }
+  .action-btn.primary{
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+    color:#241305; border:none;
+    box-shadow: 0 6px 18px rgba(201,163,90,0.28);
+  }
+  .action-btn.primary:hover{ box-shadow: 0 10px 24px rgba(201,163,90,0.4); }
+  .open-note{ font-size: 12px; color: var(--muted-dim); margin-top: 12px; line-height:1.6; }
+
+  .dual-result{ display:grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 34px; }
+  @media (max-width: 720px){ .dual-result{ grid-template-columns: 1fr; } }
+  .provider-col .provider-title{
+    font-family:'Cinzel', serif; font-size: 13px; letter-spacing: 0.12em;
+    color: var(--gold); margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .provider-col textarea.paste-box{
+    min-height: 110px; font-size: 13px;
+  }
+  .paste-show-btn{
+    margin-top: 10px; width:100%;
+    background: var(--panel-light); border: 1px solid var(--line); color: var(--gold-bright);
+    font-family:'Noto Sans KR', sans-serif; font-size: 13px; font-weight:600;
+    padding: 10px; border-radius: 8px; cursor:pointer;
+  }
+  .paste-show-btn:hover{ border-color: var(--gold); }
+  .provider-result{ margin-top: 16px; }
+  .provider-result .sb-text{ font-size: 14px; line-height: 1.8; color: var(--ink); white-space: pre-wrap; }
+  .provider-msg{ font-size: 13px; color: var(--muted); }
+
+  /* ---------- Save & history ---------- */
+  .save-row{ display:flex; flex-wrap:wrap; gap: 10px; margin-top: 30px; padding-top: 24px; border-top: 1px dashed var(--line); }
+
+  .history-entry{
+    background: var(--void-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .history-entry-head{
+    display:flex; justify-content:space-between; align-items:flex-start; gap: 12px; cursor:pointer;
+  }
+  .history-entry-title{ font-size: 14px; color: var(--ink); font-weight:600; }
+  .history-entry-meta{ font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .history-entry-cards{ display:flex; flex-wrap:wrap; gap: 10px; margin-top: 12px; }
+  .history-card-thumb{ display:flex; flex-direction:column; align-items:center; gap:4px; width: 54px; }
+  .history-card-img{
+    width: 54px; height: 92px; border-radius: 6px; overflow:hidden;
+    border: 1px solid var(--gold); background: var(--panel-light);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .history-card-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .history-card-fallback{
+    display:none; align-items:center; justify-content:center; text-align:center;
+    width:100%; height:100%; padding:3px;
+    font-family:'Nanum Myeongjo', serif; color: var(--gold-bright); font-size: 9px; line-height:1.3;
+  }
+  .history-card-label{ font-size: 10px; color: var(--muted); text-align:center; line-height:1.3; }
+  .history-entry-actions{ display:flex; gap: 8px; flex-shrink:0; }
+  .history-mini-btn{
+    background: var(--panel-light); border: 1px solid var(--line); color: var(--muted);
+    font-size: 11.5px; padding: 6px 10px; border-radius: 999px; cursor:pointer;
+    font-family:'Noto Sans KR', sans-serif; white-space:nowrap;
+  }
+  .history-mini-btn:hover{ border-color: var(--gold); color: var(--gold-bright); }
+  .history-entry-body{ display:none; margin-top: 14px; padding-top:14px; border-top: 1px dashed var(--line); font-size: 13px; line-height:1.7; color: var(--ink); white-space:pre-wrap; }
+  .history-entry-body.open{ display:block; }
+  .history-empty{ color: var(--muted-dim); font-size: 13px; }  /* ---------- Print / PDF export ---------- */
+  #printArea{ display:none; }
+  @media print{
+    body > *:not(#printArea){ display:none !important; }
+    body::before{ display:none !important; }
+    body{ background:#fff !important; }
+    #printArea{
+      display:block !important;
+      background:#fff; color:#000;
+      font-family:'Noto Sans KR', sans-serif;
+      font-weight: 500;
+      padding: 20px; max-width: 100%;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    #printArea *{
+      /* undo the site's gradient/transparent text effects and text-shadow,
+         which otherwise make headings print almost invisibly faint */
+      background-image: none !important;
+      -webkit-text-fill-color: initial !important;
+      text-shadow: none !important;
+      opacity: 1 !important;
+    }
+    #printArea h1{
+      font-family:'Nanum Myeongjo', serif; font-weight:700; font-size: 22px; color:#000 !important;
+      border-bottom: 2px solid #c9a35a; padding-bottom: 10px; margin-bottom: 16px;
+      background: none !important;
+    }
+    #printArea h2{ font-family:'Nanum Myeongjo', serif; font-weight:700; font-size: 15px; color:#4a2f0a !important; margin: 20px 0 8px; }
+    #printArea p{ font-size: 13px; font-weight:500; line-height:1.8; margin: 0 0 10px; white-space: pre-wrap; color:#000 !important; }
+    #printArea .print-meta{ font-size: 11px; font-weight:500; color:#333 !important; margin-bottom: 14px; }
+    #printArea .print-cards{ display:flex; flex-wrap:wrap; gap: 10px; margin-bottom: 10px; }
+    #printArea .print-card{ width: 90px; text-align:center; font-size: 10.5px; font-weight:500; color:#111 !important; }
+    #printArea .print-card img{ width:100%; border-radius:4px; border:1px solid #c9a35a; margin-bottom:4px; }
+    #printArea .print-footer{ margin-top: 30px; padding-top: 12px; border-top: 1px solid #ddd; font-size: 10px; color:#888 !important; text-align:center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-popup">
+    <div class="intro-icon">✦</div>
+    <p>안녕하세요. Dio입니다.<br>
+    이 프로그램은 순수하게 재미로 즐기시고,<br>
+    보다 정확한 타로 상담은 <strong>타로 마스터</strong>와 함께 하시기 바랍니다.<br><br>
+    고민을 작성하기 전에 <strong>셔플 버튼</strong>을 먼저 눌러주세요.<br><br>
+    감사합니다.</p>
+    <div class="intro-hint">화면을 클릭하면 닫혀요</div>
+  </div>
+</div>
+
+<button class="bgm-toggle" id="bgmToggle" title="배경음악 재생/정지">🎵</button>
+<audio id="bgmAudio" loop preload="auto"></audio>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">UNIVERSAL WAITE · 78 ARCANA</div>
+    <h1>MATAMO TAROT</h1>
+    <div class="tagline">타로, 마음을 비추는 거울</div>
+    <div class="creator-credit">Made by Dio</div>
+    <div class="divider"></div>
+  </header>
+
+  <section class="mode-toggle" id="modeToggle">
+    <button class="mode-btn active" id="modeConsultBtn" data-mode="consult">
+      <span class="mode-name">🔮 상담하기</span>
+      <span class="mode-desc">AI에게 카드 해석을 받아요</span>
+    </button>
+    <button class="mode-btn" id="modePracticeBtn" data-mode="practice">
+      <span class="mode-name">✍️ 연습하기</span>
+      <span class="mode-desc">내가 먼저 해석하고, AI에게 슈퍼비전을 받아요</span>
+    </button>
+    <button class="mode-btn" id="modeNumberBtn" data-mode="number">
+      <span class="mode-name">🔢 넘버 분석</span>
+      <span class="mode-desc">생년월일로 썬·문 넘버 카드를 찾아요</span>
+    </button>
+    <button class="mode-btn" id="modeCompatBtn" data-mode="compat">
+      <span class="mode-name">💕 궁합 보기</span>
+      <span class="mode-desc">두 사람의 생년월일로 궁합을 봐요</span>
+    </button>
+  </section>
+
+  <div class="pick-method-toggle" id="pickMethodToggle" style="display:none;">
+    <button class="pm-btn active" id="pmRandomBtn" data-method="random">🎲 랜덤으로 뽑기</button>
+    <button class="pm-btn" id="pmChooseBtn" data-method="choose">🔍 내가 골라서 뽑기</button>
+  </div>
+
+  <section class="panel" id="numberSection" style="display:none;">
+    <h2>🔢 썬 넘버 · 문 넘버 · 연도 카드</h2>
+    <p class="sub">생년월일을 입력하면, 타고난 기질(썬 넘버)과 사회적으로 드러나는 성향(문 넘버), 그리고 올해의 흐름을 보여주는 연도 카드에 해당하는 메이저 아르카나 카드를 찾아드려요.</p>
+
+    <label for="birthDate" style="display:block; font-size:12.5px; color:var(--gold-bright); margin-bottom:8px; font-weight:600;">생년월일 (양력)</label>
+    <input type="date" id="birthDate" style="width:100%; background:var(--void-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px; color:var(--ink); font-family:'Noto Sans KR', sans-serif; font-size:15px; outline:none; margin-bottom:16px;">
+
+    <button class="interpret-btn" id="numberAnalyzeBtn">분석하기</button>
+    <div class="validation" id="numberValidation"></div>
+
+    <div class="number-results" id="numberResults" style="display:none;"></div>
+
+    <div class="number-ai-block" id="numberAiBlock" style="display:none;">
+      <h3>🔗 두 카드를 함께 놓고 보면</h3>
+      <p class="sub">썬 넘버와 문 넘버를 조합했을 때 나타나는 성격의 결, 서로 강화되는 지점과 긴장되는 지점을 AI에게 상세하게 물어볼 수 있어요.</p>
+
+      <div class="prompt-box" id="numberPromptBox"></div>
+      <div class="prompt-actions">
+        <button class="action-btn primary" id="numberOpenClaudeBtn">✦ 복사 + Claude 열기 ↗</button>
+        <button class="action-btn primary" id="numberOpenGeminiBtn">✦ 복사 + Gemini 열기 ↗</button>
+        <button class="action-btn" id="numberCopyPromptBtn">📋 프롬프트만 복사</button>
+      </div>
+      <div class="open-note">버튼을 누르면 프롬프트가 자동으로 복사돼요. 열린 창에 붙여넣기(Ctrl/Cmd+V) 후 전송하고, 답변을 받으면 아래에 붙여넣어 확인하세요.</div>
+
+      <div class="dual-result">
+        <div class="provider-col">
+          <div class="provider-title">CLAUDE 답변</div>
+          <textarea class="paste-box" id="numberClaudePaste" placeholder="Claude의 답변을 여기에 붙여넣으세요."></textarea>
+          <button class="paste-show-btn" id="numberClaudeShowBtn">이 답변 표시하기</button>
+          <div class="provider-result" id="numberClaudeResult"></div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-title">GEMINI 답변</div>
+          <textarea class="paste-box" id="numberGeminiPaste" placeholder="Gemini의 답변을 여기에 붙여넣으세요."></textarea>
+          <button class="paste-show-btn" id="numberGeminiShowBtn">이 답변 표시하기</button>
+          <div class="provider-result" id="numberGeminiResult"></div>
+        </div>
+      </div>
+      <div class="save-row">
+        <button class="action-btn primary" id="saveNumberBtn">💾 이 결과 저장하기</button>
+        <button class="action-btn" id="pdfNumberBtn">🖨 PDF로 저장</button>
+        <button class="action-btn" id="resetNumberBtn">🔄 초기화 (다른 사람 보기)</button>
+      </div>
+      <div class="open-note">"저장하기"는 이 브라우저에 기록으로 남겨서 아래 "저장된 넘버 분석"에서 다시 볼 수 있게 해요. "PDF로 저장"을 누르면 인쇄창이 열리는데, 대상(프린터)을 "PDF로 저장"으로 선택하시면 돼요. "초기화"를 누르면 입력값과 결과가 모두 지워지고 새 사람의 생년월일을 바로 입력할 수 있어요.</div>
+    </div>
+  </section>
+
+  <section class="panel" id="numberHistoryPanel" style="display:none;">
+    <h2>📖 저장된 넘버 분석</h2>
+    <p class="sub">이 브라우저에만 저장돼요 (다른 기기·브라우저에는 안 보여요).</p>
+    <div id="numberHistoryList"></div>
+  </section>
+
+  <section class="panel" id="compatSection" style="display:none;">
+    <h2>💕 궁합 보기</h2>
+    <p class="sub">두 사람의 생년월일을 입력하면, 각자의 썬 넘버·문 넘버로 기본 궁합을, 연도 카드로 올해의 궁합 흐름을 함께 봐요.</p>
+
+    <div class="compat-person-grid">
+      <div class="compat-person-input">
+        <label for="compatNameA">사람 A 이름 (선택)</label>
+        <input type="text" id="compatNameA" placeholder="예: 나" maxlength="10">
+        <label for="compatDateA">생년월일</label>
+        <input type="date" id="compatDateA">
+      </div>
+      <div class="compat-person-input">
+        <label for="compatNameB">사람 B 이름 (선택)</label>
+        <input type="text" id="compatNameB" placeholder="예: 상대방" maxlength="10">
+        <label for="compatDateB">생년월일</label>
+        <input type="date" id="compatDateB">
+      </div>
+    </div>
+
+    <button class="interpret-btn" id="compatAnalyzeBtn">궁합 보기</button>
+    <div class="validation" id="compatValidation"></div>
+
+    <div class="compat-results" id="compatResults" style="display:none;"></div>
+
+    <div class="number-ai-block" id="compatAiBlock" style="display:none;">
+      <h3>🔗 두 사람의 궁합, 더 자세히 알고 싶다면</h3>
+      <p class="sub">썬·문 넘버로 본 기본 궁합과, 연도 카드로 본 올해의 궁합 흐름을 AI에게 자세히 물어볼 수 있어요.</p>
+
+      <div class="prompt-box" id="compatPromptBox"></div>
+      <div class="prompt-actions">
+        <button class="action-btn primary" id="compatOpenClaudeBtn">✦ 복사 + Claude 열기 ↗</button>
+        <button class="action-btn primary" id="compatOpenGeminiBtn">✦ 복사 + Gemini 열기 ↗</button>
+        <button class="action-btn" id="compatCopyPromptBtn">📋 프롬프트만 복사</button>
+      </div>
+      <div class="open-note">버튼을 누르면 프롬프트가 자동으로 복사돼요. 열린 창에 붙여넣기(Ctrl/Cmd+V) 후 전송하고, 답변을 받으면 아래에 붙여넣어 확인하세요.</div>
+
+      <div class="dual-result">
+        <div class="provider-col">
+          <div class="provider-title">CLAUDE 답변</div>
+          <textarea class="paste-box" id="compatClaudePaste" placeholder="Claude의 답변을 여기에 붙여넣으세요."></textarea>
+          <button class="paste-show-btn" id="compatClaudeShowBtn">이 답변 표시하기</button>
+          <div class="provider-result" id="compatClaudeResult"></div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-title">GEMINI 답변</div>
+          <textarea class="paste-box" id="compatGeminiPaste" placeholder="Gemini의 답변을 여기에 붙여넣으세요."></textarea>
+          <button class="paste-show-btn" id="compatGeminiShowBtn">이 답변 표시하기</button>
+          <div class="provider-result" id="compatGeminiResult"></div>
+        </div>
+      </div>
+
+      <div class="save-row">
+        <button class="action-btn primary" id="saveCompatBtn">💾 이 궁합 저장하기</button>
+        <button class="action-btn" id="pdfCompatBtn">🖨 PDF로 저장</button>
+        <button class="action-btn" id="resetCompatBtn">🔄 초기화 (다른 두 사람 보기)</button>
+      </div>
+      <div class="open-note">"저장하기"는 이 브라우저에 기록으로 남겨서 아래 "저장된 궁합"에서 다시 볼 수 있게 해요.</div>
+    </div>
+  </section>
+
+  <section class="panel" id="compatHistoryPanel" style="display:none;">
+    <h2>📖 저장된 궁합</h2>
+    <p class="sub">이 브라우저에만 저장돼요 (다른 기기·브라우저에는 안 보여요).</p>
+    <div id="compatHistoryList"></div>
+  </section>
+
+  <div id="readingFlow">
+    <section class="fan-section">
+      <div id="randomPickWrap">
+        <div class="fan-outer">
+          <div class="fan-wrap" id="fanWrap"></div>
+          <a class="fan-logo" id="fanLogo" href="https://cafe.naver.com/matamotarot" target="_blank" rel="noopener noreferrer" title="MATAMO TAROT 네이버 카페 바로가기">
+            <img id="fanLogoImg" alt="MATAMO TAROT 로고">
+            <div class="logo-fallback">✦</div>
+          </a>
+        </div>
+        <div style="display:flex; justify-content:center;">
+          <button class="shuffle-btn" id="shuffleBtn">✦ 셔플</button>
+        </div>
+        <div class="fan-hint" id="fanHint">덱을 섞은 뒤, 마음이 가는 카드를 골라보세요.</div>
+      </div>
+
+      <div id="choosePickWrap" style="display:none;">
+        <div class="fan-hint" style="margin-bottom:14px;">78장 중에서 원하는 카드를 직접 클릭해서 골라보세요.</div>
+        <div class="choose-grid" id="chooseGrid"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>1 · 고민을 적어주세요</h2>
+      <p class="sub">지금 마음에 걸리는 질문이나 상황을 편하게 적어주세요.</p>
+
+      <div class="example-picker" id="examplePicker" style="display:none;">
+        <label for="exampleSelect">실전 예시 질문으로 연습하기 (선택 사항)</label>
+        <select id="exampleSelect">
+          <option value="">— 예시 질문을 선택하면 아래에 자동으로 채워져요 —</option>
+        </select>
+      </div>
+
+      <textarea id="question" placeholder="예) 요즘 진로 문제로 고민이 많아요. 지금 제가 놓치고 있는 게 있을까요?"></textarea>
+    </section>
+
+    <section class="panel">
+      <h2>2 · 배열법을 선택해주세요</h2>
+      <p class="sub">질문의 성격에 맞는 스프레드를 골라주세요.</p>
+      <div class="spread-grid" id="spreadGrid"></div>
+
+      <div class="variant-grid" id="threeVariantGrid" style="display:none;"></div>
+
+      <div class="timing-config" id="timingConfig" style="display:none;">
+        <div class="timing-count-row">
+          <span class="timing-label">카드 장수 (3~6장)</span>
+          <div class="timing-count-btns" id="timingCountBtns"></div>
+        </div>
+        <div class="timing-label-hint">각 카드 아래 칸에 원하는 명칭을 직접 입력해주세요. (예: 3월, 4월, 5월 / 1주차, 2주차 / 봄, 여름...)</div>
+        <div class="timing-inputs" id="timingInputs"></div>
+      </div>
+
+      <div class="progress-row">
+        <div class="progress-text" id="progressText">배열법을 먼저 선택해주세요.</div>
+      </div>
+      <div class="tray" id="tray"></div>
+      <div class="fan-hint" style="margin-top:6px; text-align:left;">카드를 눌러서 한 장씩 확인해보세요.</div>
+      <button class="advice-btn" id="adviceBtn" style="display:none;">🃏 조언 카드 한 장 더 뽑기</button>
+    </section>
+
+    <section class="panel" id="myInterpretationPanel" style="display:none;">
+      <h2>3 · 나의 해석을 적어주세요</h2>
+      <p class="sub">뽑힌 카드를 보고, 스스로 먼저 해석해보세요. 이 내용을 바탕으로 AI가 슈퍼비전을 해드려요.</p>
+      <textarea id="myInterpretation" placeholder="예) 첫 번째 카드는 과거를 나타내는데, 이 사람이 겪었던 어려움을 상징하는 것 같아요. 두 번째 카드는..."></textarea>
+    </section>
+
+    <section class="panel">
+      <button class="interpret-btn" id="interpretBtn" disabled>질문 만들기</button>
+      <div class="validation" id="validation"></div>
+    </section>
+
+    <section class="panel result-panel" id="resultPanel">
+      <h2 id="resultHeading">3 · AI에게 물어보기</h2>
+      <p class="sub" id="resultSub">아래 내용을 복사해서 Claude나 Gemini 창에 붙여넣고 답을 받아보세요. API 키 없이, 평소 쓰시는 계정 그대로 사용하시면 돼요.</p>
+
+      <div class="prompt-box" id="promptBox"></div>
+      <div class="prompt-actions">
+        <button class="action-btn primary" id="openClaudeBtn">✦ 복사 + Claude 열기 ↗</button>
+        <button class="action-btn primary" id="openGeminiBtn">✦ 복사 + Gemini 열기 ↗</button>
+        <button class="action-btn" id="copyPromptBtn">📋 프롬프트만 복사</button>
+      </div>
+      <div class="open-note">브라우저는 클릭 한 번당 새 창을 하나만 확실히 허용해서, 두 버튼을 각각 눌러주셔야 팝업 차단 없이 안정적으로 열려요. 버튼을 누르면 프롬프트가 자동으로 복사되니, 열린 창에 바로 붙여넣기(Ctrl/Cmd+V) 후 전송하시면 돼요. 답변을 받으신 뒤 아래 칸에 붙여넣으시면 이 페이지에 정리해서 보여드려요.</div>
+
+      <div class="dual-result">
+        <div class="provider-col">
+          <div class="provider-title">CLAUDE 답변</div>
+          <textarea class="paste-box" id="claudePaste" placeholder="Claude의 답변을 여기에 붙여넣으세요."></textarea>
+          <button class="paste-show-btn" id="claudeShowBtn">이 답변 표시하기</button>
+          <div class="provider-result" id="claudeResult"></div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-title">GEMINI 답변</div>
+          <textarea class="paste-box" id="geminiPaste" placeholder="Gemini의 답변을 여기에 붙여넣으세요."></textarea>
+          <button class="paste-show-btn" id="geminiShowBtn">이 답변 표시하기</button>
+          <div class="provider-result" id="geminiResult"></div>
+        </div>
+      </div>
+
+      <div class="save-row">
+        <button class="action-btn primary" id="saveReadingBtn">💾 이 리딩 저장하기</button>
+        <button class="action-btn" id="downloadReadingBtn">⬇️ 텍스트 파일로 저장</button>
+        <button class="action-btn" id="pdfReadingBtn">🖨 PDF로 저장</button>
+      </div>
+      <div class="open-note">"저장하기"는 이 브라우저에 기록으로 남겨서 아래 "저장된 리딩"에서 다시 볼 수 있게 해요. "텍스트 파일로 저장"은 지금 이 리딩을 .txt 파일로 바로 내려받아요. "PDF로 저장"을 누르면 인쇄창이 열리는데, 대상(프린터)을 "PDF로 저장"으로 선택하시면 돼요.</div>
+    </section>
+
+    <section class="panel" id="historyPanel">
+      <h2>📖 저장된 리딩</h2>
+      <p class="sub">이 브라우저에만 저장돼요 (다른 기기·브라우저에는 안 보여요). 브라우저 저장공간을 지우면 함께 사라지니, 중요한 기록은 텍스트 파일로도 받아두세요.</p>
+      <div id="historyList"></div>
+    </section>
+  </div>
+
+  <footer>MATAMO TAROT · 개인적인 성찰을 돕기 위한 도구이며, 전문적인 상담을 대신하지 않습니다.<br>Made by Dio</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="printArea"></div>
+
+<script>
+/* ---------------------------------------------------------
+   -1. INTRO POPUP (dismiss on click)
+--------------------------------------------------------- */
+(function initIntroPopup(){
+  const overlay = document.getElementById('introOverlay');
+  overlay.addEventListener('click', ()=>{
+    overlay.classList.add('hidden');
+  }, { once:true });
+})();
+
+/* ---------------------------------------------------------
+   0. LOGO (tries several common filenames/extensions)
+--------------------------------------------------------- */
+(function initLogo(){
+  const img = document.getElementById('fanLogoImg');
+  const fallback = document.querySelector('#fanLogo .logo-fallback');
+  const candidates = [
+    'images/logo.png', 'images/logo.jpg', 'images/logo.jpeg',
+    'images/logo.svg', 'images/logo.webp', 'images/logo.PNG', 'images/logo.JPG',
+    'logo.png', 'logo.jpg'
+  ];
+  let idx = 0;
+  function tryNext(){
+    if(idx >= candidates.length){
+      img.remove();
+      fallback.style.display = 'flex';
+      return;
+    }
+    img.src = candidates[idx++];
+  }
+  img.onerror = tryNext;
+  tryNext();
+})();
+
+/* ---------------------------------------------------------
+   0b. BACKGROUND MUSIC (plays a user-supplied royalty-free file)
+--------------------------------------------------------- */
+(function initBgm(){
+  const audio = document.getElementById('bgmAudio');
+  const toggle = document.getElementById('bgmToggle');
+  const candidates = [
+    'audio/bgm.mp3', 'audio/bgm.ogg', 'audio/bgm.m4a', 'audio/bgm.wav',
+    'bgm.mp3', 'bgm.ogg'
+  ];
+  audio.volume = 0.35;
+  let candidateIdx = 0;
+
+  function tryNextSource(){
+    if(candidateIdx >= candidates.length){
+      toggle.title = '재생할 음악 파일이 없어요. audio/bgm.mp3 위치에 넣어주세요.';
+      return;
+    }
+    audio.src = candidates[candidateIdx++];
+  }
+  audio.addEventListener('error', tryNextSource);
+
+  audio.addEventListener('play', ()=> toggle.classList.add('playing'));
+  audio.addEventListener('pause', ()=> toggle.classList.remove('playing'));
+
+  function attemptAutoplay(){
+    // browsers always allow MUTED autoplay, but block unmuted autoplay
+    // without a user gesture — so start silently, then unmute on the
+    // person's first interaction with the page. This is the only way to
+    // get audio actually playing "from the start" rather than waiting
+    // for an explicit click on the toggle button.
+    audio.muted = true;
+    audio.play().then(()=>{
+      const unmuteOnInteraction = (e)=>{
+        if(e.target === toggle || (e.target.closest && e.target.closest('#bgmToggle'))) return;
+        audio.muted = false;
+        document.removeEventListener('click', unmuteOnInteraction);
+        document.removeEventListener('keydown', unmuteOnInteraction);
+      };
+      document.addEventListener('click', unmuteOnInteraction);
+      document.addEventListener('keydown', unmuteOnInteraction, { once:true });
+    }).catch(()=>{
+      // even muted autoplay failed — most likely no valid audio file was
+      // found yet (candidates all 404'd). Fall back to starting on the
+      // first interaction once a source becomes available.
+      audio.muted = false;
+      const startOnInteraction = (e)=>{
+        if(e.target === toggle || (e.target.closest && e.target.closest('#bgmToggle'))) return;
+        audio.play().catch(()=>{});
+        document.removeEventListener('click', startOnInteraction);
+        document.removeEventListener('keydown', startOnInteraction);
+      };
+      document.addEventListener('click', startOnInteraction);
+      document.addEventListener('keydown', startOnInteraction, { once:true });
+    });
+  }
+
+  tryNextSource();
+  attemptAutoplay();
+
+  toggle.addEventListener('click', ()=>{
+    if(!audio.src) tryNextSource();
+    if(audio.muted){
+      // it's already playing silently (autoplay-muted) — unmute instead of pausing
+      audio.muted = false;
+      if(audio.paused){
+        audio.play().catch(()=>{
+          showToast('음악 파일을 찾지 못했어요. audio/bgm.mp3 위치에 넣어주세요.');
+        });
+      }
+      return;
+    }
+    if(audio.paused){
+      audio.play().catch(()=>{
+        showToast('음악 파일을 찾지 못했어요. audio/bgm.mp3 위치에 넣어주세요.');
+      });
+    } else {
+      audio.pause();
+    }
+  });
+})();
+
+/* ---------------------------------------------------------
+   1. DECK DATA
+--------------------------------------------------------- */
+const MAJOR = [
+  ['00','Fool','바보'],['01','Magician','마법사'],['02','High Priestess','여사제'],
+  ['03','Empress','여황제'],['04','Emperor','황제'],['05','Hierophant','교황'],
+  ['06','Lovers','연인'],['07','Chariot','전차'],['08','Strength','힘'],
+  ['09','Hermit','은둔자'],['10','Wheel of Fortune','운명의 수레바퀴'],['11','Justice','정의'],
+  ['12','Hanged Man','매달린 사람'],['13','Death','죽음'],['14','Temperance','절제'],
+  ['15','Devil','악마'],['16','Tower','탑'],['17','Star','별'],
+  ['18','Moon','달'],['19','Sun','태양'],['20','Judgement','심판'],['21','World','세계']
+];
+
+// Detailed trait profiles for the Sun/Moon Number feature, one per Major Arcana (0-21).
+const MAJOR_DETAILS = [
+  { keyword:'순수한 시작, 자유로운 모험',
+    desc:'정해진 길보다 낯선 가능성에 끌리는 사람이에요. 결과를 다 알지 못해도 일단 발을 내딛는 용기가 있고, 그 과정에서 배우는 것을 즐겨요. 세상을 색안경 없이 있는 그대로 바라보려는 순수함도 큰 특징이에요.',
+    strength:'새로운 환경이나 낯선 도전 앞에서도 위축되지 않는 개방성이 있어요.',
+    caution:'준비나 계획이 부족한 채로 뛰어들어 예상치 못한 리스크를 감수하게 될 수 있어요.' },
+  { keyword:'실행력, 창조적 주도성',
+    desc:'머릿속 아이디어를 실제로 구현해내는 힘이 뛰어난 사람이에요. 지금 가진 자원과 능력을 영리하게 조합해서 원하는 결과를 만들어내는 감각이 있고, 스스로 상황을 주도하려는 의지도 강해요.',
+    strength:'생각을 곧바로 행동으로 옮기는 추진력이 있어요.',
+    caution:'자기 능력을 과신해 혼자서 모든 걸 떠안으려는 경향이 있어요.' },
+  { keyword:'내면의 통찰, 조용한 지혜',
+    desc:'말보다 관찰과 직관으로 상황을 파악하는 사람이에요. 겉으로 드러나는 것보다 그 이면에 숨은 흐름을 읽어내는 감각이 발달해 있고, 혼자만의 시간 속에서 답을 찾는 걸 편안하게 느껴요.',
+    strength:'섣불리 판단하지 않고 깊이 헤아리는 신중함이 있어요.',
+    caution:'속마음을 잘 드러내지 않아 주변 사람이 거리감을 느낄 수 있어요.' },
+  { keyword:'풍요, 돌봄과 창조',
+    desc:'사람이든 아이디어든 정성껏 돌보고 키워내는 힘이 있는 사람이에요. 감각적이고 미적인 것을 즐기며, 주변에 안정감과 편안함을 주는 존재가 되어줘요.',
+    strength:'관계와 환경을 풍요롭게 가꾸는 포용력이 있어요.',
+    caution:'상대를 챙기다 정작 자신을 돌보는 걸 뒤로 미루기 쉬워요.' },
+  { keyword:'질서, 책임감 있는 리더십',
+    desc:'목표를 향해 체계를 세우고 흔들림 없이 이끌어가는 사람이에요. 규칙과 원칙을 중요하게 여기고, 맡은 일에 대한 책임을 끝까지 지려는 태도가 강해요.',
+    strength:'혼란스러운 상황에서도 구조를 세워 안정시키는 힘이 있어요.',
+    caution:'통제하려는 마음이 지나쳐 유연성을 잃을 수 있어요.' },
+  { keyword:'원칙, 가르침과 전수',
+    desc:'자신이 배우고 믿는 가치를 다른 사람과 나누는 데서 보람을 느끼는 사람이에요. 전통이나 검증된 방식을 존중하고, 공동체 안에서 중심을 잡아주는 역할을 자주 맡게 돼요.',
+    strength:'지식과 경험을 정리해서 남에게 전달하는 능력이 있어요.',
+    caution:'정해진 틀을 벗어난 방식을 받아들이기 어려워할 수 있어요.' },
+  { keyword:'진심 어린 선택, 관계의 조화',
+    desc:'관계 안에서 진심을 나누고 조화를 이루는 걸 중요하게 생각하는 사람이에요. 중요한 갈림길에서 머리보다 마음의 소리를 따르는 편이고, 사람과의 연결에서 삶의 의미를 찾아요.',
+    strength:'상대의 마음을 헤아리고 공감하는 능력이 있어요.',
+    caution:'결정을 내릴 때 감정에 치우쳐 우유부단해질 수 있어요.' },
+  { keyword:'추진력, 목표 지향',
+    desc:'방향이 정해지면 주저 없이 밀고 나가는 힘이 있는 사람이에요. 서로 다른 힘이나 상황을 자기 의지로 통제하며 앞으로 나아가고, 경쟁이나 도전 앞에서 오히려 힘을 내는 편이에요.',
+    strength:'흔들리는 상황도 의지로 정면 돌파하는 힘이 있어요.',
+    caution:'속도를 내는 데 집중하다 주변을 살피지 못할 수 있어요.' },
+  { keyword:'내면의 용기, 부드러운 강인함',
+    desc:'힘으로 밀어붙이기보다 부드러움과 인내로 어려움을 다스리는 사람이에요. 감정이나 충동적인 상황 앞에서도 침착함을 잃지 않으려 하고, 오랜 시간에 걸쳐 신뢰를 쌓아가는 힘이 있어요.',
+    strength:'감정을 다스리며 상황을 부드럽게 풀어가는 능력이 있어요.',
+    caution:'힘든 감정을 겉으로 드러내지 않고 혼자 삭이는 경향이 있어요.' },
+  { keyword:'성찰, 고요한 탐구',
+    desc:'사람들과 어울리는 것보다 혼자 깊이 생각하는 시간에서 힘을 얻는 사람이에요. 겉으로 드러나지 않는 본질을 파고들기를 좋아하고, 자신만의 속도로 답을 찾아가는 걸 편안해해요.',
+    strength:'흔들리지 않고 스스로 답을 찾아내는 사색의 힘이 있어요.',
+    caution:'혼자만의 시간에 지나치게 몰두하면 주변과 멀어질 수 있어요.' },
+  { keyword:'변화의 흐름, 기회 포착',
+    desc:'삶이 순환한다는 걸 자연스럽게 받아들이는 사람이에요. 예상치 못한 변화가 찾아와도 그 안에서 기회를 포착하는 감각이 있어요.',
+    strength:'상황 변화에 유연하게 적응하는 힘이 있어요.',
+    caution:'스스로 방향을 정하기보다 흐름에 휩쓸리기 쉬워요.' },
+  { keyword:'공정함, 균형 잡힌 판단',
+    desc:'감정보다 사실과 논리를 바탕으로 판단하려는 사람이에요. 원인과 결과를 냉정하게 살피고, 공평하게 대하는 것을 중요한 가치로 여겨요.',
+    strength:'치우치지 않고 균형 잡힌 시각을 유지하는 힘이 있어요.',
+    caution:'지나치게 원칙적이어서 융통성이 부족해 보일 수 있어요.' },
+  { keyword:'다른 시각, 기다림의 지혜',
+    desc:'익숙한 방식을 잠시 멈추고 다른 각도에서 상황을 바라보는 사람이에요. 당장 답이 없어도 조급해하지 않고, 기다림 속에서 새로운 깨달음을 얻어요.',
+    strength:'관점을 바꿔 문제를 새롭게 바라보는 유연함이 있어요.',
+    caution:'결정을 미루다 때를 놓치는 경우가 생길 수 있어요.' },
+  { keyword:'전환, 놓아줌의 용기',
+    desc:'끝나야 할 것을 붙잡지 않고 과감히 놓아주는 사람이에요. 변화가 두렵기보다 새로운 시작의 신호로 받아들이는 힘이 있어요.',
+    strength:'낡은 패턴을 정리하고 다음 단계로 나아가는 결단력이 있어요.',
+    caution:'변화의 과정에서 오는 상실감을 충분히 돌보지 못할 수 있어요.' },
+  { keyword:'균형, 조화로운 통합',
+    desc:'서로 다른 것들 사이에서 적절한 균형점을 찾아내는 사람이에요. 극단으로 치우치지 않고, 시간을 들여 차근차근 조율해 나가는 편이에요.',
+    strength:'상반된 요소를 조화롭게 섞어내는 감각이 있어요.',
+    caution:'결정을 내리는 데 시간이 오래 걸릴 수 있어요.' },
+  { keyword:'욕망의 자각, 한계 마주하기',
+    desc:'강한 욕망이나 집착을 스스로 인식하고 다루는 법을 배워가는 사람이에요. 자신을 옭아매는 패턴을 알아차렸을 때 큰 전환점을 만들어낼 힘이 있어요.',
+    strength:'자신의 한계와 그림자를 직면할 줄 아는 용기가 있어요.',
+    caution:'익숙한 습관이나 관계에서 벗어나기 어려워할 수 있어요.' },
+  { keyword:'급격한 전환, 진실과의 대면',
+    desc:'겉으로 쌓아온 것이 흔들릴 때 오히려 진짜 중요한 것을 발견하는 사람이에요. 충격적인 사건도 결국은 더 단단한 기반을 다지는 계기로 만들어요.',
+    strength:'무너진 자리에서 다시 세우는 회복력이 있어요.',
+    caution:'급격한 변화 앞에서 크게 동요할 수 있어요.' },
+  { keyword:'희망, 잔잔한 회복',
+    desc:'힘든 시기를 지나면서도 희망의 끈을 놓지 않는 사람이에요. 자신과 타인을 향한 믿음을 바탕으로, 서두르지 않고 회복해 나가는 힘이 있어요.',
+    strength:'어려움 속에서도 방향과 의미를 잃지 않는 낙관이 있어요.',
+    caution:'이상을 좇다 현실적인 부분을 놓칠 수 있어요.' },
+  { keyword:'직관, 감정의 깊이',
+    desc:'눈에 보이지 않는 감정과 무의식의 흐름에 민감한 사람이에요. 불확실한 상황에서도 논리보다 직관으로 방향을 감지하는 힘이 있어요.',
+    strength:'겉으로 드러나지 않는 감정과 분위기를 읽어내는 감수성이 있어요.',
+    caution:'불안이나 막연한 두려움에 쉽게 휩쓸릴 수 있어요.' },
+  { keyword:'생동감, 꾸밈없는 자기 표현',
+    desc:'있는 그대로의 자신을 밝고 자신 있게 드러내는 사람이에요. 주변 사람들에게 긍정적인 에너지를 전하고, 성취를 통해 삶의 활력을 느껴요.',
+    strength:'어떤 상황에서도 긍정적인 태도를 잃지 않는 밝음이 있어요.',
+    caution:'지나친 낙관으로 어려움을 가볍게 여길 수 있어요.' },
+  { keyword:'각성, 재발견',
+    desc:'지나온 시간을 돌아보며 스스로를 다시 이해하는 사람이에요. 익숙했던 틀에서 깨어나 한 단계 성장한 모습으로 나아가려는 힘이 있어요.',
+    strength:'과거를 통합해 앞으로 나아가는 성찰의 힘이 있어요.',
+    caution:'지난 일을 곱씹으며 자책에 머무를 수 있어요.' },
+  { keyword:'완성, 통합된 성취',
+    desc:'하나의 여정을 끝까지 마무리 짓는 힘이 있는 사람이에요. 여러 경험을 통합해 온전한 자기 자신으로 완성해가는 감각이 있어요.',
+    strength:'시작한 일을 끝까지 완결짓는 지속력이 있어요.',
+    caution:'완벽하게 마무리하려는 마음에 스스로를 몰아붙일 수 있어요.' }
+];
+const SUITS = [
+  {key:'wands', kr:'완드', en:'Wands'},
+  {key:'cups', kr:'컵', en:'Cups'},
+  {key:'swords', kr:'소드', en:'Swords'},
+  {key:'pentacles', kr:'펜타클', en:'Pentacles'}
+];
+const RANKS = [
+  {key:'ace', kr:'에이스', en:'Ace'},{key:'02', kr:'2', en:'Two'},{key:'03', kr:'3', en:'Three'},
+  {key:'04', kr:'4', en:'Four'},{key:'05', kr:'5', en:'Five'},{key:'06', kr:'6', en:'Six'},
+  {key:'07', kr:'7', en:'Seven'},{key:'08', kr:'8', en:'Eight'},{key:'09', kr:'9', en:'Nine'},
+  {key:'10', kr:'10', en:'Ten'},{key:'page', kr:'페이지', en:'Page'},{key:'knight', kr:'나이트', en:'Knight'},
+  {key:'queen', kr:'퀸', en:'Queen'},{key:'king', kr:'킹', en:'King'}
+];
+
+function buildDeck(){
+  const deck = [];
+  MAJOR.forEach(([num, en, kr])=>{
+    deck.push({
+      id: `major-${num}`,
+      nameKr: kr,
+      nameEn: `The ${en}`,
+      img: `images/cards/major-${num}-${en.toLowerCase().replace(/\s+/g,'-')}.jpg`
+    });
+  });
+  SUITS.forEach(suit=>{
+    RANKS.forEach(rank=>{
+      deck.push({
+        id: `${suit.key}-${rank.key}`,
+        nameKr: `${suit.kr} ${rank.kr}`,
+        nameEn: `${rank.en} of ${suit.en}`,
+        img: `images/cards/${suit.key}-${rank.key}.jpg`
+      });
+    });
+  });
+  return deck;
+}
+const DECK = buildDeck(); // 78 cards, fixed order (used for legend)
+
+// Practice-mode example questions (real-world consultation examples)
+const EXAMPLE_QUESTIONS = [
+`일주일전 6년 만난 사람과 이별했습니다.
+저를 찬 남자와 다시 재회할 수 있을까요?
+몇개월 안으로 가능한지 궁금합니다.`,
+`이제 사회생활 할수 있는 시간이 10년 남았습니다.
+이후는 은퇴하고 새로운 삶을 살아야 하는데 고민이 많습니다.
+잘 준비할 수 있을까요?`,
+`솔로로 지낸지 오래 됐는데 이제는 저와 잘 맞는 좋은 사람이 나타날지 의문스럽기도 해요.
+올해 안에 좋은 인연을 만날 수 있을까요?`,
+`특성화고를 졸업하고 2년 4개월간 다닌 생애 첫 직장을 퇴사했습니다.
+다음달 새로운 이직을 앞두고 있습니다. 잘할 수 있을까요?
+잘 적응하고 기대에 부응할 수 있을까요? 확신이 없어 고민이 됩니다.`,
+`아들 홈스쿨링을 잘 할수 있을까요?`,
+`점점 나이만 먹어가고 있어요.
+좋은 인연을 만나고 싶지만 막상 용기도 없고.. 좋은 인연을 만날 수 있을까요?
+결혼은 바라지도 않으니 연애라도!!! 올해 연애운이 있을까요?`,
+`현재 직장을 계속 다닐 것인지, 퇴직해서 새로운 직업을 찾을 것인지 고민입니다.
+직장 생활 26년차 입니다.`,
+`저는 거의 5년째 회계사 시험을 준비하고 있습니다.
+1차는 통과하였지만 2차에서 매번 만족스러운 결과를 얻지 못해 최종합격을 하지 못하고 있습니다.
+내년에 정말 마지막이라고 생각하고 2차 시험을 보려고 합니다.
+저는 내년에 회계사가 될 수 있을까요?`,
+`안녕하세요 저는 이제 막 취직한 파릇파릇한 신입 직장인입니다.
+먼 지방에서 서울로 상경하여 열심히 살고 있는데 주변에서 소개팅 나가라고 재촉을 합니다.
+저는 극심한 자만추(자연스러운 만남 추구)인데요.
+솔직히 외롭긴 하지만 연애를 안해서 외로운건지, 친구들로도 채워지는 외로움인지 잘 모르겠어요!
+저는 언제, 어디서 제 짝이 나타날까요? 소개팅을 나가야 할까요? 기다려야 할까요?`,
+`5살 여아이 키우는 36살 엄마인데요.
+멋진 엄마이자 멋진 와이프가 되고 싶어요. 제가 될 수 있을까요?
+특히 능력, 재물운이 궁금합니다. 남편보다 더 벌어서 좀 쉬게 해주고 싶어요!`,
+`0월 0일부로 사무실 이전을 했는데 사업이 잘 될지 궁금합니다.
+돈 많이 벌 수 있을까요?`,
+`보고 싶은 사람이 있는데 보기 힘들어요. 잘 지내고 있을까요?
+(*실전에서 난해한 질문을 하시는 경우가 많습니다. 그런 상황을 가정하여 연습해 보세요)`,
+`사업을 하고 있는데 요즘 금전적인 손해가 많이 있어요.
+다른 업체와 계약을 하고 송금을 했는데 사기 당한 적도 있어요.
+유독 올해 이런 일이 많이 있는데, 앞으로 사업은 어떨지 금전적인 문제는 어떻게 될지 궁금합니다.`,
+`안녕하세요 젊은 나이에 애기 아빠가 된 25살입니다.
+일도 열심히 하고 육아하느라 많이 못쉬고 있지만 지금 너무 행복합니다.
+미래의 금전운이 정말 궁금합니다! 가정을 책임져야 하는 아빠니까요!`,
+`폐 건강이 걱정됩니다. 폐섬유화가 안정되면 좋겠습니다.
+폐 건강 해결하려면 어떻게 해야 하나요?`,
+`남자친구가 생겼어요. 운명인 것 같아요.`,
+`자녀들과의 불협화음이 잘 해결될 수 있을까요?`,
+`아들이 여자친구와 결혼할 수 있을지? 혼자서 준비해야 하는데 너무 막막해요.`,
+`휴직을 해야 할지 말아야 할지 고민입니다.
+휴직 후 해외에서 몇 년 살다 올까 고민중입니다.
+학교에서 체육교사로 근무중인데 어찌해야 할까요?
+휴직을 해야 한다면 몇 년 정도가 가장 적당할까요?`,
+`한강이 보이는 집을 사려고 지난 14년간 하루도 후회없이 살았는데 쉽지 않습니다.
+언제쯤 (대출 없이) 한강이 보이는 집을 살 수 있을까요?`,
+`결혼한지 1년이 다 되어가는 병아리 신혼부부입니다.
+지난 1년동안 웃기도 많이 웃고, 다투기도 많이 하는데요.
+앞으로 저희 부부가 지금처럼, 지금보다 더 행복하고 알콩달콩하게 잘 살 수 있을까요?
+힘든 일도, 어려운 일도 생길테지만 지혜롭게 극복하고 싶어요.`,
+`이혼한지 10년. 제가 다시 결혼할 수 있을까요?
+결혼한다면 한국인일까요 외국인일까요?`,
+`앞으로 남은 영업 대박칠 수 있을까요? 머니 많이 벌수 있을지?`,
+`제가 3년동안 다닌 직장에서 상담 업무를 맡고 있습니다. (상담해서 영업하는 일)
+앞으로 경기가 안좋으면 실적이 줄어들 수 있어서 일을 그만둘까 고민중인데요.
+일을 그만두고 다른 직업을 찾는게 좋을까요, 힘들어도 계속 다니는게 좋을까요.
+너무 고민이 됩니다.`,
+`와인샵을 오픈한지 2개월이 되었습니다. 동네 주민들이 종종 찾아오고 대외적인 모임도 하고 있습니다.
+장사가 잘 되기 위해서 1년에 200만원을 투자해서 모임을 하는게 맞는지..
+체력이 약해서 고민인데.. 좀 더 활동을 많이 하면 매출이 늘 것 같기도 하고..
+좋은 방법이 있을까요?`,
+`프랜차이즈 떡볶이 가맹점을 오픈하려고 준비중입니다.
+중학교 정문 앞이 좋을까요 아님 아파트 단지 근처 상가가 좋을까요?
+그리고 이 사업을 시작하는게 맞을까요?`,
+`제가 초등학교 6학년이라 이제 중학교를 준비해야 하거든요.
+근데 근처에 중학교가 많은데 거리가 제일 가까운 곳에 가고 싶거든요..
+근데 거기가 신청자가 많아서 튕길수도 있는데 그 학교 못가면 좀 멀어서..
+그 학교 가게 될지 안될지 알고 싶어요오..`,
+`3일전 퇴사했습니다. 앞으로 취업운은 어떨까요?`,
+`여자친구를 가지고 싶어요! 제 기준이 높은건 알지만..`,
+`좋은 사람 만나서 연애하고 싶은데 도대체 언제 어디서 만날 수 있을지.`,
+`큰 아들 장가를 보내려는데 여자가 없어요. 어떻게 해야 언제쯤 생길지 궁금합니다.`,
+`오래 하던 일을 정리하고 지금 쉬는 중입니다.
+이제 새로운 일을 찾아 재취업을 준비해야 하는데 좋은 곳으로 갈 수 있을까요?`,
+`10년 넘게 하던 일을 그만두고 올해부터 새로운 일을 시작했습니다.
+자리는 잡아가고 있지만 작은 급여나 적성에 맞는 일인지 고민입니다.
+이 일을 계속 해도 괜찮을까요?`,
+`제가 경찰 공무원으로 재직중인데요, 정년이 좀 남긴 했지만 제 2의 인생을 위해
+명예 퇴직을 하고 다른 직업으로 가야 하는지 요즘 고민중입니다.
+어떻게 하면 좋을지요.`,
+`16년동안 다니고 있는 직장인입니다. 심신이 지쳐서 휴식이 필요합니다.
+프랑스 외국 기업에 다니고 있는데요, 급여가 적은 것도 아니기에 직장을 접고 휴식하려고 해도
+때가 때인지라 직장은 구하기가 어려우니 사업 구상을 할지 직장을 유지할지 고민이 됩니다.`,
+`60이라는 숫자를 바라보고 있는 나이에도 불구하고 일을 해야만 살 수 있는 현실이
+슬프고 고달프지만, 용기 내어서 작은 가게를 차리고 싶은 것이 꿈입니다.
+꿈은 이루어 질 수 있을까요?`,
+`샐러리맨으로 갈 수 있는 직책까지 올라 갔는데 한해 한해 하루 하루가 힘드네요.
+시골로 귀향할까, 새로운 직업을 찾을까. 새롭게 잘 할수 있는 기술을 배울까요?
+잘하는게 직장인인데..`,
+`사업을 더 번창시킬 수 있을지 알고 싶습니다.`,
+`저는 폐쇄공포증이 있는 13살 학생입니다.
+그럴때마다 너무 두렵고 무서워요. 극복할 수 있을까요?`,
+`같이 일하던 직장 상사가 퇴사를 하면서 같이 일하자고 해서 현재 다니고 있는 회사에
+퇴사 요청을 했는데, 최고 대우를 해준다며 잡네요. 어느 쪽을 선택해야 하나요?`,
+`나름대로 열심히 운동도 하고 연구실 생활도 하고 자기 관리도 어느정도까지는 노력하고 있는데,
+인간관계 중 특히 여자친구가 언제 생길지 궁금합니다.`,
+`지금 재직 중인 회사에 뼈를 묻어야 할지, 이직을 해야 할지 고민입니다.
+만약 이직을 해야 한다면, 업종 변경을 해야 하는지 궁금합니다.`,
+`스무살이 되고 첫 연애를 시작했어요. 제대로 된 첫 연애는 스무살이 처음이었는데
+그때 만난 친구와 5년 가까이 연애를 하고 지금은 헤어진지 1년 정도된 상태입니다.
+이제 새로운 사람도 만나고 싶고, 연애의 설렘도 느끼고 싶다는 생각이 들어요.
+제 다음 연애는 언제일지, 그리고 다음 남자친구는 어떤 사람일지 궁금합니다.`,
+`이직하고 2년간 같이 일했던 유러피안 매니져가 조직 변경으로 다른 곳으로 가는데
+동료였던 중국인이 director가 되서 제 매니져가 되었어요.
+아시안이라 업무스타일이 빡빡할 것 같은데 합이 맞을지 궁금해요.`,
+`현재 학원을 운영중인데 아이들을 가르치는 것에 회의감이 듭니다.
+엄하게 지도하고 있는 편인데 그러다 보면 퇴원하는 친구들도 많이 생기고
+또 그것 때문에 계속 스트레스 받고 괴로워하고.. 이렇게 계속 학원을 운영하는 것이 맞을지 궁금합니다.
+계속 해야 한다면 언제쯤 전성기를 다시 찾게 될까요?`,
+`7년을 만난 애인과 작년에 헤어졌는데 어쩌다 보니 종종 연락하고 만나는 애매한 사이가 되어 버렸습니다.
+이 사이를 어떻게 해야 할지, 전 애인을 다시 만나도 될지 고민입니다.`,
+`지금 하고 있는 일을 계속 해도 될까요? (현 직장에 계속 다녀도 될까요?)`,
+`올해 안에 솔로 탈출 가능할까요? (질문자: 여자)`,
+`올해 안에 이직할 수 있을까요?`,
+`저는 집주인의 채무로 인해 TV에서나 보던 전세사기의 피해자입니다.
+1주전 전세집이 경매로 넘어갔고 현재 형사고소를 준비하고 있는데요.
+전세금을 돌려받을 수 있을까요. 전세금은 1억대 후반입니다.`,
+`동료로서 2년 정도, 연인으로 발전한지가 한 달이 조금 넘었습니다.
+다들 그렇겠지만 생각만 해도 너무 좋고 떨리고 비혼주의였던 제 가치관 마저 바꾸어버린 사람이예요.
+만난지 얼마 되진 않았지만 살면서 이렇게 확신을 가져본 일은 앞으로도 없을거예요.
+이대로 잘 만나다가 결혼할 수 있을까요? 아니면 그 남자가 변하지는 않을까요?`,
+`현재 대학 졸업을 앞둔 25세 대학생입니다. 졸업을 앞둔 시점에 진로 고민이 있습니다.
+조금 돌아가지만 인생에 도움 될것 같은 느낌이 드는 길과, 비교적 빨리 목적지에 갈 것 같은 느낌이 드는 길,
+두 가지 중 선택의 기로에 서 있습니다.
+조금은 돌아가는 것 같이 보이는 길이 속도는 더디지만 가치 있어 보이는데 올바른 선택을 하는 방법이 있을까요?`,
+`대학원 동기를 친구로 안보고 직장동료처럼 보는 게 힘듭니다.
+어떻게 하면 선을 지킬 수 있을까요?`,
+`저는 20살 여자입니다. 연애운이 궁금합니다.
+학교도 여학교를 졸업했고 현재는 직장생활을 먼저 하고 있어 남자가 없는 상황입니다.
+설레는 감정이 시작되려고 하다가도, 결국 그동안 끝은 연애로 이어지지 않았는데요.
+이런 저에게 과연 연애가 시작되는 순간이 곧 찾아오게 될까요? 정말 연애가 너무 하고 싶은 20살입니다.`,
+`헤어진지 며칠 안됐습니다.
+평생 사랑할 여자를 언제쯤 만날 수 있을까요? 너무 어려워요.`,
+`결혼 5주년 부부입니다.
+우리 부부는 아직도 내 집 마련을 못했는데 언제쯤 가능해질까요?
+언제쯤 경제적으로 풍족해질 수 있을지 궁금합니다.`,
+`하고 싶은 것 vs 내가 잘 하는 것 중에 어떤 걸 선택해야 할까요. (진로)`,
+`저는 누구보다 제가 하고 있는 일에 대한 가치와 잠재력을 믿어 의심치 않습니다.
+열심히 하는 제 모습이 뿌듯하기도 한데, 때로는 다른 시각에서 바라보는 사람들의 평가와 시기가
+저를 속상하게 하여 마음 아픕니다.`,
+`현재 회사에서 부서 이동을 원하고 있습니다.
+제가 원하는 부서로 이동할 수 있을까요? 아니면 다른 회사로 이직을 준비하는 것이 맞을까요?`,
+`저의 직업은 군입니다. 전역을 하고 싶은데, 직업이 군인이신 아버지를 설득할 수 있는
+방법을 알고 싶습니다.`,
+`큰 딸이 유학을 앞두고 있습니다. 작년엔 최종에서 떨어져 실망했는데
+이번에는 박사학위를 받기 위해 미국에 갈 수 있는지 궁금합니다. 내일 인터뷰입니다.`,
+`저의 아들은 공부를 너무 안하는데 꼭 in Seoul 대학에 간다고 합니다.
+정말 갈 수 있을까요? 버스, 지하철 이용 안하고 수능 성적으로만요.`,
+`꿈도 많고 좋아하는 것들도 많아서 내년에 1년동안 휴학을 한 뒤, 전세계 곳곳을 여행하며
+나를 찾는, 온전히 나만을 위한 시간을 보내려고 합니다.
+그런데 벌써 취업이 된 동기들을 보며 왠지 모를 조바심이 나더라구요.
+나름 소신 있게 준비하고 있다고 생각했는데 꿈을 향해 논스톱으로 달려가야 할지
+아니면 1년의 시간, 돈을 투자해 보는 것이 좋을지 고민이 많아집니다.`,
+`저는 미국에서 공부를 하고 있는 유학생입니다.
+운이 좋게 졸업 후 미국에서 일을 하게 되었는데요, 한국에 있는 가족, 친구들 때문에
+몇 년 후 미국 생활을 접고 한국에 갈지, 미국에 남아 있을지 고민입니다.
+제가 어떻게 하는 것이 행복해지는 길일까요?`,
+`얼마 전 애정이 식었다며 떠난 남편을 잊어야 하는지, 기다려야 하는지 판단이 안섭니다.`,
+`올해 몇 달 안남았는데요, 행복하게 올해를 마무리 할 수 있을지 알려 주세요.`,
+`곧 있으면 졸업인데 취업을 잘 할 수 있을까요?`,
+`아직 남자친구가 없어서 슬퍼요. 제 연애운은 앞으로 어떻게 될까요?`,
+`회사에 보기 싫은 사람이 너무 많아서 못가겠어요.
+버틸까요.. 다른 곳 가도 이상한 사람 많을까요. 탈주할까요.`,
+`다음달 운세 알려 주세요.`,
+`우리 막내딸이 승무원이 되고 싶어 합니다. 잘 될지 궁금합니다.
+지금 현재 항공 운항과 재학중이고 곧 졸업입니다.`,
+`소개팅을 한 남자가 있습니다. 만났을 때 분위기는 좋았는데요.
+왜 그 후에 연락이 없을까요? 그 남자의 마음이 궁금하네요.`,
+`갑자기 여자친구가 헤어지자고 합니다.
+왜 그러는지 궁금합니다. 만약 헤어지면 다시 만날 수 있을지도요.`,
+`직장상사와의 트러블로 너무 힘듭니다.
+저만 미워하는 것 같아요. 왜 그러는거죠? 앞으로 나아질까요?`,
+`한 달 전, 남자친구와 헤어졌습니다. 다시 만날 수 있을까요? (재회)`
+];
+
+
+function shuffleArr(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* ---------------------------------------------------------
+   2. SPREADS
+--------------------------------------------------------- */
+const SPREADS = {
+  one:   { label:'원카드', count:1,  positions:['오늘의 카드'] },
+  three: { label:'쓰리카드', count:3, positions:['과거','현재','미래'] },
+  five:  { label:'5카드', count:5,  positions:['현재 상황','도전 과제','내면의 힘','조언','결과'] },
+  either:{ label:'양자택일', count:5, positions:[
+      '현재의 나','첫번째 선택의 과정','첫번째 선택의 결과','두번째 선택의 과정','두번째 선택의 결과'
+  ]},
+  magic7:{ label:'매직세븐', count:7, positions:[
+      '과거','현재','미래','조언','환경·무의식','장애물','결과'
+  ]},
+  timing:{ label:'시기 보기', count:3, positions:['1','2','3'] },
+  miniCeltic:{ label:'미니 켈틱', count:6, positions:[
+      '현재의 나(나의 상황)','장애물','현재 상황을 만든 환경적 요인(내적 요인)','과거 또는 원인',
+      '과거로부터 이어지는 현재 상황(외적 요인)','미래의 모습'
+  ]},
+  celtic:{ label:'켈틱크로스', count:10, positions:[
+      '현재의 나(나의 상황)','장애물','현재 상황을 만든 환경적 요인(내적 요인)','과거 또는 원인',
+      '과거로부터 이어지는 현재 상황(외적 요인)','가까운 미래의 모습','내가 보는 나의 모습',
+      '남들이 보는 모습','희망 또는 두려움','전체적인 결과'
+  ]}
+};
+
+// Different 3-card framings — the meaning of each position can change
+// depending on what kind of question is being asked.
+const THREE_VARIANTS = {
+  pcf:  { label:'과거 · 현재 · 미래',      hint:'시간 흐름을 보고 싶을 때', positions:['과거','현재','미래'] },
+  cpr:  { label:'원인 · 과정 · 결과',      hint:'왜 이렇게 됐는지 궁금할 때', positions:['원인','과정','결과'] },
+  near: { label:'현재 · 가까운 미래 · 먼 미래', hint:'앞으로의 전개가 궁금할 때', positions:['현재','가까운 미래','먼 미래'] },
+  advice:{ label:'상황 · 장애물 · 조언',    hint:'구체적인 조언이 필요할 때', positions:['상황','장애물','조언'] },
+  today:{ label:'오늘의 운세 · 아침 · 점심 · 저녁', hint:'오늘 하루의 흐름이 궁금할 때', positions:['아침','점심','저녁'] }
+};
+let currentThreeVariant = 'pcf';
+
+/* ---------------------------------------------------------
+   3. STATE
+--------------------------------------------------------- */
+let shuffled = shuffleArr(DECK);
+let currentSpreadKey = null;
+let selections = []; // {position, card}
+let currentMode = 'consult'; // 'consult' | 'practice'
+let cardPickMethod = 'random'; // 'random' (fan) | 'choose' (78-card grid) — only relevant in practice mode
+let adviceCardRequested = false;
+
+function currentPositions(){
+  if(!currentSpreadKey) return [];
+  const base = SPREADS[currentSpreadKey].positions;
+  return adviceCardRequested ? base.concat('조언 카드') : base;
+}
+function totalNeeded(){
+  return currentPositions().length;
+}
+
+const myInterpretationPanel = document.getElementById('myInterpretationPanel');
+const resultHeading = document.getElementById('resultHeading');
+const resultSub = document.getElementById('resultSub');
+
+function selectMode(mode){
+  currentMode = mode;
+  document.getElementById('modeConsultBtn').classList.toggle('active', mode === 'consult');
+  document.getElementById('modePracticeBtn').classList.toggle('active', mode === 'practice');
+  document.getElementById('modeNumberBtn').classList.toggle('active', mode === 'number');
+  document.getElementById('modeCompatBtn').classList.toggle('active', mode === 'compat');
+
+  const examplePicker = document.getElementById('examplePicker');
+  const pickMethodToggle = document.getElementById('pickMethodToggle');
+  const readingFlow = document.getElementById('readingFlow');
+  const numberSection = document.getElementById('numberSection');
+  const numberHistoryPanel = document.getElementById('numberHistoryPanel');
+  const compatSection = document.getElementById('compatSection');
+  const compatHistoryPanel = document.getElementById('compatHistoryPanel');
+
+  if(mode === 'number'){
+    readingFlow.style.display = 'none';
+    numberSection.style.display = 'block';
+    numberHistoryPanel.style.display = 'block';
+    compatSection.style.display = 'none';
+    compatHistoryPanel.style.display = 'none';
+    pickMethodToggle.style.display = 'none';
+    renderNumberHistory();
+    hideResult();
+    return;
+  }
+
+  if(mode === 'compat'){
+    readingFlow.style.display = 'none';
+    numberSection.style.display = 'none';
+    numberHistoryPanel.style.display = 'none';
+    compatSection.style.display = 'block';
+    compatHistoryPanel.style.display = 'block';
+    pickMethodToggle.style.display = 'none';
+    renderCompatHistory();
+    hideResult();
+    return;
+  }
+
+  readingFlow.style.display = 'block';
+  numberSection.style.display = 'none';
+  numberHistoryPanel.style.display = 'none';
+  compatSection.style.display = 'none';
+  compatHistoryPanel.style.display = 'none';
+
+  if(mode === 'practice'){
+    myInterpretationPanel.style.display = 'block';
+    examplePicker.style.display = 'block';
+    pickMethodToggle.style.display = 'flex';
+    interpretBtn.textContent = '슈퍼비전 요청 만들기';
+    resultHeading.textContent = '4 · AI 슈퍼비전 받기';
+    resultSub.textContent = '아래 내용을 복사해서 Claude나 Gemini 창에 붙여넣으면, 내가 쓴 해석에 대한 슈퍼비전을 받을 수 있어요.';
+  } else {
+    myInterpretationPanel.style.display = 'none';
+    examplePicker.style.display = 'none';
+    pickMethodToggle.style.display = 'flex';
+    interpretBtn.textContent = '질문 만들기';
+    resultHeading.textContent = '3 · AI에게 물어보기';
+    resultSub.textContent = '아래 내용을 복사해서 Claude나 Gemini 창에 붙여넣고 답을 받아보세요. API 키 없이, 평소 쓰시는 계정 그대로 사용하시면 돼요.';
+  }
+  hideResult();
+}
+
+document.getElementById('modeConsultBtn').addEventListener('click', ()=> selectMode('consult'));
+document.getElementById('modePracticeBtn').addEventListener('click', ()=> selectMode('practice'));
+document.getElementById('modeNumberBtn').addEventListener('click', ()=> selectMode('number'));
+document.getElementById('modeCompatBtn').addEventListener('click', ()=> selectMode('compat'));
+
+/* ---------------------------------------------------------
+   3b2. SUN NUMBER / MOON NUMBER ANALYSIS
+--------------------------------------------------------- */
+function digitSum(numStr){
+  return numStr.split('').reduce((sum, ch)=>{
+    const d = parseInt(ch, 10);
+    return sum + (isNaN(d) ? 0 : d);
+  }, 0);
+}
+// Sun/Moon Numbers reduce by repeated digit-summing all the way down to a
+// single digit (1-9), matching Major Arcana cards 1 (Magician) through
+// 9 (Hermit).
+function reduceToSingleDigit(n){
+  while(n > 9){
+    n = digitSum(String(n));
+  }
+  return n;
+}
+
+function calculateSunNumber(y, m, d){
+  const raw = `${y}${String(m).padStart(2,'0')}${String(d).padStart(2,'0')}`;
+  const sum = digitSum(raw);
+  return reduceToSingleDigit(sum);
+}
+function calculateMoonNumber(m, d){
+  const sum = m + d;
+  return reduceToSingleDigit(sum);
+}
+
+// Year Card reduces only until it fits the full Major Arcana range (0-21),
+// since it can land on any of the 22 cards — unlike Sun/Moon which reduce
+// all the way to a single digit (1-9).
+function reduceToRange21(n){
+  while(n > 21){
+    n = digitSum(String(n));
+  }
+  return n;
+}
+function calculateYearCard(m, d){
+  const currentYear = new Date().getFullYear();
+  const raw = `${currentYear}${String(m).padStart(2,'0')}${String(d).padStart(2,'0')}`;
+  const sum = digitSum(raw);
+  return { num: reduceToRange21(sum), year: currentYear };
+}
+
+function majorCardByNumber(n){
+  const [num, en, kr] = MAJOR[n];
+  return {
+    num, nameKr: kr, nameEn: `The ${en}`,
+    img: `images/cards/major-${num}-${en.toLowerCase().replace(/\s+/g,'-')}.jpg`,
+    detail: MAJOR_DETAILS[n]
+  };
+}
+
+function renderNumberCardBlock(label, number, card){
+  return `
+    <div class="number-card-block">
+      <div class="number-card-label">${label}</div>
+      <div class="number-card-img">
+        <img src="${card.img}" alt="${card.nameKr}" onerror="this.remove(); this.parentElement.querySelector('.number-card-fallback').style.display='flex';">
+        <div class="number-card-fallback">${card.nameKr}</div>
+      </div>
+      <div class="number-card-name">${number}번 · ${card.nameKr}</div>
+      <div class="number-card-keyword">${card.detail.keyword}</div>
+      <div class="number-card-desc">${card.detail.desc}</div>
+      <div class="number-card-sub">
+        <div class="number-card-sub-row"><span class="tag strength">강점</span>${card.detail.strength}</div>
+        <div class="number-card-sub-row"><span class="tag caution">유의할 점</span>${card.detail.caution}</div>
+      </div>
+    </div>`;
+}
+
+function buildNumberPrompt(birthVal, sunNum, sunCard, moonNum, moonCard, yearInfo, yearCard){
+  return `당신은 대한민국 최고의 타로 상담사입니다. 수비학(넘버 시스템)과 타로를 함께 다루는 전문가로서, 따뜻하지만 필요할 땐 직설적으로 핵심을 짚어주는 성격입니다.
+
+아래는 한 사람의 생년월일과, 그 생년월일에서 도출한 썬 넘버(타고난 기질), 문 넘버(사회적으로 드러나는 성향), 그리고 연도 카드(${yearInfo.year}년 한 해의 테마) 정보입니다.
+
+생년월일: ${birthVal}
+
+썬 넘버: ${sunNum}번 · ${sunCard.nameKr} (${sunCard.nameEn})
+- 키워드: ${sunCard.detail.keyword}
+- 설명: ${sunCard.detail.desc}
+- 강점: ${sunCard.detail.strength}
+- 유의할 점: ${sunCard.detail.caution}
+
+문 넘버: ${moonNum}번 · ${moonCard.nameKr} (${moonCard.nameEn})
+- 키워드: ${moonCard.detail.keyword}
+- 설명: ${moonCard.detail.desc}
+- 강점: ${moonCard.detail.strength}
+- 유의할 점: ${moonCard.detail.caution}
+
+연도 카드 (${yearInfo.year}년): ${yearInfo.num}번 · ${yearCard.nameKr} (${yearCard.nameEn})
+- 키워드: ${yearCard.detail.keyword}
+- 설명: ${yearCard.detail.desc}
+- 강점: ${yearCard.detail.strength}
+- 유의할 점: ${yearCard.detail.caution}
+
+이 세 카드를 조합해서, 이 사람이 가진 특징과 ${yearInfo.year}년 한 해의 흐름을 아주 상세하게 설명해주세요. 다음 내용을 포함해주세요.
+1. 썬 넘버와 문 넘버가 서로 강화되는 지점, 혹은 긴장이나 괴리가 있는 지점
+2. 연도 카드가 보여주는 ${yearInfo.year}년의 전반적인 테마와 흐름
+3. 타고난 기질(썬)·사회적 모습(문)이 올해의 테마(연도 카드)와 어떻게 맞물리는지 — 힘을 받는 부분과 조심해야 할 부분
+4. 이 사람이 올해를 더 균형 있게 보내기 위한 구체적인 제안
+
+점술적으로 단정짓지 말고, 스스로를 더 깊이 이해하도록 돕는 사려 깊은 언어로 작성해주세요. 한국어로 답변해주세요.`;
+}
+
+let lastNumberResult = null;
+
+document.getElementById('numberAnalyzeBtn').addEventListener('click', ()=>{
+  const val = document.getElementById('birthDate').value;
+  const validation = document.getElementById('numberValidation');
+  validation.textContent = '';
+  if(!val){
+    validation.textContent = '생년월일을 입력해주세요.';
+    return;
+  }
+  const [y, m, d] = val.split('-').map(Number);
+
+  const sunNum = calculateSunNumber(y, m, d);
+  const moonNum = calculateMoonNumber(m, d);
+  const sunCard = majorCardByNumber(sunNum);
+  const moonCard = majorCardByNumber(moonNum);
+  const yearInfo = calculateYearCard(m, d);
+  const yearCard = majorCardByNumber(yearInfo.num);
+  lastNumberResult = { birthDate: val, sunNum, sunCard, moonNum, moonCard, yearInfo, yearCard };
+
+  const resultsEl = document.getElementById('numberResults');
+  resultsEl.style.display = 'block';
+  resultsEl.innerHTML = `
+    <div class="number-card-row">
+      ${renderNumberCardBlock('☀ 썬 넘버 — 타고난 기질', sunNum, sunCard)}
+      ${renderNumberCardBlock('🌙 문 넘버 — 사회적으로 드러나는 성향', moonNum, moonCard)}
+      ${renderNumberCardBlock(`🗓 연도 카드 — ${yearInfo.year}년의 테마`, yearInfo.num, yearCard)}
+    </div>
+  `;
+
+  const aiBlock = document.getElementById('numberAiBlock');
+  const promptBoxEl = document.getElementById('numberPromptBox');
+  aiBlock.style.display = 'block';
+  promptBoxEl.textContent = buildNumberPrompt(val, sunNum, sunCard, moonNum, moonCard, yearInfo, yearCard);
+  document.getElementById('numberClaudePaste').value = '';
+  document.getElementById('numberGeminiPaste').value = '';
+  document.getElementById('numberClaudeResult').innerHTML = '';
+  document.getElementById('numberGeminiResult').innerHTML = '';
+
+  resultsEl.scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+document.getElementById('numberOpenClaudeBtn').addEventListener('click', ()=>{
+  const text = document.getElementById('numberPromptBox').textContent;
+  if(!text) return;
+  const syncOk = trySyncCopy(text);
+  window.open('https://claude.ai/new', '_blank');
+  if(syncOk){
+    showToast('프롬프트 복사 완료! Claude 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.');
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(()=> showToast('프롬프트 복사 완료! Claude 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.'))
+      .catch(()=> showToast('복사에 실패했어요. 프롬프트를 직접 선택해서 복사해주세요.'));
+  }
+});
+document.getElementById('numberOpenGeminiBtn').addEventListener('click', ()=>{
+  const text = document.getElementById('numberPromptBox').textContent;
+  if(!text) return;
+  const syncOk = trySyncCopy(text);
+  window.open('https://gemini.google.com/app', '_blank');
+  if(syncOk){
+    showToast('프롬프트 복사 완료! Gemini 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.');
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(()=> showToast('프롬프트 복사 완료! Gemini 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.'))
+      .catch(()=> showToast('복사에 실패했어요. 프롬프트를 직접 선택해서 복사해주세요.'));
+  }
+});
+document.getElementById('numberCopyPromptBtn').addEventListener('click', async ()=>{
+  const text = document.getElementById('numberPromptBox').textContent;
+  if(!text) return;
+  const ok = await copyPromptToClipboard(text);
+  showToast(ok ? '프롬프트가 복사되었어요.' : '복사에 실패했어요. 직접 선택해서 복사해주세요.');
+});
+document.getElementById('numberClaudeShowBtn').addEventListener('click', ()=>{
+  const text = document.getElementById('numberClaudePaste').value.trim();
+  const el = document.getElementById('numberClaudeResult');
+  el.innerHTML = text ? `<div class="sb-text">${escapeHtml(text)}</div>` : `<div class="provider-msg">붙여넣은 답변이 비어있어요.</div>`;
+});
+document.getElementById('numberGeminiShowBtn').addEventListener('click', ()=>{
+  const text = document.getElementById('numberGeminiPaste').value.trim();
+  const el = document.getElementById('numberGeminiResult');
+  el.innerHTML = text ? `<div class="sb-text">${escapeHtml(text)}</div>` : `<div class="provider-msg">붙여넣은 답변이 비어있어요.</div>`;
+});
+
+document.getElementById('resetNumberBtn').addEventListener('click', ()=>{
+  lastNumberResult = null;
+  document.getElementById('birthDate').value = '';
+  document.getElementById('numberValidation').textContent = '';
+  document.getElementById('numberResults').style.display = 'none';
+  document.getElementById('numberResults').innerHTML = '';
+  document.getElementById('numberAiBlock').style.display = 'none';
+  document.getElementById('numberPromptBox').textContent = '';
+  document.getElementById('numberClaudePaste').value = '';
+  document.getElementById('numberGeminiPaste').value = '';
+  document.getElementById('numberClaudeResult').innerHTML = '';
+  document.getElementById('numberGeminiResult').innerHTML = '';
+  showToast('초기화했어요. 다른 사람의 생년월일을 입력해보세요.');
+  document.getElementById('numberSection').scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+/* ---------------------------------------------------------
+   11b. NUMBER ANALYSIS: SAVE & HISTORY
+--------------------------------------------------------- */
+const NUMBER_HISTORY_KEY = 'matamo_number_readings';
+
+function getNumberReadings(){
+  try{ return JSON.parse(localStorage.getItem(NUMBER_HISTORY_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function setNumberReadings(arr){
+  localStorage.setItem(NUMBER_HISTORY_KEY, JSON.stringify(arr));
+}
+
+function buildNumberRecord(){
+  const r = lastNumberResult;
+  return {
+    id: Date.now(),
+    date: new Date().toLocaleString('ko-KR'),
+    birthDate: r.birthDate,
+    sunNum: r.sunNum,
+    sunCard: { nameKr: r.sunCard.nameKr, nameEn: r.sunCard.nameEn, img: r.sunCard.img },
+    moonNum: r.moonNum,
+    moonCard: { nameKr: r.moonCard.nameKr, nameEn: r.moonCard.nameEn, img: r.moonCard.img },
+    yearInfo: r.yearInfo,
+    yearCard: { nameKr: r.yearCard.nameKr, nameEn: r.yearCard.nameEn, img: r.yearCard.img },
+    claudeAnswer: document.getElementById('numberClaudePaste').value.trim(),
+    geminiAnswer: document.getElementById('numberGeminiPaste').value.trim()
+  };
+}
+
+function numberRecordToText(r){
+  const lines = [];
+  lines.push('MATAMO TAROT 넘버 분석 기록');
+  lines.push(`날짜: ${r.date}`);
+  lines.push(`생년월일: ${r.birthDate}`);
+  lines.push(`썬 넘버: ${r.sunNum}번 · ${r.sunCard.nameKr} (${r.sunCard.nameEn})`);
+  lines.push(`문 넘버: ${r.moonNum}번 · ${r.moonCard.nameKr} (${r.moonCard.nameEn})`);
+  if(r.yearCard){
+    lines.push(`연도 카드 (${r.yearInfo.year}년): ${r.yearInfo.num}번 · ${r.yearCard.nameKr} (${r.yearCard.nameEn})`);
+  }
+  if(r.claudeAnswer){ lines.push(''); lines.push('CLAUDE 조합 해석:'); lines.push(r.claudeAnswer); }
+  if(r.geminiAnswer){ lines.push(''); lines.push('GEMINI 조합 해석:'); lines.push(r.geminiAnswer); }
+  return lines.join('\n');
+}
+
+document.getElementById('saveNumberBtn').addEventListener('click', ()=>{
+  if(!lastNumberResult){ showToast('저장할 결과가 없어요.'); return; }
+  const record = buildNumberRecord();
+  const all = getNumberReadings();
+  all.push(record);
+  setNumberReadings(all);
+  renderNumberHistory();
+  showToast('넘버 분석을 저장했어요.');
+});
+
+const numberHistoryList = document.getElementById('numberHistoryList');
+
+function renderNumberHistory(){
+  const all = getNumberReadings();
+  if(all.length === 0){
+    numberHistoryList.innerHTML = `<div class="history-empty">아직 저장된 넘버 분석이 없어요.</div>`;
+    return;
+  }
+  numberHistoryList.innerHTML = '';
+  all.slice().reverse().forEach(r=>{
+    const entry = document.createElement('div');
+    entry.className = 'history-entry';
+    entry.innerHTML = `
+      <div class="history-entry-head">
+        <div>
+          <div class="history-entry-title">${escapeHtml(r.birthDate)}</div>
+          <div class="history-entry-meta">${escapeHtml(r.date)}</div>
+          <div class="history-entry-cards">
+            <div class="history-card-thumb">
+              <div class="history-card-img">
+                <img src="${r.sunCard.img}" alt="${escapeHtml(r.sunCard.nameKr)}" onerror="this.remove(); this.parentElement.querySelector('.history-card-fallback').style.display='flex';">
+                <div class="history-card-fallback">${escapeHtml(r.sunCard.nameKr)}</div>
+              </div>
+              <div class="history-card-label">☀ ${r.sunNum}번</div>
+            </div>
+            <div class="history-card-thumb">
+              <div class="history-card-img">
+                <img src="${r.moonCard.img}" alt="${escapeHtml(r.moonCard.nameKr)}" onerror="this.remove(); this.parentElement.querySelector('.history-card-fallback').style.display='flex';">
+                <div class="history-card-fallback">${escapeHtml(r.moonCard.nameKr)}</div>
+              </div>
+              <div class="history-card-label">🌙 ${r.moonNum}번</div>
+            </div>
+            ${r.yearCard ? `
+            <div class="history-card-thumb">
+              <div class="history-card-img">
+                <img src="${r.yearCard.img}" alt="${escapeHtml(r.yearCard.nameKr)}" onerror="this.remove(); this.parentElement.querySelector('.history-card-fallback').style.display='flex';">
+                <div class="history-card-fallback">${escapeHtml(r.yearCard.nameKr)}</div>
+              </div>
+              <div class="history-card-label">🗓 ${r.yearInfo.num}번</div>
+            </div>` : ''}
+          </div>
+        </div>
+        <div class="history-entry-actions">
+          <button class="history-mini-btn" data-action="download">⬇️ 저장</button>
+          <button class="history-mini-btn" data-action="pdf">🖨 PDF</button>
+          <button class="history-mini-btn" data-action="delete">삭제</button>
+        </div>
+      </div>
+      <div class="history-entry-body">${escapeHtml(numberRecordToText(r))}</div>
+    `;
+    entry.querySelector('.history-entry-head').addEventListener('click', (e)=>{
+      if(e.target.closest('.history-mini-btn')) return;
+      entry.querySelector('.history-entry-body').classList.toggle('open');
+    });
+    entry.querySelector('[data-action="pdf"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      printAsPdf('MATAMO TAROT · 넘버 분석', numberRecordToPrintHtml(r));
+    });
+    entry.querySelector('[data-action="download"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      downloadText(`matamo-number-${r.id}.txt`, numberRecordToText(r));
+    });
+    entry.querySelector('[data-action="delete"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const updated = getNumberReadings().filter(x => x.id !== r.id);
+      setNumberReadings(updated);
+      renderNumberHistory();
+      showToast('삭제했어요.');
+    });
+    numberHistoryList.appendChild(entry);
+  });
+}
+
+/* ---------------------------------------------------------
+   3b3. COMPATIBILITY (궁합 보기)
+--------------------------------------------------------- */
+function personCards(y, m, d){
+  const sunNum = calculateSunNumber(y, m, d);
+  const moonNum = calculateMoonNumber(m, d);
+  const yearInfo = calculateYearCard(m, d);
+  return {
+    sunNum, sunCard: majorCardByNumber(sunNum),
+    moonNum, moonCard: majorCardByNumber(moonNum),
+    yearInfo, yearCard: majorCardByNumber(yearInfo.num)
+  };
+}
+
+function renderCompatPersonBlock(name, birthVal, cards){
+  return `
+    <div class="compat-person-block">
+      <h3>${escapeHtml(name)} <span style="color:var(--muted); font-size:13px; font-weight:400;">(${escapeHtml(birthVal)})</span></h3>
+      <div class="number-card-row">
+        ${renderNumberCardBlock('☀ 썬 넘버', cards.sunNum, cards.sunCard)}
+        ${renderNumberCardBlock('🌙 문 넘버', cards.moonNum, cards.moonCard)}
+        ${renderNumberCardBlock(`🗓 연도 카드 (${cards.yearInfo.year}년)`, cards.yearInfo.num, cards.yearCard)}
+      </div>
+    </div>`;
+}
+
+function cardBlock(label, num, card){
+  return `${label}: ${num}번 · ${card.nameKr} (${card.nameEn})
+- 키워드: ${card.detail.keyword}
+- 설명: ${card.detail.desc}`;
+}
+
+function buildCompatPrompt(nameA, dateA, cardsA, nameB, dateB, cardsB){
+  return `당신은 대한민국 최고의 타로 상담사입니다. 수비학(넘버 시스템)과 타로를 함께 다루는 전문가로서, 따뜻하지만 필요할 땐 직설적으로 핵심을 짚어주는 성격입니다.
+
+아래는 두 사람의 생년월일에서 도출한 썬 넘버(타고난 기질), 문 넘버(사회적으로 드러나는 성향), 연도 카드(올해의 테마) 정보입니다. 이 정보로 두 사람의 궁합을 봐주세요.
+
+■ ${nameA} (생년월일: ${dateA})
+${cardBlock('썬 넘버', cardsA.sunNum, cardsA.sunCard)}
+${cardBlock('문 넘버', cardsA.moonNum, cardsA.moonCard)}
+${cardBlock(`연도 카드 (${cardsA.yearInfo.year}년)`, cardsA.yearInfo.num, cardsA.yearCard)}
+
+■ ${nameB} (생년월일: ${dateB})
+${cardBlock('썬 넘버', cardsB.sunNum, cardsB.sunCard)}
+${cardBlock('문 넘버', cardsB.moonNum, cardsB.moonCard)}
+${cardBlock(`연도 카드 (${cardsB.yearInfo.year}년)`, cardsB.yearInfo.num, cardsB.yearCard)}
+
+다음 내용을 포함해서 상세하게 설명해주세요.
+1. 두 사람의 썬 넘버·문 넘버를 비교했을 때 기본적으로 서로 잘 맞는 지점 (기질이 통하거나 서로 보완되는 부분)
+2. 두 사람의 썬 넘버·문 넘버를 비교했을 때 갈등이나 오해가 생기기 쉬운 지점
+3. 두 사람 각자의 연도 카드를 참고했을 때, 올해 두 사람의 관계에 어떤 흐름이나 이벤트가 있을 수 있는지
+4. 두 사람이 올해 관계를 더 좋게 만들기 위한 구체적인 제안
+
+점술적으로 단정짓지 말고, 두 사람이 서로를 더 깊이 이해하도록 돕는 사려 깊은 언어로 작성해주세요. 한국어로 답변해주세요.`;
+}
+
+let lastCompatResult = null;
+
+document.getElementById('compatAnalyzeBtn').addEventListener('click', ()=>{
+  const valA = document.getElementById('compatDateA').value;
+  const valB = document.getElementById('compatDateB').value;
+  const validation = document.getElementById('compatValidation');
+  validation.textContent = '';
+
+  if(!valA || !valB){
+    validation.textContent = '두 사람의 생년월일을 모두 입력해주세요.';
+    return;
+  }
+
+  const nameA = document.getElementById('compatNameA').value.trim() || '사람 A';
+  const nameB = document.getElementById('compatNameB').value.trim() || '사람 B';
+  const [yA, mA, dA] = valA.split('-').map(Number);
+  const [yB, mB, dB] = valB.split('-').map(Number);
+  const cardsA = personCards(yA, mA, dA);
+  const cardsB = personCards(yB, mB, dB);
+
+  lastCompatResult = { nameA, valA, cardsA, nameB, valB, cardsB };
+
+  const resultsEl = document.getElementById('compatResults');
+  resultsEl.style.display = 'block';
+  resultsEl.innerHTML =
+    renderCompatPersonBlock(nameA, valA, cardsA) +
+    renderCompatPersonBlock(nameB, valB, cardsB);
+
+  const aiBlock = document.getElementById('compatAiBlock');
+  const promptBoxEl = document.getElementById('compatPromptBox');
+  aiBlock.style.display = 'block';
+  promptBoxEl.textContent = buildCompatPrompt(nameA, valA, cardsA, nameB, valB, cardsB);
+  document.getElementById('compatClaudePaste').value = '';
+  document.getElementById('compatGeminiPaste').value = '';
+  document.getElementById('compatClaudeResult').innerHTML = '';
+  document.getElementById('compatGeminiResult').innerHTML = '';
+
+  resultsEl.scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+document.getElementById('compatOpenClaudeBtn').addEventListener('click', ()=>{
+  const text = document.getElementById('compatPromptBox').textContent;
+  if(!text) return;
+  const syncOk = trySyncCopy(text);
+  window.open('https://claude.ai/new', '_blank');
+  if(syncOk){
+    showToast('프롬프트 복사 완료! Claude 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.');
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(()=> showToast('프롬프트 복사 완료! Claude 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.'))
+      .catch(()=> showToast('복사에 실패했어요. 프롬프트를 직접 선택해서 복사해주세요.'));
+  }
+});
+document.getElementById('compatOpenGeminiBtn').addEventListener('click', ()=>{
+  const text = document.getElementById('compatPromptBox').textContent;
+  if(!text) return;
+  const syncOk = trySyncCopy(text);
+  window.open('https://gemini.google.com/app', '_blank');
+  if(syncOk){
+    showToast('프롬프트 복사 완료! Gemini 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.');
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(()=> showToast('프롬프트 복사 완료! Gemini 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.'))
+      .catch(()=> showToast('복사에 실패했어요. 프롬프트를 직접 선택해서 복사해주세요.'));
+  }
+});
+document.getElementById('compatCopyPromptBtn').addEventListener('click', async ()=>{
+  const text = document.getElementById('compatPromptBox').textContent;
+  if(!text) return;
+  const ok = await copyPromptToClipboard(text);
+  showToast(ok ? '프롬프트가 복사되었어요.' : '복사에 실패했어요. 직접 선택해서 복사해주세요.');
+});
+document.getElementById('compatClaudeShowBtn').addEventListener('click', ()=>{
+  const text = document.getElementById('compatClaudePaste').value.trim();
+  const el = document.getElementById('compatClaudeResult');
+  el.innerHTML = text ? `<div class="sb-text">${escapeHtml(text)}</div>` : `<div class="provider-msg">붙여넣은 답변이 비어있어요.</div>`;
+});
+document.getElementById('compatGeminiShowBtn').addEventListener('click', ()=>{
+  const text = document.getElementById('compatGeminiPaste').value.trim();
+  const el = document.getElementById('compatGeminiResult');
+  el.innerHTML = text ? `<div class="sb-text">${escapeHtml(text)}</div>` : `<div class="provider-msg">붙여넣은 답변이 비어있어요.</div>`;
+});
+
+document.getElementById('resetCompatBtn').addEventListener('click', ()=>{
+  lastCompatResult = null;
+  document.getElementById('compatNameA').value = '';
+  document.getElementById('compatDateA').value = '';
+  document.getElementById('compatNameB').value = '';
+  document.getElementById('compatDateB').value = '';
+  document.getElementById('compatValidation').textContent = '';
+  document.getElementById('compatResults').style.display = 'none';
+  document.getElementById('compatResults').innerHTML = '';
+  document.getElementById('compatAiBlock').style.display = 'none';
+  document.getElementById('compatPromptBox').textContent = '';
+  document.getElementById('compatClaudePaste').value = '';
+  document.getElementById('compatGeminiPaste').value = '';
+  document.getElementById('compatClaudeResult').innerHTML = '';
+  document.getElementById('compatGeminiResult').innerHTML = '';
+  showToast('초기화했어요. 다른 두 사람의 생년월일을 입력해보세요.');
+  document.getElementById('compatSection').scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+const COMPAT_HISTORY_KEY = 'matamo_compat_readings';
+function getCompatReadings(){
+  try{ return JSON.parse(localStorage.getItem(COMPAT_HISTORY_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function setCompatReadings(arr){
+  localStorage.setItem(COMPAT_HISTORY_KEY, JSON.stringify(arr));
+}
+
+function buildCompatRecord(){
+  const r = lastCompatResult;
+  const slim = c => ({
+    sunNum: c.sunNum, sunCard: { nameKr: c.sunCard.nameKr, nameEn: c.sunCard.nameEn, img: c.sunCard.img },
+    moonNum: c.moonNum, moonCard: { nameKr: c.moonCard.nameKr, nameEn: c.moonCard.nameEn, img: c.moonCard.img },
+    yearInfo: c.yearInfo, yearCard: { nameKr: c.yearCard.nameKr, nameEn: c.yearCard.nameEn, img: c.yearCard.img }
+  });
+  return {
+    id: Date.now(),
+    date: new Date().toLocaleString('ko-KR'),
+    nameA: r.nameA, valA: r.valA, cardsA: slim(r.cardsA),
+    nameB: r.nameB, valB: r.valB, cardsB: slim(r.cardsB),
+    claudeAnswer: document.getElementById('compatClaudePaste').value.trim(),
+    geminiAnswer: document.getElementById('compatGeminiPaste').value.trim()
+  };
+}
+
+function compatRecordToText(r){
+  const lines = [];
+  lines.push('MATAMO TAROT 궁합 보기 기록');
+  lines.push(`날짜: ${r.date}`);
+  lines.push('');
+  lines.push(`■ ${r.nameA} (${r.valA})`);
+  lines.push(`썬 넘버: ${r.cardsA.sunNum}번 · ${r.cardsA.sunCard.nameKr}`);
+  lines.push(`문 넘버: ${r.cardsA.moonNum}번 · ${r.cardsA.moonCard.nameKr}`);
+  lines.push(`연도 카드 (${r.cardsA.yearInfo.year}년): ${r.cardsA.yearInfo.num}번 · ${r.cardsA.yearCard.nameKr}`);
+  lines.push('');
+  lines.push(`■ ${r.nameB} (${r.valB})`);
+  lines.push(`썬 넘버: ${r.cardsB.sunNum}번 · ${r.cardsB.sunCard.nameKr}`);
+  lines.push(`문 넘버: ${r.cardsB.moonNum}번 · ${r.cardsB.moonCard.nameKr}`);
+  lines.push(`연도 카드 (${r.cardsB.yearInfo.year}년): ${r.cardsB.yearInfo.num}번 · ${r.cardsB.yearCard.nameKr}`);
+  if(r.claudeAnswer){ lines.push(''); lines.push('CLAUDE 궁합 해석:'); lines.push(r.claudeAnswer); }
+  if(r.geminiAnswer){ lines.push(''); lines.push('GEMINI 궁합 해석:'); lines.push(r.geminiAnswer); }
+  return lines.join('\n');
+}
+
+document.getElementById('saveCompatBtn').addEventListener('click', ()=>{
+  if(!lastCompatResult){ showToast('저장할 궁합 결과가 없어요.'); return; }
+  const record = buildCompatRecord();
+  const all = getCompatReadings();
+  all.push(record);
+  setCompatReadings(all);
+  renderCompatHistory();
+  showToast('궁합 결과를 저장했어요.');
+});
+
+const compatHistoryList = document.getElementById('compatHistoryList');
+
+function renderCompatHistory(){
+  const all = getCompatReadings();
+  if(all.length === 0){
+    compatHistoryList.innerHTML = `<div class="history-empty">아직 저장된 궁합 결과가 없어요.</div>`;
+    return;
+  }
+  compatHistoryList.innerHTML = '';
+  all.slice().reverse().forEach(r=>{
+    const entry = document.createElement('div');
+    entry.className = 'history-entry';
+    entry.innerHTML = `
+      <div class="history-entry-head">
+        <div>
+          <div class="history-entry-title">${escapeHtml(r.nameA)} × ${escapeHtml(r.nameB)}</div>
+          <div class="history-entry-meta">${escapeHtml(r.date)}</div>
+          <div class="history-entry-cards">
+            <div class="history-card-thumb">
+              <div class="history-card-img">
+                <img src="${r.cardsA.sunCard.img}" alt="${escapeHtml(r.cardsA.sunCard.nameKr)}" onerror="this.remove(); this.parentElement.querySelector('.history-card-fallback').style.display='flex';">
+                <div class="history-card-fallback">${escapeHtml(r.cardsA.sunCard.nameKr)}</div>
+              </div>
+              <div class="history-card-label">${escapeHtml(r.nameA)} ☀</div>
+            </div>
+            <div class="history-card-thumb">
+              <div class="history-card-img">
+                <img src="${r.cardsB.sunCard.img}" alt="${escapeHtml(r.cardsB.sunCard.nameKr)}" onerror="this.remove(); this.parentElement.querySelector('.history-card-fallback').style.display='flex';">
+                <div class="history-card-fallback">${escapeHtml(r.cardsB.sunCard.nameKr)}</div>
+              </div>
+              <div class="history-card-label">${escapeHtml(r.nameB)} ☀</div>
+            </div>
+          </div>
+        </div>
+        <div class="history-entry-actions">
+          <button class="history-mini-btn" data-action="download">⬇️ 저장</button>
+          <button class="history-mini-btn" data-action="pdf">🖨 PDF</button>
+          <button class="history-mini-btn" data-action="delete">삭제</button>
+        </div>
+      </div>
+      <div class="history-entry-body">${escapeHtml(compatRecordToText(r))}</div>
+    `;
+    entry.querySelector('.history-entry-head').addEventListener('click', (e)=>{
+      if(e.target.closest('.history-mini-btn')) return;
+      entry.querySelector('.history-entry-body').classList.toggle('open');
+    });
+    entry.querySelector('[data-action="download"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      downloadText(`matamo-compat-${r.id}.txt`, compatRecordToText(r));
+    });
+    entry.querySelector('[data-action="pdf"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      printAsPdf('MATAMO TAROT · 궁합 보기', compatRecordToPrintHtml(r));
+    });
+    entry.querySelector('[data-action="delete"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const updated = getCompatReadings().filter(x => x.id !== r.id);
+      setCompatReadings(updated);
+      renderCompatHistory();
+      showToast('삭제했어요.');
+    });
+    compatHistoryList.appendChild(entry);
+  });
+}
+
+function compatRecordToPrintHtml(r){
+  let html = `<div class="print-meta">날짜: ${escapeHtml(r.date)}</div>`;
+  html += `<h2>■ ${escapeHtml(r.nameA)} (${escapeHtml(r.valA)})</h2>`;
+  html += `<p>썬 넘버 ${r.cardsA.sunNum}번 · ${escapeHtml(r.cardsA.sunCard.nameKr)} / 문 넘버 ${r.cardsA.moonNum}번 · ${escapeHtml(r.cardsA.moonCard.nameKr)} / 연도 카드(${r.cardsA.yearInfo.year}) ${r.cardsA.yearInfo.num}번 · ${escapeHtml(r.cardsA.yearCard.nameKr)}</p>`;
+  html += `<h2>■ ${escapeHtml(r.nameB)} (${escapeHtml(r.valB)})</h2>`;
+  html += `<p>썬 넘버 ${r.cardsB.sunNum}번 · ${escapeHtml(r.cardsB.sunCard.nameKr)} / 문 넘버 ${r.cardsB.moonNum}번 · ${escapeHtml(r.cardsB.moonCard.nameKr)} / 연도 카드(${r.cardsB.yearInfo.year}) ${r.cardsB.yearInfo.num}번 · ${escapeHtml(r.cardsB.yearCard.nameKr)}</p>`;
+  if(r.claudeAnswer){ html += `<h2>Claude 궁합 해석</h2><p>${escapeHtml(r.claudeAnswer)}</p>`; }
+  if(r.geminiAnswer){ html += `<h2>Gemini 궁합 해석</h2><p>${escapeHtml(r.geminiAnswer)}</p>`; }
+  return html;
+}
+
+document.getElementById('pdfCompatBtn').addEventListener('click', ()=>{
+  if(!lastCompatResult){ showToast('저장할 궁합 결과가 없어요.'); return; }
+  const record = buildCompatRecord();
+  printAsPdf('MATAMO TAROT · 궁합 보기', compatRecordToPrintHtml(record));
+});
+
+/* ---------------------------------------------------------
+   3c. PICK METHOD: random fan draw vs. choose-from-grid
+--------------------------------------------------------- */
+function selectPickMethod(method){
+  cardPickMethod = method;
+  document.getElementById('pmRandomBtn').classList.toggle('active', method === 'random');
+  document.getElementById('pmChooseBtn').classList.toggle('active', method === 'choose');
+  document.getElementById('randomPickWrap').style.display = method === 'random' ? 'block' : 'none';
+  document.getElementById('choosePickWrap').style.display = method === 'choose' ? 'block' : 'none';
+
+  // switching methods mid-reading would mix up which cards are "used" in
+  // a confusing way, so start the card selection over when it changes
+  selections = [];
+  adviceCardRequested = false;
+  renderFan();
+  renderChooseGrid();
+  renderTray();
+  updateProgress();
+  hideResult();
+}
+
+document.getElementById('pmRandomBtn').addEventListener('click', ()=> selectPickMethod('random'));
+document.getElementById('pmChooseBtn').addEventListener('click', ()=> selectPickMethod('choose'));
+
+/* ---------------------------------------------------------
+   3b. PRACTICE-MODE EXAMPLE QUESTIONS
+--------------------------------------------------------- */
+(function initExampleQuestions(){
+  const select = document.getElementById('exampleSelect');
+  EXAMPLE_QUESTIONS.forEach((q, idx)=>{
+    const opt = document.createElement('option');
+    opt.value = idx;
+    const firstLine = q.split('\n')[0];
+    const preview = firstLine.length > 38 ? firstLine.slice(0, 38) + '…' : firstLine;
+    opt.textContent = `Q${idx + 1}. ${preview}`;
+    select.appendChild(opt);
+  });
+  select.addEventListener('change', ()=>{
+    if(select.value === '') return;
+    const q = EXAMPLE_QUESTIONS[Number(select.value)];
+    document.getElementById('question').value = q;
+    showToast('예시 질문을 불러왔어요. 자유롭게 수정해도 좋아요.');
+  });
+})();
+
+/* ---------------------------------------------------------
+   4. FAN RENDER
+--------------------------------------------------------- */
+const fanWrap = document.getElementById('fanWrap');
+
+function renderFan(){
+  fanWrap.innerHTML = '';
+  const n = shuffled.length;
+  const spread = 190; // degrees total arc
+  const start = -spread/2;
+  const cardWpx = getComputedStyle(document.documentElement).getPropertyValue('--card-w');
+  shuffled.forEach((card, i)=>{
+    const angle = start + (spread/(n-1))*i;
+    const slot = document.createElement('div');
+    slot.className = 'card-slot';
+    slot.dataset.index = i;
+    slot.style.transform = `rotate(${angle}deg) translateY(calc(-1 * var(--fan-radius)))`;
+    slot.style.zIndex = i;
+
+    slot.innerHTML = `
+      <div class="tarot-card">
+        <div class="tarot-card-inner">
+          <div class="card-face card-back"></div>
+          <div class="card-face card-front">
+            <div class="fallback">${card.nameKr}<br><span style="opacity:.6">${card.nameEn}</span></div>
+          </div>
+        </div>
+      </div>`;
+
+    slot.addEventListener('click', ()=> onSlotClick(i, slot));
+    fanWrap.appendChild(slot);
+  });
+}
+
+function onSlotClick(i, slot){
+  if(!currentSpreadKey){
+    showToast('먼저 배열법을 선택해주세요.');
+    return;
+  }
+  if(slot.dataset.locked === '1') return;
+  if(selections.length >= totalNeeded()){
+    showToast('이미 필요한 카드를 모두 선택했어요.');
+    return;
+  }
+
+  const card = shuffled[i];
+  slot.dataset.locked = '1';
+  slot.classList.add('picked'); // stays face-down in the fan; reveal happens in the tray below
+  slot.style.zIndex = 500; // rise above neighboring cards so the lift-up is visible
+
+  const position = currentPositions()[selections.length];
+  selections.push({ position, card, revealed:false });
+  renderTray();
+  updateProgress();
+}
+
+/* ---------------------------------------------------------
+   4b. CHOOSE-GRID (practice mode: pick any of the 78 cards directly)
+--------------------------------------------------------- */
+const chooseGrid = document.getElementById('chooseGrid');
+
+function renderChooseGrid(){
+  if(cardPickMethod !== 'choose') return;
+  chooseGrid.innerHTML = '';
+  const usedIds = new Set(selections.map(s => s.card.id));
+
+  DECK.forEach(card=>{
+    const used = usedIds.has(card.id);
+    const cell = document.createElement('div');
+    cell.className = 'choose-card' + (used ? ' used' : '');
+    cell.innerHTML = `
+      <div class="choose-card-img">
+        <img src="${card.img}" alt="${card.nameKr}" onerror="this.remove(); this.parentElement.querySelector('.choose-card-fallback').style.display='flex';">
+        <div class="choose-card-fallback">${card.nameKr}</div>
+      </div>
+      <div class="choose-card-name">${card.nameKr}</div>
+    `;
+    if(!used){
+      cell.addEventListener('click', ()=> onChooseCardClick(card));
+    }
+    chooseGrid.appendChild(cell);
+  });
+}
+
+function onChooseCardClick(card){
+  if(!currentSpreadKey){
+    showToast('먼저 배열법을 선택해주세요.');
+    return;
+  }
+  if(selections.length >= totalNeeded()){
+    showToast('이미 필요한 카드를 모두 선택했어요.');
+    return;
+  }
+  const position = currentPositions()[selections.length];
+  // the card was already visible when picked, so reveal it in the tray right away
+  selections.push({ position, card, revealed:true });
+  renderChooseGrid();
+  renderTray();
+  updateProgress();
+}
+
+function shuffleJitter(){
+  const slots = fanWrap.querySelectorAll('.card-slot');
+  slots.forEach((slot, idx)=>{
+    const rx = (Math.random()-0.5)*40;
+    const ry = (Math.random()-0.5)*24;
+    const rr = (Math.random()-0.5)*30;
+    const inner = slot.querySelector('.tarot-card');
+    if(inner.animate){
+      inner.animate([
+        { transform:'translate(0,0) rotate(0deg)' },
+        { transform:`translate(${rx}px, ${ry}px) rotate(${rr}deg)` },
+        { transform:'translate(0,0) rotate(0deg)' }
+      ], { duration: 480, delay: idx*2.2, easing:'ease-in-out' });
+    }
+  });
+}
+
+document.getElementById('shuffleBtn').addEventListener('click', ()=>{
+  // full reset — shuffle starts everything over from scratch
+  shuffled = shuffleArr(DECK);
+  selections = [];
+  currentSpreadKey = null;
+  currentThreeVariant = 'pcf';
+  adviceCardRequested = false;
+
+  document.getElementById('question').value = '';
+  document.getElementById('exampleSelect').value = '';
+  document.getElementById('myInterpretation').value = '';
+  validationEl.textContent = '';
+
+  document.querySelectorAll('.spread-btn').forEach(b => b.classList.remove('active'));
+  threeVariantGrid.style.display = 'none';
+  threeVariantGrid.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+  refreshSpreadBtnLabel('three');
+
+  timingConfig.style.display = 'none';
+  timingCount = 3;
+  timingLabels = ['', '', '', '', '', ''];
+  timingCountBtns.querySelectorAll('.tc-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.count) === 3));
+  renderTimingInputs();
+  applyTimingSpread();
+
+  selectMode(currentMode); // re-apply the current mode's UI state without switching modes
+
+  renderFan();
+  shuffleJitter();
+  renderTray();
+  updateProgress();
+  hideResult();
+  showToast('처음부터 다시 시작해요.');
+});
+
+/* ---------------------------------------------------------
+   5. SPREAD SELECTION
+--------------------------------------------------------- */
+const spreadGrid = document.getElementById('spreadGrid');
+const threeVariantGrid = document.getElementById('threeVariantGrid');
+const timingConfig = document.getElementById('timingConfig');
+const timingCountBtns = document.getElementById('timingCountBtns');
+const timingInputsEl = document.getElementById('timingInputs');
+
+// Timing spread: variable card count (3-6), with freely user-typed labels
+// per card (e.g. "3월", "4월"...) instead of fixed position names.
+let timingCount = 3;
+let timingLabels = ['', '', '', '', '', ''];
+
+function applyTimingSpread(){
+  SPREADS.timing.count = timingCount;
+  SPREADS.timing.positions = timingLabels.slice(0, timingCount).map((v, i) => {
+    const trimmed = (v || '').trim();
+    return trimmed || `${i + 1}번째`;
+  });
+  refreshSpreadBtnLabel('timing');
+}
+
+function renderTimingInputs(){
+  timingInputsEl.innerHTML = '';
+  for(let i = 0; i < timingCount; i++){
+    const wrap = document.createElement('div');
+    wrap.className = 'timing-input-wrap';
+    wrap.innerHTML = `
+      <span>${i + 1}번 카드</span>
+      <input type="text" maxlength="12" placeholder="예: ${i + 3}월" value="${escapeHtml(timingLabels[i] || '')}">
+    `;
+    const input = wrap.querySelector('input');
+    input.addEventListener('input', ()=>{
+      timingLabels[i] = input.value;
+      applyTimingSpread();
+      if(currentSpreadKey === 'timing'){ renderTray(); updateProgress(); }
+    });
+    timingInputsEl.appendChild(wrap);
+  }
+}
+
+[3,4,5,6].forEach(n=>{
+  const btn = document.createElement('button');
+  btn.className = 'tc-btn' + (n === timingCount ? ' active' : '');
+  btn.dataset.count = n;
+  btn.textContent = n;
+  btn.addEventListener('click', ()=> selectTimingCount(n));
+  timingCountBtns.appendChild(btn);
+});
+
+function selectTimingCount(n){
+  timingCount = n;
+  timingCountBtns.querySelectorAll('.tc-btn').forEach(b=>{
+    b.classList.toggle('active', Number(b.dataset.count) === n);
+  });
+  renderTimingInputs();
+  applyTimingSpread();
+  selections = [];
+  adviceCardRequested = false;
+  renderFan();
+  renderChooseGrid();
+  renderTray();
+  updateProgress();
+  hideResult();
+}
+
+renderTimingInputs();
+
+function spreadCountLabel(key){
+  const s = SPREADS[key];
+  if(key === 'three'){
+    return `${s.count}장 · ${THREE_VARIANTS[currentThreeVariant].positions.join(' / ')}`;
+  }
+  if(key === 'timing'){
+    return `3~6장 · 명칭 직접 입력`;
+  }
+  return `${s.count}장 · ${s.positions.join(' / ')}`;
+}
+
+Object.entries(SPREADS).forEach(([key, s])=>{
+  const btn = document.createElement('button');
+  btn.className = 'spread-btn';
+  btn.dataset.key = key;
+  btn.innerHTML = `<span class="name">${s.label}</span><span class="count">${spreadCountLabel(key)}</span>`;
+  btn.addEventListener('click', ()=> selectSpread(key));
+  spreadGrid.appendChild(btn);
+});
+
+function refreshSpreadBtnLabel(key){
+  const btn = spreadGrid.querySelector(`.spread-btn[data-key="${key}"]`);
+  if(btn) btn.querySelector('.count').textContent = spreadCountLabel(key);
+}
+
+Object.entries(THREE_VARIANTS).forEach(([vKey, v])=>{
+  const btn = document.createElement('button');
+  btn.className = 'variant-btn';
+  btn.dataset.vkey = vKey;
+  btn.innerHTML = `<strong>${v.label}</strong><br><span style="opacity:.75">${v.hint}</span>`;
+  btn.addEventListener('click', ()=> selectThreeVariant(vKey));
+  threeVariantGrid.appendChild(btn);
+});
+
+function selectSpread(key){
+  currentSpreadKey = key;
+  selections = [];
+  adviceCardRequested = false;
+  document.querySelectorAll('.spread-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.key === key);
+  });
+
+  if(key === 'three'){
+    SPREADS.three.positions = THREE_VARIANTS[currentThreeVariant].positions;
+    threeVariantGrid.style.display = 'grid';
+  } else {
+    threeVariantGrid.style.display = 'none';
+  }
+  if(key === 'three'){
+    document.querySelectorAll('.variant-btn').forEach(b=>{
+      b.classList.toggle('active', b.dataset.vkey === currentThreeVariant);
+    });
+  }
+
+  if(key === 'timing'){
+    timingConfig.style.display = 'block';
+    applyTimingSpread();
+  } else {
+    timingConfig.style.display = 'none';
+  }
+
+  renderFan();
+  renderChooseGrid();
+  renderTray();
+  updateProgress();
+  hideResult();
+}
+
+function selectThreeVariant(vKey){
+  currentThreeVariant = vKey;
+  SPREADS.three.positions = THREE_VARIANTS[vKey].positions;
+  selections = [];
+  adviceCardRequested = false;
+  document.querySelectorAll('.variant-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.vkey === vKey);
+  });
+  refreshSpreadBtnLabel('three');
+  renderFan();
+  renderChooseGrid();
+  renderTray();
+  updateProgress();
+  hideResult();
+}
+
+/* ---------------------------------------------------------
+   6. TRAY & PROGRESS
+--------------------------------------------------------- */
+const tray = document.getElementById('tray');
+const progressText = document.getElementById('progressText');
+const interpretBtn = document.getElementById('interpretBtn');
+const validationEl = document.getElementById('validation');
+
+function buildTraySlot(pos, idx, options){
+  const compact = options && options.compact;
+  const sel = selections[idx];
+  const slot = document.createElement('div');
+  slot.className = compact ? 'tray-slot tray-slot-compact' : 'tray-slot';
+
+  const badgeHtml = compact
+    ? `<div class="m7-badge">
+         <div class="m7-badge-pos">${pos}</div>
+         ${sel && sel.revealed ? `<div class="m7-badge-name">${sel.card.nameKr}</div>` : ''}
+       </div>`
+    : '';
+
+  let cardHtml;
+  if(!sel){
+    cardHtml = `<div class="tray-card">${badgeHtml}</div>`;
+  } else {
+    cardHtml = `
+      <div class="tray-card filled ${sel.revealed ? 'revealed' : ''}" data-idx="${idx}">
+        <div class="tray-card-inner">
+          <div class="tray-face tray-back">${badgeHtml}</div>
+          <div class="tray-face tray-front">
+            <img src="${sel.card.img}" alt="${sel.card.nameKr}" onerror="this.remove(); this.parentElement.querySelector('.fallback').style.display='flex';">
+            <div class="fallback">${sel.card.nameKr}<br><span style="opacity:.6">${sel.card.nameEn}</span></div>
+            ${badgeHtml}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  if(compact){
+    slot.innerHTML = cardHtml;
+  } else {
+    slot.innerHTML = `
+      ${cardHtml}
+      <div class="tray-pos">${pos}</div>
+      <div class="tray-name">${sel && sel.revealed ? sel.card.nameKr : ''}</div>
+    `;
+  }
+
+  if(sel){
+    const cardEl = slot.querySelector('.tray-card');
+    cardEl.addEventListener('click', ()=> revealTrayCard(idx, slot));
+  }
+  return slot;
+}
+
+// The 양자택일(either/or) spread reads as a pyramid: card 1 sits at the
+// bottom center, cards 2 & 4 flank it on the row above (choice A / choice B),
+// and cards 3 & 5 sit above those as each choice's eventual result.
+const EITHER_AREAS = ['ec1','ec2','ec3','ec4','ec5'];
+
+// Celtic Cross reads as a cross block (cards 1-6, with card 2 laid
+// crosswise over card 1) plus a vertical staff of four cards (7-10)
+// standing to the right.
+const CELTIC_AREAS = [null, null, 'cc3', 'cc4', 'cc5', 'cc6', 'cc7', 'cc8', 'cc9', 'cc10'];
+
+// Magic Seven reads as a hexagram (six-pointed star): six cards form the
+// outer points (top, both upper corners, both lower corners, bottom) with
+// the seventh card sitting in the very center.
+// positions order: [과거, 현재, 미래, 조언, 환경·무의식, 장애물, 결과]
+const MAGIC7_AREAS = ['m1','m2','m3','m4','m5','m6','m7'];
+
+function renderTray(){
+  tray.innerHTML = '';
+  if(!currentSpreadKey) return;
+  const positions = currentPositions();
+
+  tray.classList.remove('tray-either-mode', 'tray-celtic-mode', 'tray-magic7-mode');
+
+  if(currentSpreadKey === 'either'){
+    tray.classList.add('tray-either-mode');
+    const grid = document.createElement('div');
+    grid.className = 'either-grid';
+    positions.slice(0, 5).forEach((pos, idx)=>{
+      const slot = buildTraySlot(pos, idx);
+      slot.classList.add(EITHER_AREAS[idx]);
+      grid.appendChild(slot);
+    });
+    tray.appendChild(grid);
+
+    // an optional advice card (position 6) doesn't fit the pyramid — show it below
+    if(positions.length > 5){
+      const extraRow = document.createElement('div');
+      extraRow.className = 'tray-extra-row';
+      positions.slice(5).forEach((pos, i)=>{
+        extraRow.appendChild(buildTraySlot(pos, i + 5));
+      });
+      tray.appendChild(extraRow);
+    }
+  } else if(currentSpreadKey === 'celtic' || currentSpreadKey === 'miniCeltic'){
+    const isMini = currentSpreadKey === 'miniCeltic';
+    tray.classList.add('tray-celtic-mode');
+    const grid = document.createElement('div');
+    grid.className = isMini ? 'celtic-grid mini-celtic-grid' : 'celtic-grid';
+
+    const crossWrap = document.createElement('div');
+    crossWrap.className = 'cc-cross-wrap';
+    const slot1 = buildTraySlot(positions[0], 0);
+    slot1.classList.add('cc-base');
+    crossWrap.appendChild(slot1);
+    if(positions[1] !== undefined){
+      const slot2 = buildTraySlot(positions[1], 1);
+      slot2.classList.add('cc-cross');
+      crossWrap.appendChild(slot2);
+    }
+    grid.appendChild(crossWrap);
+
+    const maxCards = isMini ? 6 : 10;
+    for(let idx = 2; idx < Math.min(positions.length, maxCards); idx++){
+      const slot = buildTraySlot(positions[idx], idx);
+      slot.classList.add(CELTIC_AREAS[idx]);
+      grid.appendChild(slot);
+    }
+    tray.appendChild(grid);
+
+    // an optional advice card doesn't fit the cross/star shape — show it below
+    if(positions.length > maxCards){
+      const extraRow = document.createElement('div');
+      extraRow.className = 'tray-extra-row';
+      positions.slice(maxCards).forEach((pos, i)=>{
+        extraRow.appendChild(buildTraySlot(pos, i + maxCards));
+      });
+      tray.appendChild(extraRow);
+    }
+  } else if(currentSpreadKey === 'magic7'){
+    tray.classList.add('tray-magic7-mode');
+    const grid = document.createElement('div');
+    grid.className = 'magic7-grid';
+    positions.slice(0, 7).forEach((pos, idx)=>{
+      const slot = buildTraySlot(pos, idx, { compact: true });
+      slot.classList.add(MAGIC7_AREAS[idx]);
+      grid.appendChild(slot);
+    });
+    tray.appendChild(grid);
+
+    // an optional advice card (position 8) doesn't fit the star — show it below
+    if(positions.length > 7){
+      const extraRow = document.createElement('div');
+      extraRow.className = 'tray-extra-row';
+      positions.slice(7).forEach((pos, i)=>{
+        extraRow.appendChild(buildTraySlot(pos, i + 7));
+      });
+      tray.appendChild(extraRow);
+    }
+  } else {
+    positions.forEach((pos, idx)=>{
+      tray.appendChild(buildTraySlot(pos, idx));
+    });
+  }
+}
+
+function revealTrayCard(idx, slot){
+  const sel = selections[idx];
+  if(!sel || sel.revealed) return;
+  sel.revealed = true;
+
+  if(slot.classList.contains('tray-slot-compact')){
+    // compact mode (magic7) shows the name inside an on-card badge that
+    // doesn't exist until reveal — simplest to just re-render the tray
+    renderTray();
+    return;
+  }
+
+  const cardEl = slot.querySelector('.tray-card');
+  cardEl.classList.add('revealed');
+  slot.querySelector('.tray-name').textContent = sel.card.nameKr;
+}
+
+document.getElementById('adviceBtn').addEventListener('click', ()=>{
+  if(!currentSpreadKey || adviceCardRequested) return;
+  const baseCount = SPREADS[currentSpreadKey].count;
+  if(selections.length !== baseCount) return; // only offered once the base spread is complete
+  adviceCardRequested = true;
+  renderTray();
+  updateProgress();
+  showToast('조언 카드 자리가 추가됐어요. 부채에서 한 장 더 뽑아보세요.');
+});
+
+function updateProgress(){
+  const adviceBtn = document.getElementById('adviceBtn');
+  if(!currentSpreadKey){
+    progressText.innerHTML = '배열법을 먼저 선택해주세요.';
+    interpretBtn.disabled = true;
+    adviceBtn.style.display = 'none';
+    return;
+  }
+  const need = totalNeeded();
+  const have = selections.length;
+  const label = currentSpreadKey === 'three'
+    ? `${SPREADS.three.label} (${THREE_VARIANTS[currentThreeVariant].label})`
+    : SPREADS[currentSpreadKey].label;
+  progressText.innerHTML = `<strong>${label}</strong> · 카드 선택 <strong>${have}/${need}</strong>`;
+  interpretBtn.disabled = !(have === need);
+
+  // offer the optional advice card once the base spread is fully drawn
+  const baseCount = SPREADS[currentSpreadKey].count;
+  if(!adviceCardRequested && have === baseCount){
+    adviceBtn.style.display = 'inline-block';
+    adviceBtn.disabled = false;
+    adviceBtn.textContent = '🃏 조언 카드 한 장 더 뽑기';
+  } else if(adviceCardRequested){
+    adviceBtn.style.display = 'inline-block';
+    adviceBtn.disabled = true;
+    adviceBtn.textContent = '🃏 조언 카드 추가됨';
+  } else {
+    adviceBtn.style.display = 'none';
+  }
+}
+
+/* ---------------------------------------------------------
+   7. TOAST
+--------------------------------------------------------- */
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+/* ---------------------------------------------------------
+   9. PROMPT GENERATION
+--------------------------------------------------------- */
+function buildPrompt(question, spread, myInterpretation){
+  const cardLines = selections.map(s => `- ${s.position}: ${s.card.nameKr} (${s.card.nameEn})`).join('\n');
+
+  if(currentMode === 'practice'){
+    return `당신은 대한민국 최고의 타로 상담사이자, 후배 상담사를 키우는 수퍼바이저입니다. 따뜻한 마음씨로 진심을 다해 아끼면서도, 필요할 땐 돌려 말하지 않고 핵심을 짚어주는 솔직한 피드백도 서슴지 않는 성격입니다.
+
+아래는 제가 직접 작성한 타로 리딩입니다. 이 해석에 대해 슈퍼비전을 해주세요.
+
+질문: ${question}
+배열법: ${spread.label}
+뽑힌 카드:
+${cardLines}
+
+제가 작성한 해석:
+${myInterpretation}
+
+다음 기준으로 피드백해주세요:
+1. 잘 짚은 부분 (구체적으로 어떤 점이 좋았는지)
+2. 놓쳤거나 보완하면 좋을 부분 (카드의 다른 의미, 위치 간의 연결, 질문과의 연관성 등)
+3. 더 깊이 볼 수 있는 관점이나 질문 (제가 스스로 더 생각해볼 만한 지점)
+
+듣기 좋은 말만 하지 말고, 부족한 부분이 있다면 애정을 담아 직설적으로 짚어주세요. 한국어로 답변해주세요.`;
+  }
+
+  return `당신은 대한민국 최고의 타로 상담사입니다. 유니버설 웨이트 타로를 깊이 있게 해석하는 전문가로서, 따뜻한 마음씨로 저를 진심으로 아끼면서도 필요할 땐 돌려 말하지 않고 핵심을 짚어주는 솔직한 팩트 폭격도 서슴지 않는 성격입니다. 듣기 좋은 말만 하지 말고, 카드가 보여주는 불편한 진실이 있다면 애정을 담아 직설적으로 말해주세요. 점술적으로 단정짓지 말고, 제가 스스로 통찰을 얻도록 돕는 언어로 해석해주세요.
+
+질문: ${question}
+배열법: ${spread.label}
+뽑힌 카드:
+${cardLines}
+
+각 카드가 해당 위치에서 어떤 의미를 갖는지 짚어준 뒤, 전체 흐름을 엮어 종합적인 조언으로 마무리해주세요. 한국어로 답변해주세요.`;
+}
+
+/* ---------------------------------------------------------
+   10. RESULT SECTION: prompt copy / open / paste-back
+--------------------------------------------------------- */
+const resultPanel = document.getElementById('resultPanel');
+const promptBox = document.getElementById('promptBox');
+const claudeResult = document.getElementById('claudeResult');
+const geminiResult = document.getElementById('geminiResult');
+
+function hideResult(){
+  resultPanel.classList.remove('show');
+  promptBox.textContent = '';
+  claudeResult.innerHTML = '';
+  geminiResult.innerHTML = '';
+  document.getElementById('claudePaste').value = '';
+  document.getElementById('geminiPaste').value = '';
+}
+
+interpretBtn.addEventListener('click', ()=>{
+  const question = document.getElementById('question').value.trim();
+  validationEl.textContent = '';
+
+  if(!question){
+    validationEl.textContent = '고민을 먼저 적어주세요.';
+    return;
+  }
+  if(!currentSpreadKey || selections.length !== totalNeeded()){
+    validationEl.textContent = '카드를 모두 선택해주세요.';
+    return;
+  }
+
+  let myInterpretation = '';
+  if(currentMode === 'practice'){
+    myInterpretation = document.getElementById('myInterpretation').value.trim();
+    if(!myInterpretation){
+      validationEl.textContent = '나의 해석을 먼저 적어주세요.';
+      return;
+    }
+  }
+
+  const spread = SPREADS[currentSpreadKey];
+  const prompt = buildPrompt(question, spread, myInterpretation);
+
+  promptBox.textContent = prompt;
+  claudeResult.innerHTML = '';
+  geminiResult.innerHTML = '';
+  resultPanel.classList.add('show');
+  resultPanel.scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+function trySyncCopy(text){
+  // execCommand only works reliably while the document still has focus —
+  // it must run BEFORE window.open() shifts focus to the new tab, and
+  // must stay fully synchronous (no await before it) so the click's
+  // "trusted user gesture" isn't lost for either the copy or the popup.
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  let ok = false;
+  try{ ok = document.execCommand('copy'); }catch(e){ ok = false; }
+  ta.remove();
+  return ok;
+}
+
+async function copyPromptToClipboard(text){
+  if(trySyncCopy(text)) return true;
+  // fall back to the modern clipboard API (may prompt for permission) —
+  // only reached if the synchronous method above failed
+  try{
+    await navigator.clipboard.writeText(text);
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+document.getElementById('openClaudeBtn').addEventListener('click', ()=>{
+  const text = promptBox.textContent;
+  if(!text){ showToast('먼저 질문 만들기를 눌러주세요.'); return; }
+  const syncOk = trySyncCopy(text); // copy while the document still has focus, before opening the tab
+  window.open('https://claude.ai/new', '_blank');
+  if(syncOk){
+    showToast('프롬프트 복사 완료! Claude 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.');
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(()=> showToast('프롬프트 복사 완료! Claude 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.'))
+      .catch(()=> showToast('복사에 실패했어요. 프롬프트를 직접 선택해서 복사해주세요.'));
+  }
+});
+
+document.getElementById('openGeminiBtn').addEventListener('click', ()=>{
+  const text = promptBox.textContent;
+  if(!text){ showToast('먼저 질문 만들기를 눌러주세요.'); return; }
+  const syncOk = trySyncCopy(text);
+  window.open('https://gemini.google.com/app', '_blank');
+  if(syncOk){
+    showToast('프롬프트 복사 완료! Gemini 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.');
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(()=> showToast('프롬프트 복사 완료! Gemini 창에 붙여넣기(Ctrl/Cmd+V) 해주세요.'))
+      .catch(()=> showToast('복사에 실패했어요. 프롬프트를 직접 선택해서 복사해주세요.'));
+  }
+});
+
+document.getElementById('copyPromptBtn').addEventListener('click', async ()=>{
+  const text = promptBox.textContent;
+  if(!text) return;
+  const ok = await copyPromptToClipboard(text);
+  showToast(ok ? '프롬프트가 복사되었어요.' : '복사에 실패했어요. 직접 선택해서 복사해주세요.');
+});
+
+function renderPastedAnswer(container, rawText){
+  const text = rawText.trim();
+  if(!text){
+    container.innerHTML = `<div class="provider-msg">붙여넣은 답변이 비어있어요.</div>`;
+    return;
+  }
+  container.innerHTML = `<div class="sb-text">${escapeHtml(text)}</div>`;
+}
+
+document.getElementById('claudeShowBtn').addEventListener('click', ()=>{
+  renderPastedAnswer(claudeResult, document.getElementById('claudePaste').value);
+});
+document.getElementById('geminiShowBtn').addEventListener('click', ()=>{
+  renderPastedAnswer(geminiResult, document.getElementById('geminiPaste').value);
+});
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* ---------------------------------------------------------
+   11. SAVE & HISTORY (stored in this browser's localStorage)
+--------------------------------------------------------- */
+const HISTORY_KEY = 'matamo_readings';
+
+function getReadings(){
+  try{ return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function setReadings(arr){
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
+}
+
+function currentSpreadLabel(){
+  if(!currentSpreadKey) return '';
+  return currentSpreadKey === 'three'
+    ? `${SPREADS.three.label} (${THREE_VARIANTS[currentThreeVariant].label})`
+    : SPREADS[currentSpreadKey].label;
+}
+
+function buildReadingRecord(){
+  return {
+    id: Date.now(),
+    date: new Date().toLocaleString('ko-KR'),
+    mode: currentMode,
+    question: document.getElementById('question').value.trim(),
+    spreadLabel: currentSpreadLabel(),
+    cards: selections.map(s => ({ position: s.position, nameKr: s.card.nameKr, nameEn: s.card.nameEn, img: s.card.img })),
+    myInterpretation: currentMode === 'practice' ? document.getElementById('myInterpretation').value.trim() : '',
+    prompt: promptBox.textContent,
+    claudeAnswer: document.getElementById('claudePaste').value.trim(),
+    geminiAnswer: document.getElementById('geminiPaste').value.trim()
+  };
+}
+
+function readingToText(r){
+  const lines = [];
+  lines.push('MATAMO TAROT 리딩 기록');
+  lines.push(`날짜: ${r.date}`);
+  lines.push(`모드: ${r.mode === 'practice' ? '연습하기' : '상담하기'}`);
+  lines.push(`질문: ${r.question}`);
+  lines.push(`배열법: ${r.spreadLabel}`);
+  lines.push('');
+  lines.push('뽑힌 카드:');
+  r.cards.forEach(c => lines.push(`- ${c.position}: ${c.nameKr} (${c.nameEn})`));
+  if(r.myInterpretation){
+    lines.push('');
+    lines.push('나의 해석:');
+    lines.push(r.myInterpretation);
+  }
+  if(r.claudeAnswer){
+    lines.push('');
+    lines.push('CLAUDE 답변:');
+    lines.push(r.claudeAnswer);
+  }
+  if(r.geminiAnswer){
+    lines.push('');
+    lines.push('GEMINI 답변:');
+    lines.push(r.geminiAnswer);
+  }
+  return lines.join('\n');
+}
+
+function downloadText(filename, text){
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* ---------------------------------------------------------
+   PDF EXPORT (via the browser's own print-to-PDF — this avoids
+   needing to embed a Korean-compatible font, which client-side PDF
+   libraries like jsPDF don't include by default)
+--------------------------------------------------------- */
+async function printAsPdf(titleText, bodyHtml){
+  const printArea = document.getElementById('printArea');
+  printArea.innerHTML = `<h1>${escapeHtml(titleText)}</h1>${bodyHtml}<div class="print-footer">MATAMO TAROT · Made by Dio</div>`;
+  // make sure the Korean web fonts are fully loaded before printing —
+  // otherwise the browser may rasterize a thinner fallback font into the PDF
+  try{
+    if(document.fonts && document.fonts.ready){
+      await document.fonts.ready;
+    }
+  }catch(e){ /* ignore, print anyway */ }
+  window.print();
+}
+
+function readingRecordToPrintHtml(r){
+  let html = `<div class="print-meta">날짜: ${escapeHtml(r.date)} · 모드: ${r.mode === 'practice' ? '연습하기' : '상담하기'} · 배열법: ${escapeHtml(r.spreadLabel)}</div>`;
+  html += `<h2>질문</h2><p>${escapeHtml(r.question)}</p>`;
+  html += `<h2>뽑힌 카드</h2><div class="print-cards">`;
+  html += r.cards.map(c => `
+    <div class="print-card">
+      <img src="${c.img}" onerror="this.style.display='none'">
+      <div>${escapeHtml(c.position)}<br>${escapeHtml(c.nameKr)}</div>
+    </div>`).join('');
+  html += `</div>`;
+  if(r.myInterpretation){ html += `<h2>나의 해석</h2><p>${escapeHtml(r.myInterpretation)}</p>`; }
+  if(r.claudeAnswer){ html += `<h2>Claude 답변</h2><p>${escapeHtml(r.claudeAnswer)}</p>`; }
+  if(r.geminiAnswer){ html += `<h2>Gemini 답변</h2><p>${escapeHtml(r.geminiAnswer)}</p>`; }
+  return html;
+}
+
+function numberRecordToPrintHtml(r){
+  let html = `<div class="print-meta">날짜: ${escapeHtml(r.date)} · 생년월일: ${escapeHtml(r.birthDate)}</div>`;
+  html += `<h2>☀ 썬 넘버 — ${r.sunNum}번 · ${escapeHtml(r.sunCard.nameKr)}</h2>`;
+  html += `<div class="print-cards"><div class="print-card"><img src="${r.sunCard.img}" onerror="this.style.display='none'"></div></div>`;
+  html += `<h2>🌙 문 넘버 — ${r.moonNum}번 · ${escapeHtml(r.moonCard.nameKr)}</h2>`;
+  html += `<div class="print-cards"><div class="print-card"><img src="${r.moonCard.img}" onerror="this.style.display='none'"></div></div>`;
+  if(r.yearCard){
+    html += `<h2>🗓 연도 카드 (${r.yearInfo.year}년) — ${r.yearInfo.num}번 · ${escapeHtml(r.yearCard.nameKr)}</h2>`;
+    html += `<div class="print-cards"><div class="print-card"><img src="${r.yearCard.img}" onerror="this.style.display='none'"></div></div>`;
+  }
+  if(r.claudeAnswer){ html += `<h2>Claude 조합 해석</h2><p>${escapeHtml(r.claudeAnswer)}</p>`; }
+  if(r.geminiAnswer){ html += `<h2>Gemini 조합 해석</h2><p>${escapeHtml(r.geminiAnswer)}</p>`; }
+  return html;
+}
+
+document.getElementById('pdfReadingBtn').addEventListener('click', ()=>{
+  if(!promptBox.textContent){ showToast('저장할 리딩이 없어요.'); return; }
+  const record = buildReadingRecord();
+  printAsPdf('MATAMO TAROT · 리딩 기록', readingRecordToPrintHtml(record));
+});
+
+document.getElementById('pdfNumberBtn').addEventListener('click', ()=>{
+  if(!lastNumberResult){ showToast('저장할 결과가 없어요.'); return; }
+  const record = buildNumberRecord();
+  printAsPdf('MATAMO TAROT · 넘버 분석', numberRecordToPrintHtml(record));
+});
+
+document.getElementById('saveReadingBtn').addEventListener('click', ()=>{
+  if(!promptBox.textContent){ showToast('저장할 리딩이 없어요.'); return; }
+  const record = buildReadingRecord();
+  const all = getReadings();
+  all.push(record);
+  setReadings(all);
+  renderHistory();
+  showToast('리딩을 저장했어요.');
+});
+
+document.getElementById('downloadReadingBtn').addEventListener('click', ()=>{
+  if(!promptBox.textContent){ showToast('저장할 리딩이 없어요.'); return; }
+  const record = buildReadingRecord();
+  downloadText(`matamo-tarot-${record.id}.txt`, readingToText(record));
+});
+
+const historyList = document.getElementById('historyList');
+
+function renderHistory(){
+  const all = getReadings();
+  if(all.length === 0){
+    historyList.innerHTML = `<div class="history-empty">아직 저장된 리딩이 없어요.</div>`;
+    return;
+  }
+  historyList.innerHTML = '';
+  all.slice().reverse().forEach(r=>{
+    const entry = document.createElement('div');
+    entry.className = 'history-entry';
+    entry.innerHTML = `
+      <div class="history-entry-head">
+        <div>
+          <div class="history-entry-title">${escapeHtml(r.question || '(질문 없음)')}</div>
+          <div class="history-entry-meta">${escapeHtml(r.date)} · ${escapeHtml(r.spreadLabel)} · ${r.mode === 'practice' ? '연습하기' : '상담하기'}</div>
+          <div class="history-entry-cards">${r.cards.map(c => `
+            <div class="history-card-thumb">
+              <div class="history-card-img">
+                <img src="${c.img}" alt="${escapeHtml(c.nameKr)}" onerror="this.remove(); this.parentElement.querySelector('.history-card-fallback').style.display='flex';">
+                <div class="history-card-fallback">${escapeHtml(c.nameKr)}</div>
+              </div>
+              <div class="history-card-label">${escapeHtml(c.position)}</div>
+            </div>`).join('')}</div>
+        </div>
+        <div class="history-entry-actions">
+          <button class="history-mini-btn" data-action="download">⬇️ 저장</button>
+          <button class="history-mini-btn" data-action="pdf">🖨 PDF</button>
+          <button class="history-mini-btn" data-action="delete">삭제</button>
+        </div>
+      </div>
+      <div class="history-entry-body">${escapeHtml(readingToText(r))}</div>
+    `;
+    entry.querySelector('.history-entry-head').addEventListener('click', (e)=>{
+      if(e.target.closest('.history-mini-btn')) return;
+      entry.querySelector('.history-entry-body').classList.toggle('open');
+    });
+    entry.querySelector('[data-action="download"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      downloadText(`matamo-tarot-${r.id}.txt`, readingToText(r));
+    });
+    entry.querySelector('[data-action="pdf"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      printAsPdf('MATAMO TAROT · 리딩 기록', readingRecordToPrintHtml(r));
+    });
+    entry.querySelector('[data-action="delete"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const updated = getReadings().filter(x => x.id !== r.id);
+      setReadings(updated);
+      renderHistory();
+      showToast('삭제했어요.');
+    });
+    historyList.appendChild(entry);
+  });
+}
+
+/* ---------------------------------------------------------
+   12. INIT
+--------------------------------------------------------- */
+renderFan();
+updateProgress();
+renderHistory();
+</script>
+</body>
+</html>
