@@ -198,6 +198,11 @@
     margin: 0 0 14px;
   }
   .intro-popup p strong{ color: var(--gold-bright); }
+  .intro-pc-note{
+    font-size: 12px; color: var(--gold-bright);
+    background: rgba(201,163,90,0.1); border: 1px solid var(--line);
+    border-radius: 8px; padding: 8px 10px; margin-bottom: 14px;
+  }
   .intro-hint{ font-size: 11.5px; color: var(--muted-dim); }
 
   /* ---------- Visitor counter ---------- */
@@ -1029,6 +1034,7 @@
     보다 정확한 타로 상담은 <strong>타로 마스터</strong>와 함께 하시기 바랍니다.<br><br>
     고민을 작성하기 전에 <strong>셔플 버튼</strong>을 먼저 눌러주세요.<br><br>
     감사합니다.</p>
+    <div class="intro-pc-note">💻 이 웹페이지는 PC에 최적화되어 있습니다.</div>
     <div class="intro-hint">화면을 클릭하면 닫혀요</div>
   </div>
 </div>
@@ -1056,7 +1062,7 @@
       <span class="mode-desc">AI에게 카드 해석을 받아요</span>
     </button>
     <button class="mode-btn" id="modePracticeBtn" data-mode="practice">
-      <span class="mode-name">✍️ 연습하기</span>
+      <span class="mode-name">✍️ 리딩연습하기</span>
       <span class="mode-desc">내가 먼저 해석하고, AI에게 슈퍼비전을 받아요</span>
     </button>
     <button class="mode-btn" id="modeNumberBtn" data-mode="number">
@@ -1070,8 +1076,8 @@
   </section>
 
   <div class="pick-method-toggle" id="pickMethodToggle" style="display:none;">
-    <button class="pm-btn active" id="pmRandomBtn" data-method="random">🎲 랜덤으로 뽑기</button>
-    <button class="pm-btn" id="pmChooseBtn" data-method="choose">🔍 내가 골라서 뽑기</button>
+    <button class="pm-btn active" id="pmRandomBtn" data-method="random">🎲 직접 뽑기</button>
+    <button class="pm-btn" id="pmChooseBtn" data-method="choose">🔍 카드보며 뽑기</button>
   </div>
 
   <section class="panel" id="numberSection" style="display:none;">
@@ -3313,7 +3319,7 @@ function readingToText(r){
   const lines = [];
   lines.push('MATAMO TAROT 리딩 기록');
   lines.push(`날짜: ${r.date}`);
-  lines.push(`모드: ${r.mode === 'practice' ? '연습하기' : '상담하기'}`);
+  lines.push(`모드: ${r.mode === 'practice' ? '리딩연습하기' : '상담하기'}`);
   lines.push(`질문: ${r.question}`);
   lines.push(`배열법: ${r.spreadLabel}`);
   lines.push('');
@@ -3368,7 +3374,7 @@ async function printAsPdf(titleText, bodyHtml){
 }
 
 function readingRecordToPrintHtml(r){
-  let html = `<div class="print-meta">날짜: ${escapeHtml(r.date)} · 모드: ${r.mode === 'practice' ? '연습하기' : '상담하기'} · 배열법: ${escapeHtml(r.spreadLabel)}</div>`;
+  let html = `<div class="print-meta">날짜: ${escapeHtml(r.date)} · 모드: ${r.mode === 'practice' ? '리딩연습하기' : '상담하기'} · 배열법: ${escapeHtml(r.spreadLabel)}</div>`;
   html += `<h2>질문</h2><p>${escapeHtml(r.question)}</p>`;
   html += `<h2>뽑힌 카드</h2><div class="print-cards">`;
   html += r.cards.map(c => `
@@ -3442,7 +3448,7 @@ function renderHistory(){
       <div class="history-entry-head">
         <div>
           <div class="history-entry-title">${escapeHtml(r.question || '(질문 없음)')}</div>
-          <div class="history-entry-meta">${escapeHtml(r.date)} · ${escapeHtml(r.spreadLabel)} · ${r.mode === 'practice' ? '연습하기' : '상담하기'}</div>
+          <div class="history-entry-meta">${escapeHtml(r.date)} · ${escapeHtml(r.spreadLabel)} · ${r.mode === 'practice' ? '리딩연습하기' : '상담하기'}</div>
           <div class="history-entry-cards">${r.cards.map(c => `
             <div class="history-card-thumb">
               <div class="history-card-img">
