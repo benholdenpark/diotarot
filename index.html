@@ -205,6 +205,82 @@
   }
   .intro-hint{ font-size: 11.5px; color: var(--muted-dim); }
 
+  /* ---------- Manual ---------- */
+  .manual-toggle{
+    position: fixed; top: 16px; left: 16px; z-index: 90;
+    background: var(--panel-light); border: 1px solid var(--gold);
+    color: var(--gold-bright); font-family:'Noto Sans KR', sans-serif;
+    font-size: 12.5px; font-weight: 600;
+    padding: 8px 14px; border-radius: 999px; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    transition: transform .15s ease, box-shadow .2s ease;
+  }
+  .manual-toggle:hover{ transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.45); }
+  @media (max-width: 560px){
+    .manual-toggle{ top: 10px; left: 10px; font-size: 11.5px; padding: 7px 11px; }
+  }
+
+  .manual-overlay{
+    display: none;
+    position: fixed; inset: 0; z-index: 110;
+    background: rgba(8,6,14,0.78);
+    backdrop-filter: blur(3px);
+    align-items: center; justify-content: center;
+    padding: 30px 16px;
+  }
+  .manual-overlay.open{ display: flex; animation: introFadeIn .25s ease; }
+  .manual-panel{
+    position: relative;
+    background: linear-gradient(180deg, var(--panel), var(--panel-light));
+    border: 1px solid var(--gold);
+    border-radius: 18px;
+    max-width: 640px; width: 100%;
+    max-height: 85vh;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 40px rgba(201,163,90,0.12);
+  }
+  .manual-close{
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--void-2); border: 1px solid var(--line); color: var(--muted);
+    font-size: 15px; cursor: pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .manual-close:hover{ color: var(--gold-bright); border-color: var(--gold); }
+  .manual-content{
+    padding: 40px 36px 32px;
+    overflow-y: auto; max-height: 85vh;
+    color: var(--ink);
+  }
+  .manual-content .manual-h1{
+    font-family:'Nanum Myeongjo', serif; font-weight:400; font-size: 22px;
+    color: var(--gold-bright); margin: 0 0 4px; padding-right: 30px;
+  }
+  .manual-content .manual-credit{ font-size: 11px; color: var(--muted-dim); margin: 0 0 22px; }
+  .manual-content h4{
+    font-family:'Nanum Myeongjo', serif; font-weight:400; font-size: 16px;
+    color: var(--gold); margin: 26px 0 10px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--line);
+  }
+  .manual-content h4:first-of-type{ margin-top: 0; }
+  .manual-content p{ font-size: 13.5px; line-height: 1.75; margin: 0 0 10px; color: var(--ink); }
+  .manual-content ul, .manual-content ol{ margin: 0 0 12px; padding-left: 20px; }
+  .manual-content li{ font-size: 13.5px; line-height: 1.75; margin-bottom: 4px; color: var(--ink); }
+  .manual-content strong{ color: var(--gold-bright); }
+  .manual-content pre{
+    background: var(--void-2); border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px 14px; font-size: 12px; color: var(--muted);
+    overflow-x: auto; margin: 0 0 12px; line-height: 1.6;
+  }
+  .manual-content table{
+    width: 100%; border-collapse: collapse; margin: 0 0 14px; font-size: 12.5px;
+  }
+  .manual-content th, .manual-content td{
+    border: 1px solid var(--line); padding: 8px 10px; text-align: left; line-height: 1.5;
+  }
+  .manual-content th{ background: rgba(201,163,90,0.1); color: var(--gold-bright); font-weight:600; }
+  .manual-content td{ color: var(--ink); }
+
   /* ---------- Visitor counter ---------- */
   .visitor-badge{
     position: fixed; top: 16px; right: 16px; z-index: 60;
@@ -1039,6 +1115,103 @@
   </div>
 </div>
 
+<button class="manual-toggle" id="manualToggle" title="사용자 매뉴얼">📖 매뉴얼</button>
+
+<div class="manual-overlay" id="manualOverlay">
+  <div class="manual-panel">
+    <button class="manual-close" id="manualClose" title="닫기">✕</button>
+    <div class="manual-content">
+      <h3 class="manual-h1">MATAMO TAROT 사용자 매뉴얼</h3>
+      <p class="manual-credit">Made by Dio</p>
+
+      <h4>1. 시작하기</h4>
+      <p>페이지를 열면 안내 팝업이 떠요. 화면 아무 곳이나 클릭하면 닫혀요. 이 웹페이지는 PC 환경에 최적화되어 있어요.</p>
+
+      <h4>2. 네 가지 모드</h4>
+      <table>
+        <tr><th>모드</th><th>설명</th></tr>
+        <tr><td>🔮 상담하기</td><td>카드를 뽑고 AI(Claude/Gemini)에게 해석을 받는 기본 모드</td></tr>
+        <tr><td>✍️ 리딩연습하기</td><td>내가 먼저 직접 해석을 작성하고, AI에게 슈퍼비전(피드백)을 받는 연습용 모드. 실전 예시 질문 75개 제공</td></tr>
+        <tr><td>🔢 넘버 분석</td><td>생년월일로 썬 넘버·문 넘버·연도 카드를 확인</td></tr>
+        <tr><td>💕 궁합 보기</td><td>두 사람의 생년월일로 궁합을 확인</td></tr>
+      </table>
+
+      <h4>3. 카드 뽑는 방법 두 가지 (리딩연습하기 모드)</h4>
+      <ul>
+        <li><strong>🎲 직접 뽑기</strong> — 78장이 뒷면으로 부채꼴로 펼쳐짐. 클릭 후 트레이에서 뒤집어 확인</li>
+        <li><strong>🔍 카드보며 뽑기</strong> — 78장 전체 앞면이 10장씩 나열, 원하는 카드를 보고 직접 선택</li>
+      </ul>
+
+      <h4>4. 배열법 전체 목록</h4>
+      <table>
+        <tr><th>배열법</th><th>카드 수</th><th>특징</th></tr>
+        <tr><td>원카드</td><td>1장</td><td>오늘의 카드</td></tr>
+        <tr><td>쓰리카드</td><td>3장</td><td>5가지 프레임 중 선택</td></tr>
+        <tr><td>5카드</td><td>5장</td><td>현재 상황·도전 과제·내면의 힘·조언·결과</td></tr>
+        <tr><td>양자택일</td><td>5장</td><td>두 선택지 비교, 피라미드 배치</td></tr>
+        <tr><td>매직세븐</td><td>7장</td><td>육망성(별) 모양 배치</td></tr>
+        <tr><td>시기 보기</td><td>3~6장</td><td>카드 수·명칭 직접 입력 (예: 3월/4월/5월)</td></tr>
+        <tr><td>미니 켈틱</td><td>6장</td><td>켈틱크로스의 십자 블록만 사용</td></tr>
+        <tr><td>켈틱크로스</td><td>10장</td><td>십자 + 기둥 모양의 전통 배열법</td></tr>
+      </table>
+
+      <p><strong>쓰리카드 5가지 프레임:</strong> 과거·현재·미래 / 원인·과정·결과 / 현재·가까운 미래·먼 미래 / 상황·장애물·조언 / 오늘의 운세(아침·점심·저녁)</p>
+
+      <p><strong>켈틱크로스 10자리:</strong> ① 현재의 나(나의 상황) ② 장애물 ③ 환경적 요인(내적) ④ 과거 또는 원인 ⑤ 외적 요인 ⑥ 가까운 미래 ⑦ 내가 보는 나 ⑧ 남들이 보는 나 ⑨ 희망 또는 두려움 ⑩ 전체적인 결과</p>
+
+      <h4>5. 조언 카드 추가 뽑기</h4>
+      <p>필요한 카드를 다 뽑으면 "🃏 조언 카드 한 장 더 뽑기" 버튼이 나타나요. 배열법당 한 번만 사용 가능해요.</p>
+
+      <h4>6. AI에게 물어보기 (API 키 불필요)</h4>
+      <ol>
+        <li>카드를 다 뽑고 "질문 만들기"(또는 "슈퍼비전 요청 만들기") 클릭</li>
+        <li>프롬프트 자동 생성</li>
+        <li>"✦ 복사 + Claude 열기" 또는 "✦ 복사 + Gemini 열기" 클릭 → 자동 복사 + 새 창 열림</li>
+        <li>새 창에 붙여넣기(Ctrl/Cmd+V) 후 전송</li>
+        <li>받은 답변을 복사해서 이 페이지에 붙여넣고 "이 답변 표시하기" 클릭</li>
+      </ol>
+
+      <h4>7. 저장 · PDF · 기록 관리</h4>
+      <ul>
+        <li>💾 이 리딩 저장하기 — 브라우저에 기록 저장</li>
+        <li>⬇️ 텍스트 파일로 저장 — .txt 다운로드</li>
+        <li>🖨 PDF로 저장 — 인쇄 기능으로 PDF 저장</li>
+      </ul>
+      <p>⚠️ 저장 기능은 이 브라우저에만 저장돼요(localStorage). 다른 기기·브라우저에는 안 보여요.</p>
+
+      <h4>8. 넘버 분석</h4>
+      <ul>
+        <li><strong>☀ 썬 넘버</strong> — 생년월일 전체를 더해 1~9로 축약, 타고난 기질</li>
+        <li><strong>🌙 문 넘버</strong> — 생월+생일을 더해 1~9로 축약, 사회적 성향</li>
+        <li><strong>🗓 연도 카드</strong> — 올해 연도+생월+생일을 더해 21 이하로 축약, 올해의 테마</li>
+      </ul>
+
+      <h4>9. 궁합 보기</h4>
+      <p>두 사람의 생년월일을 입력하면 각자의 썬/문/연도 카드를 비교해서, 잘 맞는 지점·갈등 지점·올해의 관계 흐름·조언을 AI에게 요청할 수 있어요.</p>
+
+      <h4>10. 나만의 이미지 · 로고 · 음악 넣기</h4>
+      <p>HTML 파일과 같은 위치에 아래 구조로 넣으면 자동 적용돼요.</p>
+      <pre>images/logo.png
+images/cards/major-00-fool.jpg ... (78장)
+audio/bgm.mp3</pre>
+      <p>이미지가 없는 카드는 카드 이름으로 자동 대체 표시돼요.</p>
+
+      <h4>11. 기타</h4>
+      <ul>
+        <li><strong>셔플 버튼</strong> — 모든 입력 초기화 (단, 현재 모드는 유지)</li>
+        <li><strong>오른쪽 상단 방문자 수</strong> — 배포된 사이트에서 자동 집계</li>
+        <li><strong>오른쪽 하단 🎵</strong> — 배경음악 재생/정지</li>
+      </ul>
+
+      <h4>자주 묻는 질문</h4>
+      <p><strong>Q. API 키가 필요한가요?</strong><br>A. 아니요, 전혀 필요 없어요. 평소 쓰시는 Claude/Gemini 계정 그대로 무료로 사용해요.</p>
+      <p><strong>Q. 저장한 리딩이 다른 컴퓨터에서도 보이나요?</strong><br>A. 아니요, 브라우저마다 따로 저장돼요.</p>
+      <p><strong>Q. 모바일에서도 되나요?</strong><br>A. 네, 되지만 PC 환경에 최적화되어 있어요.</p>
+    </div>
+  </div>
+</div>
+
+
 <button class="bgm-toggle" id="bgmToggle" title="배경음악 재생/정지">🎵</button>
 <audio id="bgmAudio" loop preload="auto"></audio>
 
@@ -1328,6 +1501,27 @@
   overlay.addEventListener('click', ()=>{
     overlay.classList.add('hidden');
   }, { once:true });
+})();
+
+/* ---------------------------------------------------------
+   -1b. MANUAL PANEL (click to open, click outside/close/Esc to dismiss)
+--------------------------------------------------------- */
+(function initManual(){
+  const toggle = document.getElementById('manualToggle');
+  const overlay = document.getElementById('manualOverlay');
+  const closeBtn = document.getElementById('manualClose');
+
+  function open(){ overlay.classList.add('open'); }
+  function close(){ overlay.classList.remove('open'); }
+
+  toggle.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', (e)=>{
+    if(e.target === overlay) close(); // click on the dark backdrop, not the panel itself
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && overlay.classList.contains('open')) close();
+  });
 })();
 
 /* ---------------------------------------------------------
