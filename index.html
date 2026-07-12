@@ -537,6 +537,21 @@
   textarea::placeholder{ color: var(--muted-dim); }
   textarea:focus{ border-color: var(--gold); }
 
+  .question-recap{
+    background: rgba(201,163,90,0.08);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .question-recap-label{
+    font-size: 11.5px; font-weight: 700; color: var(--gold);
+    letter-spacing: 0.03em; margin-bottom: 6px;
+  }
+  .question-recap-text{
+    font-size: 14px; line-height: 1.6; color: var(--ink); white-space: pre-wrap;
+  }
+
   .example-picker{ margin-bottom: 16px; }
   .example-picker label{
     display:block; font-size: 12.5px; color: var(--gold-bright);
@@ -1435,6 +1450,10 @@ audio/bgm.mp3</pre>
     <section class="panel" id="myInterpretationPanel" style="display:none;">
       <h2>3 · 나의 해석을 적어주세요</h2>
       <p class="sub">뽑힌 카드를 보고, 스스로 먼저 해석해보세요. 이 내용을 바탕으로 AI가 슈퍼비전을 해드려요.</p>
+      <div class="question-recap" id="questionRecap" style="display:none;">
+        <div class="question-recap-label">📌 나의 고민</div>
+        <div class="question-recap-text" id="questionRecapText"></div>
+      </div>
       <textarea id="myInterpretation" placeholder="예) 첫 번째 카드는 과거를 나타내는데, 이 사람이 겪었던 어려움을 상징하는 것 같아요. 두 번째 카드는..."></textarea>
     </section>
 
@@ -2248,6 +2267,21 @@ const myInterpretationPanel = document.getElementById('myInterpretationPanel');
 const resultHeading = document.getElementById('resultHeading');
 const resultSub = document.getElementById('resultSub');
 
+// Keeps a copy of the question visible just above the "나의 해석" textarea,
+// so the person doesn't have to scroll back up to panel 1 while writing.
+function updateQuestionRecap(){
+  const recap = document.getElementById('questionRecap');
+  const recapText = document.getElementById('questionRecapText');
+  const q = document.getElementById('question').value.trim();
+  if(q){
+    recapText.textContent = q;
+    recap.style.display = 'block';
+  } else {
+    recap.style.display = 'none';
+  }
+}
+document.getElementById('question').addEventListener('input', updateQuestionRecap);
+
 function selectMode(mode){
   currentMode = mode;
   document.getElementById('modeConsultBtn').classList.toggle('active', mode === 'consult');
@@ -2300,6 +2334,7 @@ function selectMode(mode){
     interpretBtn.textContent = '슈퍼비전 요청 만들기';
     resultHeading.textContent = '4 · AI 슈퍼비전 받기';
     resultSub.textContent = '아래 내용을 복사해서 Claude나 Gemini 창에 붙여넣으면, 내가 쓴 해석에 대한 슈퍼비전을 받을 수 있어요.';
+    updateQuestionRecap();
   } else {
     myInterpretationPanel.style.display = 'none';
     examplePicker.style.display = 'none';
@@ -2996,6 +3031,7 @@ document.getElementById('pmChooseBtn').addEventListener('click', ()=> selectPick
     if(select.value === '') return;
     const q = EXAMPLE_QUESTIONS[Number(select.value)];
     document.getElementById('question').value = q.text;
+    updateQuestionRecap();
     showToast(`[${q.category}] 예시 질문을 불러왔어요. 자유롭게 수정해도 좋아요.`);
   });
 })();
@@ -3127,6 +3163,7 @@ document.getElementById('shuffleBtn').addEventListener('click', ()=>{
   adviceCardRequested = false;
 
   document.getElementById('question').value = '';
+  updateQuestionRecap();
   document.getElementById('exampleSelect').value = '';
   document.getElementById('myInterpretation').value = '';
   validationEl.textContent = '';
