@@ -804,6 +804,19 @@
   }
   .timing-input-wrap input:focus{ border-color: var(--gold); }
 
+  .either-config{ margin-top: 12px; padding-top: 14px; border-top: 1px dashed var(--line); }
+  .either-config-row{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 480px){ .either-config-row{ grid-template-columns: 1fr; } }
+  .either-config-field label{
+    display:block; font-size: 12px; color: var(--gold-bright); margin: 0 0 6px; font-weight:600;
+  }
+  .either-config-field input{
+    width:100%; background: var(--void-2); border:1px solid var(--line); border-radius:10px;
+    padding: 10px 12px; color: var(--ink); font-family:'Noto Sans KR', sans-serif; font-size: 14px;
+    outline:none;
+  }
+  .either-config-field input:focus{ border-color: var(--gold); }
+
   .progress-row{
     display:flex; align-items:center; justify-content:space-between;
     margin-top: 22px; flex-wrap: wrap; gap: 10px;
@@ -819,8 +832,8 @@
     display:grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
-      "ec3 ec5"
-      "ec2 ec4"
+      "ec5 ec3"
+      "ec4 ec2"
       "ec1 ec1";
     justify-items:center;
     align-items:end;
@@ -1636,6 +1649,20 @@ audio/bgm.mp3</pre>
         </div>
         <div class="timing-label-hint">각 카드 아래 칸에 원하는 명칭을 직접 입력해주세요. (예: 3월, 4월, 5월 / 1주차, 2주차 / 봄, 여름...)</div>
         <div class="timing-inputs" id="timingInputs"></div>
+      </div>
+
+      <div class="either-config" id="eitherConfig" style="display:none;">
+        <div class="timing-label-hint">두 선택지가 각각 무엇인지 입력해두면, 카드 라벨과 AI 프롬프트에 그대로 반영돼요.</div>
+        <div class="either-config-row">
+          <div class="either-config-field">
+            <label for="eitherLabelB">B 선택 (왼쪽)</label>
+            <input type="text" id="eitherLabelB" placeholder="예: 지금 회사에 남기" maxlength="30">
+          </div>
+          <div class="either-config-field">
+            <label for="eitherLabelA">A 선택 (오른쪽)</label>
+            <input type="text" id="eitherLabelA" placeholder="예: 이직하기" maxlength="30">
+          </div>
+        </div>
       </div>
 
       <div class="progress-row">
@@ -3007,7 +3034,7 @@ const SPREADS = {
   three: { label:'쓰리카드', count:3, positions:['과거','현재','미래'] },
   five:  { label:'5카드', count:5,  positions:['현재 상황','도전 과제','내면의 힘','조언','결과'] },
   either:{ label:'양자택일', count:5, positions:[
-      '현재의 나','첫번째 선택의 과정','첫번째 선택의 결과','두번째 선택의 과정','두번째 선택의 결과'
+      '현재의 나','A선택의 과정','A선택의 미래','B선택의 과정','B선택의 미래'
   ]},
   magic7:{ label:'매직세븐', count:7, positions:[
       '과거','현재','미래','조언','환경·무의식','장애물','결과'
@@ -4105,6 +4132,11 @@ document.getElementById('shuffleBtn').addEventListener('click', ()=>{
   renderTimingInputs();
   applyTimingSpread();
 
+  eitherConfig.style.display = 'none';
+  eitherLabelAInput.value = '';
+  eitherLabelBInput.value = '';
+  applyEitherLabels();
+
   selectMode(currentMode); // re-apply the current mode's UI state without switching modes
 
   renderFan();
@@ -4123,6 +4155,28 @@ const threeVariantGrid = document.getElementById('threeVariantGrid');
 const timingConfig = document.getElementById('timingConfig');
 const timingCountBtns = document.getElementById('timingCountBtns');
 const timingInputsEl = document.getElementById('timingInputs');
+const eitherConfig = document.getElementById('eitherConfig');
+const eitherLabelAInput = document.getElementById('eitherLabelA');
+const eitherLabelBInput = document.getElementById('eitherLabelB');
+
+// Either/or spread: the person can name what each side actually represents
+// (e.g. "이직하기" vs "지금 회사에 남기") — this flows into the card
+// position labels and the AI prompt for a much more specific reading.
+function applyEitherLabels(){
+  const labelA = eitherLabelAInput.value.trim();
+  const labelB = eitherLabelBInput.value.trim();
+  SPREADS.either.positions = [
+    '현재의 나',
+    labelA ? `A선택(${labelA})의 과정` : 'A선택의 과정',
+    labelA ? `A선택(${labelA})의 미래` : 'A선택의 미래',
+    labelB ? `B선택(${labelB})의 과정` : 'B선택의 과정',
+    labelB ? `B선택(${labelB})의 미래` : 'B선택의 미래'
+  ];
+  refreshSpreadBtnLabel('either');
+  if(currentSpreadKey === 'either'){ renderTray(); updateProgress(); }
+}
+eitherLabelAInput.addEventListener('input', applyEitherLabels);
+eitherLabelBInput.addEventListener('input', applyEitherLabels);
 
 // Timing spread: variable card count (3-6), with freely user-typed labels
 // per card (e.g. "3월", "4월"...) instead of fixed position names.
@@ -4243,6 +4297,13 @@ function selectSpread(key){
     applyTimingSpread();
   } else {
     timingConfig.style.display = 'none';
+  }
+
+  if(key === 'either'){
+    eitherConfig.style.display = 'block';
+    applyEitherLabels();
+  } else {
+    eitherConfig.style.display = 'none';
   }
 
   renderFan();
