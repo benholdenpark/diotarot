@@ -281,6 +281,99 @@
   .manual-content th{ background: rgba(201,163,90,0.1); color: var(--gold-bright); font-weight:600; }
   .manual-content td{ color: var(--ink); }
 
+  /* ---------- Result View modal ---------- */
+  .result-view-overlay{
+    display:none;
+    position: fixed; inset: 0; z-index: 130;
+    background: rgba(6,4,10,0.86);
+    backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+    padding: 24px 16px;
+  }
+  .result-view-overlay.open{ display:flex; animation: introFadeIn .25s ease; }
+  .result-view-panel{
+    position: relative;
+    width: 100%; max-width: 680px; max-height: 90vh;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(201,163,90,0.10), transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(97,31,62,0.35), transparent 55%),
+      linear-gradient(180deg, var(--panel), var(--void-2));
+    border: 1px solid var(--gold);
+    border-radius: 18px;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.65), 0 0 50px rgba(201,163,90,0.14);
+    display:flex; flex-direction:column;
+    overflow:hidden;
+  }
+  .result-view-close{
+    position: absolute; top: 14px; right: 14px; z-index: 3;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--void-2); border: 1px solid var(--line); color: var(--muted);
+    font-size: 15px; cursor: pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .result-view-close:hover{ color: var(--gold-bright); border-color: var(--gold); }
+  .result-view-header{
+    text-align:center; padding: 34px 30px 20px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .result-view-icon{ font-size: 26px; margin-bottom: 8px; filter: drop-shadow(0 0 10px rgba(201,163,90,0.5)); }
+  .result-view-header h2{
+    font-family:'Nanum Myeongjo', serif; font-weight: 400; font-size: 22px;
+    color: var(--gold-bright); margin: 0;
+  }
+  .result-view-sub{ font-size: 12px; color: var(--muted); margin-top: 6px; letter-spacing: 0.03em; }
+  .result-view-body{
+    padding: 28px 30px; overflow-y: auto; flex: 1;
+  }
+  .result-view-actions{
+    display:flex; gap: 10px; padding: 18px 30px; border-top: 1px solid var(--line);
+    flex-shrink: 0; flex-wrap: wrap;
+  }
+  .result-view-actions .action-btn{ flex: 1; min-width: 160px; }
+
+  /* Reuse the same semantic markup the PDF export already builds
+     (.print-meta / .print-cards / .print-card / h2 / p), restyled here
+     for on-screen viewing inside the modal. These selectors are scoped to
+     .result-view-body so they never affect the hidden #printArea used for
+     actual PDF export. */
+  .result-view-body .print-meta{
+    font-size: 12px; color: var(--muted); letter-spacing: 0.03em;
+    margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px dashed var(--line);
+    text-align:center;
+  }
+  .result-view-body h2{
+    font-family:'Nanum Myeongjo', serif; font-weight: 400; font-size: 16px;
+    color: var(--gold); margin: 26px 0 12px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--line);
+  }
+  .result-view-body h2:first-of-type{ margin-top: 0; }
+  .result-view-body p{
+    font-size: 14.5px; line-height: 1.85; color: var(--ink);
+    word-break: keep-all; overflow-wrap: break-word;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+  .result-view-body .print-cards{
+    display:flex; flex-wrap:wrap; gap: 14px; justify-content:center;
+  }
+  .result-view-body .print-card{
+    width: 96px; text-align:center; font-size: 12px; color: var(--muted);
+  }
+  .result-view-body .print-card img{
+    width:100%; border-radius: 8px; border: 1px solid var(--gold);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+    margin-bottom: 6px;
+  }
+  @media (max-width: 560px){
+    .result-view-header{ padding: 26px 20px 16px; }
+    .result-view-body{ padding: 20px; }
+    .result-view-actions{ padding: 14px 20px; flex-direction:column; }
+    .result-view-actions .action-btn{ width:100%; }
+  }
+
+
   /* ---------- Visitor counter ---------- */
   .visitor-badge{
     position: fixed; top: 16px; right: 16px; z-index: 60;
@@ -480,6 +573,71 @@
   .choose-card.used .choose-card-img{ opacity: 0.3; filter: grayscale(0.6); }
   .choose-card.used:hover .choose-card-img{ transform:none; filter: grayscale(0.6); }
   .choose-card.used .choose-card-name{ opacity: 0.4; }
+
+  /* ---------- Card study detail panel ---------- */
+  #studyDetailPanel{ --study-accent: var(--gold); }
+  .study-detail-head{
+    display:flex; align-items:center; gap: 26px; margin-bottom: 28px;
+    padding-bottom: 24px; border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .study-detail-img{
+    flex-shrink: 0; width: 136px; height: 232px;
+    border-radius: 10px; overflow:hidden;
+    border: 1px solid var(--study-accent);
+    background: var(--panel-light);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45), 0 0 22px color-mix(in srgb, var(--study-accent) 35%, transparent);
+    display:flex; align-items:center; justify-content:center;
+    position: relative;
+  }
+  .study-detail-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .study-detail-fallback{
+    display:none; align-items:center; justify-content:center; text-align:center;
+    width:100%; height:100%; padding:10px;
+    font-family:'Nanum Myeongjo', serif; color: var(--gold-bright); font-size: 15px;
+  }
+  .study-detail-num{
+    font-size: 11.5px; color: var(--muted); letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .study-detail-title h2{
+    font-family:'Nanum Myeongjo', serif; font-weight: 400; font-size: 26px; color: var(--gold-bright);
+    margin-top: 6px;
+    display:flex; align-items:center; gap: 8px;
+  }
+  .study-suit-icon{
+    display:inline-flex; align-items:center; justify-content:center;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: color-mix(in srgb, var(--study-accent) 22%, var(--void-2));
+    border: 1px solid var(--study-accent);
+    font-size: 14px;
+  }
+  @media (max-width: 560px){
+    .study-detail-head{ flex-direction:column; text-align:center; gap: 16px; }
+    .study-detail-img{ width: 116px; height: 198px; }
+    .study-detail-title h2{ justify-content:center; }
+  }
+
+  .study-tagline{
+    font-family:'Nanum Myeongjo', serif;
+    font-weight: 700; font-size: 18px; line-height: 1.5;
+    color: var(--study-accent);
+    background: color-mix(in srgb, var(--study-accent) 10%, transparent);
+    border-left: 3px solid var(--study-accent);
+    padding: 12px 18px;
+    margin-bottom: 22px;
+    border-radius: 0 8px 8px 0;
+    word-break: keep-all;
+  }
+  .study-bio{
+    font-family:'Nanum Myeongjo', serif;
+    font-size: 15.5px; line-height: 2; color: var(--ink);
+    letter-spacing: 0.01em;
+    max-width: 640px;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    text-align: justify;
+  }
 
   details.legend{
     max-width: 640px; margin: 18px auto 0; text-align:center;
@@ -1226,6 +1384,21 @@ audio/bgm.mp3</pre>
   </div>
 </div>
 
+<div class="result-view-overlay" id="resultViewOverlay">
+  <div class="result-view-panel">
+    <button class="result-view-close" id="resultViewClose" title="닫기">✕</button>
+    <div class="result-view-header">
+      <div class="result-view-icon">🔮</div>
+      <h2 id="resultViewTitle"></h2>
+      <div class="result-view-sub" id="resultViewSub"></div>
+    </div>
+    <div class="result-view-body" id="resultViewBody"></div>
+    <div class="result-view-actions">
+      <button class="action-btn primary" id="resultViewSaveText">⬇️ 텍스트로 저장</button>
+      <button class="action-btn primary" id="resultViewSavePdf">🖨 PDF로 저장</button>
+    </div>
+  </div>
+</div>
 
 <button class="bgm-toggle" id="bgmToggle" title="배경음악 재생/정지">🎵</button>
 <audio id="bgmAudio" loop preload="auto"></audio>
@@ -1260,6 +1433,10 @@ audio/bgm.mp3</pre>
     <button class="mode-btn" id="modeCompatBtn" data-mode="compat">
       <span class="mode-name">💕 궁합 보기</span>
       <span class="mode-desc">두 사람의 생년월일로 궁합을 봐요</span>
+    </button>
+    <button class="mode-btn" id="modeStudyBtn" data-mode="study">
+      <span class="mode-name">🎭 카드 공부</span>
+      <span class="mode-desc">78장 카드의 성격적 특성을 하나씩 배워요</span>
     </button>
   </section>
 
@@ -1307,6 +1484,7 @@ audio/bgm.mp3</pre>
         </div>
       </div>
       <div class="save-row">
+        <button class="action-btn primary" id="viewNumberBtn">🔮 결과 보기</button>
         <button class="action-btn primary" id="saveNumberBtn">💾 이 결과 저장하기</button>
         <button class="action-btn" id="pdfNumberBtn">🖨 PDF로 저장</button>
         <button class="action-btn" id="resetNumberBtn">🔄 초기화 (다른 사람 보기)</button>
@@ -1373,6 +1551,7 @@ audio/bgm.mp3</pre>
       </div>
 
       <div class="save-row">
+        <button class="action-btn primary" id="viewCompatBtn">🔮 결과 보기</button>
         <button class="action-btn primary" id="saveCompatBtn">💾 이 궁합 저장하기</button>
         <button class="action-btn" id="pdfCompatBtn">🖨 PDF로 저장</button>
         <button class="action-btn" id="resetCompatBtn">🔄 초기화 (다른 두 사람 보기)</button>
@@ -1385,6 +1564,26 @@ audio/bgm.mp3</pre>
     <h2>📖 저장된 궁합</h2>
     <p class="sub">이 브라우저에만 저장돼요 (다른 기기·브라우저에는 안 보여요).</p>
     <div id="compatHistoryList"></div>
+  </section>
+
+  <section class="panel" id="studySection" style="display:none;">
+    <h2>🎭 카드 성격 공부</h2>
+    <p class="sub">바보 카드(0번)부터 순서대로, 메이저 아르카나 22장과 궁정 카드(페이지·나이트·퀸·킹) 16장 — 총 38장의 성격을 하나의 글로 자연스럽게 읽어볼 수 있어요.</p>
+    <div class="choose-grid" id="studyGrid"></div>
+  </section>
+
+  <section class="panel" id="studyDetailPanel" style="display:none;">
+    <div class="study-detail-head">
+      <div class="study-detail-img" id="studyDetailImg">
+        <img id="studyDetailImgTag" alt="">
+        <div class="study-detail-fallback" id="studyDetailFallback"></div>
+      </div>
+      <div class="study-detail-title">
+        <div class="study-detail-num" id="studyDetailNum"></div>
+        <h2 id="studyDetailName" style="margin:4px 0 0;"></h2>
+      </div>
+    </div>
+    <div id="studyDetailBody"></div>
   </section>
 
   <div id="readingFlow">
@@ -1490,11 +1689,12 @@ audio/bgm.mp3</pre>
       </div>
 
       <div class="save-row">
+        <button class="action-btn primary" id="viewReadingBtn">🔮 결과 보기</button>
         <button class="action-btn primary" id="saveReadingBtn">💾 이 리딩 저장하기</button>
         <button class="action-btn" id="downloadReadingBtn">⬇️ 텍스트 파일로 저장</button>
         <button class="action-btn" id="pdfReadingBtn">🖨 PDF로 저장</button>
       </div>
-      <div class="open-note">"저장하기"는 이 브라우저에 기록으로 남겨서 아래 "저장된 리딩"에서 다시 볼 수 있게 해요. "텍스트 파일로 저장"은 지금 이 리딩을 .txt 파일로 바로 내려받아요. "PDF로 저장"을 누르면 인쇄창이 열리는데, 대상(프린터)을 "PDF로 저장"으로 선택하시면 돼요.</div>
+      <div class="open-note">"🔮 결과 보기"를 누르면 예쁘게 정리된 창으로 전체 리딩을 볼 수 있어요. "저장하기"는 이 브라우저에 기록으로 남겨서 아래 "저장된 리딩"에서 다시 볼 수 있게 해요. "텍스트 파일로 저장"은 지금 이 리딩을 .txt 파일로 바로 내려받아요. "PDF로 저장"을 누르면 인쇄창이 열리는데, 대상(프린터)을 "PDF로 저장"으로 선택하시면 돼요.</div>
     </section>
 
     <section class="panel" id="historyPanel">
@@ -1540,6 +1740,45 @@ audio/bgm.mp3</pre>
   });
   document.addEventListener('keydown', (e)=>{
     if(e.key === 'Escape' && overlay.classList.contains('open')) close();
+  });
+})();
+
+/* ---------------------------------------------------------
+   0c. RESULT VIEW MODAL — a shared, nicely-designed viewer used by
+   every mode (상담하기/리딩연습하기/넘버 분석/궁합 보기) to show a
+   completed reading, and reused when reopening a saved history entry.
+--------------------------------------------------------- */
+let currentResultView = null; // { title, subText, htmlBody, textBody, filenamePrefix }
+
+function openResultView({ title, subText, htmlBody, textBody, filenamePrefix }){
+  currentResultView = { title, htmlBody, textBody, filenamePrefix };
+  document.getElementById('resultViewTitle').textContent = title;
+  document.getElementById('resultViewSub').textContent = subText || '';
+  document.getElementById('resultViewBody').innerHTML = htmlBody;
+  document.getElementById('resultViewOverlay').classList.add('open');
+}
+
+(function initResultView(){
+  const overlay = document.getElementById('resultViewOverlay');
+  const closeBtn = document.getElementById('resultViewClose');
+
+  function close(){ overlay.classList.remove('open'); }
+
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', (e)=>{
+    if(e.target === overlay) close();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && overlay.classList.contains('open')) close();
+  });
+
+  document.getElementById('resultViewSaveText').addEventListener('click', ()=>{
+    if(!currentResultView) return;
+    downloadText(`${currentResultView.filenamePrefix}-${Date.now()}.txt`, currentResultView.textBody);
+  });
+  document.getElementById('resultViewSavePdf').addEventListener('click', ()=>{
+    if(!currentResultView) return;
+    printAsPdf(currentResultView.title, currentResultView.htmlBody);
   });
 })();
 
@@ -1592,53 +1831,8 @@ audio/bgm.mp3</pre>
   audio.addEventListener('play', ()=> toggle.classList.add('playing'));
   audio.addEventListener('pause', ()=> toggle.classList.remove('playing'));
 
-  function attemptAutoplay(){
-    // browsers always allow MUTED autoplay, but block unmuted autoplay
-    // without a user gesture — so start silently, then unmute on the
-    // person's first interaction with the page. This is the only way to
-    // get audio actually playing "from the start" rather than waiting
-    // for an explicit click on the toggle button.
-    audio.muted = true;
-    audio.play().then(()=>{
-      const unmuteOnInteraction = (e)=>{
-        if(e.target === toggle || (e.target.closest && e.target.closest('#bgmToggle'))) return;
-        audio.muted = false;
-        document.removeEventListener('click', unmuteOnInteraction);
-        document.removeEventListener('keydown', unmuteOnInteraction);
-      };
-      document.addEventListener('click', unmuteOnInteraction);
-      document.addEventListener('keydown', unmuteOnInteraction, { once:true });
-    }).catch(()=>{
-      // even muted autoplay failed — most likely no valid audio file was
-      // found yet (candidates all 404'd). Fall back to starting on the
-      // first interaction once a source becomes available.
-      audio.muted = false;
-      const startOnInteraction = (e)=>{
-        if(e.target === toggle || (e.target.closest && e.target.closest('#bgmToggle'))) return;
-        audio.play().catch(()=>{});
-        document.removeEventListener('click', startOnInteraction);
-        document.removeEventListener('keydown', startOnInteraction);
-      };
-      document.addEventListener('click', startOnInteraction);
-      document.addEventListener('keydown', startOnInteraction, { once:true });
-    });
-  }
-
-  tryNextSource();
-  attemptAutoplay();
-
   toggle.addEventListener('click', ()=>{
     if(!audio.src) tryNextSource();
-    if(audio.muted){
-      // it's already playing silently (autoplay-muted) — unmute instead of pausing
-      audio.muted = false;
-      if(audio.paused){
-        audio.play().catch(()=>{
-          showToast('음악 파일을 찾지 못했어요. audio/bgm.mp3 위치에 넣어주세요.');
-        });
-      }
-      return;
-    }
     if(audio.paused){
       audio.play().catch(()=>{
         showToast('음악 파일을 찾지 못했어요. audio/bgm.mp3 위치에 넣어주세요.');
@@ -1790,6 +1984,603 @@ function buildDeck(){
   return deck;
 }
 const DECK = buildDeck(); // 78 cards, fixed order (used for legend)
+
+/* ---------------------------------------------------------
+   2d. CARD PERSONALITY PROFILES (for the 카드 공부 study mode)
+--------------------------------------------------------- */
+const CARD_PERSONALITY = {
+  'major-00': {
+    basic: [`계산적이지 않고 순수하며 낙천적`, `타인에 대한 악의는 없으나, 생각 없이 뱉는 말로 상처를 주기도 함 (착해서가 아니라 그저 생각이 없는 것)`, `자유로운 영혼 — 구속·집착·잔소리를 싫어함`, `철이 없고 아이 같으며 충동적`, `MBTI상 E 성향, 밖에서 노는 것을 좋아함`],
+    strengths: [`창의적인 아이디어`, `즉흥적이고 유쾌하며 열정이 가득함`, `이상주의자 — 미래가 밝을 것이라는 희망을 가짐`, `무엇이든 꽂히면 직진하는 추진력`],
+    weaknesses: [`시작은 좋으나 끝이 없음 — 책임감 부족, 변덕이 심함`, `끈기가 부족해 마무리를 짓지 못함`, `경솔하고 신뢰감이 부족한 가벼운 사람`, `유혹에 약하고 쉽게 사랑에 빠짐`, `자기중심적·이기적 — 타인이 자신을 따르길 바라지만 리더십은 없음`, `희망은 있어도 실질적 준비는 없음`],
+    love: [`책임감 없이 하고 싶은 대로 행동`, `연인에게 맞춰주지 않고 고집이 셈`, `자유를 억압하는 연애를 견디지 못해 오래 지속하기 어려움`],
+    symbol: [`천왕성과 연결 — 단체생활이나 억압적 분위기를 견디지 못함`, `전체적으로 유쾌하지만 가벼워 보이는 인상`],
+  },
+  'major-01': {
+    basic: [`대인관계에 능숙하고 호감이 가는 스타일`, `언변이 좋고 끼가 넘쳐서 이성에게 인기가 많음`, `호기심이 많고 다방면에 관심이 많으며 뭐든 잘함`, `옷을 잘 입고 자기 자신을 잘 꾸밈`, `일 벌이길 좋아함`, `사람들 앞에 나서길 좋아하고 당당함`],
+    strengths: [`창의력이 넘치고 아이디어를 실현시키는 능력이 있음`, `유머감각이 뛰어나고 말을 잘해서 의사소통 능력이 좋음 (말로 벌어먹고 살아도 될 정도)`, `머리가 좋고 응용력이 좋음`],
+    weaknesses: [`허세와 허풍이 심하게 나타날 수 있음`, `왕자병(공주병)이 있을 수 있음`, `자기 잘난 맛에 사는 사람이라 칭찬에 약함`, `시작은 있는데 끝이 없음 — 여기저기 관심이 많아서 끝을 보지 않고 다른 일에 빠짐`, `작정하고 사기 치면 정말 잘 침 — 없는 것도 있는 것처럼 만드는 능력이 있음`, `동업하기에 신뢰가 가는 사람은 아님`, `본인 멋대로 하는 성향이 있고 이기적이며 공감 능력이 부족함`],
+    love: [`나쁜 남자·나쁜 여자 스타일`, `평생 한 사람만 보고 살기 힘들고 바람기가 많음`, `말과 행동을 로맨틱하게 잘함`, `유혹에 약하고 금사빠 기질이 있음`],
+    symbol: [`수성과 연결 — 소통·재치·정보 처리 능력을 상징`, `손에 도구를 쥔 이미지처럼, 뭐든 다룰 줄 아는 재주꾼`],
+  },
+  'major-02': {
+    basic: [`비밀을 간직하고 있고, 비밀을 잘 지켜주는 사람`, `대인관계가 폭넓지 않고 내성적이며 사교적이지 않음 (MBTI로는 INXX에 가까움)`, `현명하고 똑 부러지며 침착함 — 감정을 쉽게 드러내지 않음`, `신중하고 소극적이며 집순이·집돌이 성향`, `금전적으로 여유가 없고 돈 욕심이 없으며 타인에게 잘 베풂`, `차갑고 냉정하고 고고한 분위기 — 타인이 쉽게 다가가기 어려움`],
+    strengths: [`영적인 능력, 통찰력, 직관력이 뛰어남`, `주변 사람의 고민을 잘 들어주고 조언해주는 상담가 자질이 있음`, `책임감이 있고 성실하며 청렴함`],
+    weaknesses: [`융통성이 부족하고 고집이 세며 보수적인 마인드를 지님`, `앞과 뒤가 다른 이중적인 면이 있고, 뒤끝이 있어 상처를 오래 기억함`, `생각만 많고 행동으로 옮기지 못함`, `게으르고 소극적인 면이 있음`, `자기중심적이고 비밀스러움`, `타인에게 엄격하고 깐깐함`, `결벽증·완벽주의 성향이 있음`, `생각과 의심이 많아 스트레스가 심함`, `갈등이 생겨도 바로 표현하지 못하고 속으로만 앓음`],
+    love: [`사랑의 감정을 잘 표현하지 못해 짝사랑을 자주 함`, `상대를 잘 믿지 못하고 의심이 많음`, `쉽게 사랑에 빠지지 않고 사람을 오래 지켜본 뒤 판단함`, `연인에게 집착하는 경향이 있고, 말꼬리를 잡거나 과거 일을 들먹이기도 함`],
+    symbol: [`달과 연결 — 무의식·직관·감춰진 진실을 상징`, `베일 뒤에 앉은 이미지처럼, 드러난 것 너머를 봄`],
+  },
+  'major-03': {
+    basic: [`안정적이고 품위 있으며 여유 있는 성격 — 품격을 갖춘 우아한 사람`, `임신한 여성을 상징하기도 하며, 아이나 동물을 사랑함`, `여성스럽고 매력적임`, `모성애가 있고, 내 사람에게 따뜻하고 자비로움`, `외로움을 잘 타고 사랑받고 관심받는 것을 좋아함`, `자신을 잘 가꾸고 화려하게 꾸미길 좋아함 — 미인형이 많음`, `활동적이고 사교적이면서도 게으른 면이 있고, 자신감이 있음`, `본인이 잘난 것을 알고 자기애가 넘치며 눈이 높음`],
+    strengths: [`이해심이 많고 내 사람들을 엄마처럼 포용함`, `주변 사람을 잘 챙기고 연인에게 헌신함`, `리더십이 있고 부와 권력을 가진 사람이 많음`],
+    weaknesses: [`지나치게 물질적이고 돈을 너무 밝힐 수 있음`, `자존심이 강해서 한 번 화나면 극단적으로 변함`, `이기적이고, 뜻대로 안 되면 몰아붙임`, `게으르고 허영심이 심하며 한 번에 큰돈을 쓰는 사치스러움이 있음`, `타인을 지배하려는 욕구가 있음`, `질투와 의심이 심함 — 시기·집착·욕심·소유욕이 문제가 됨`, `쉽게 질리고 지루함을 잘 느낌`, `화가 나면 비꼬고, 절제력이 없음`],
+    love: [`연애에서 상대가 자신을 떠받들어주길 바람`, `연인을 엄마처럼 챙기며 헌신적으로 대함`, `엄마처럼 챙겨주는 연애를 하면서도 주도권은 본인이 가지길 바람`],
+    symbol: [`금성과 연결 — 사랑·아름다움·풍요를 상징`, `자연과 함께 있는 이미지처럼, 생명력과 창조성이 풍부함`],
+  },
+  'major-04': {
+    basic: [`책임감이 굉장히 강함`, `이성적이고 단호하며 이상과 야망이 큼`, `승부욕과 성취욕구가 대단함`, `워커홀릭 기질이 있고 열정적임 — 규율·규칙·법규를 중요하게 여김`, `재물보다 능력에 대한 인정과 권력에 욕심이 많음`, `남성적인 덕목을 지닌 상남자 스타일`, `미래에 대한 불안감을 늘 안고 있고 평소 스트레스가 많음`],
+    strengths: [`결단력이 있고 단호함`, `리더십이 뛰어나고 사업가 기질이 있음`, `카리스마가 있음`, `행동력과 추진력이 대단하고, 고난과 역경을 이겨내며 목적을 달성하는 힘이 있음`, `자기 가족이나 자기 사람에게는 최선을 다함`],
+    weaknesses: [`보수적이고 권위적이며 가부장적임`, `고집이 굉장히 세고 본인 말이 다 맞다고 생각해 소통이 안 됨`, `독선적이고 성격이 급하며 다혈질`, `자존심이 아주 강함`, `융통성이 없고 무정함`, `감정을 표현하는 데 어려움을 느낌`, `남성우월적인 성향이 강하고 즉흥적임`],
+    love: [`설레는 연애보다 안정적이고 현실적인 연애를 선호함`, `일을 더 중요시해서 연애 상대를 외롭게 함`, `연인에게 맞춰주기보다 자신의 연애 방식을 고집함`, `자기 입장이 우선이라 소통이 어렵고 상대의 기분을 잘 파악하지 못함`, `자신을 잘 따르고 말 잘 듣는, 자기 할 일 잘하는 상대를 원함`],
+    symbol: [`양자리·화성과 연결 — 개척·주도·통솔력을 상징`, `왕좌에 앉은 이미지처럼, 질서와 안정을 세우려 함`],
+  },
+  'major-05': {
+    basic: [`돈 욕심이 크지 않고 계산적이지 않음`, `성숙하고 똑똑하며 지혜로움`, `예의가 바르고 너그러우며 포용력과 리더십이 있음`, `고지식하고 보수적이며 고리타분한 꼰대 기질`, `계속해서 남들에게 인정받기를 원함`],
+    strengths: [`사람과 사람을 잘 이어주고 의견 차이를 잘 중재함`, `부당한 이득을 취하지 않고 돈 관리를 잘함 — 믿고 맡길 수 있는 사람`, `신용이 좋아 동업해도 괜찮은 사람`, `조언을 잘해줌`, `타인의 고민을 잘 들어주고 답을 잘 찾아줌`, `한번 시작하면 끝까지 하는 인내심이 있음`],
+    weaknesses: [`아는 척, 똑똑한 척 조언을 해서 반감을 사기도 함`, `남을 지적하는 것을 좋아함`, `아쉬운 소리, 싫은 소리를 못함`, `융통성이 부족해 고집을 꺾지 못함`, `잘난 척을 함 (사회생활에서 환영받지 못하는 스타일)`, `잔소리가 심하고 따지길 좋아하며, 타인의 마음을 읽으려 함`, `잔소리 많은 꼰대로 비침`, `사람들 말을 잘 믿어서 배신당하거나 상처받는 일이 생김`, `오지랖이 넓어 도와줘도 말투 때문에 욕을 먹음`, `본인의 가치관을 타인에게 강요함`, `새로운 것을 받아들이지 못하고 자기 생각에 갇혀 있음`],
+    love: [`안정적이고 전통적인 연애 방식을 선호`, `결혼이나 정착을 비교적 진지하게 생각함`, `상대에게 조언이나 가르침을 주려는 경향이 있음`],
+    symbol: [`황소자리와 연결 — 안정·전통·신뢰를 상징`, `두 제자를 둔 스승의 이미지처럼, 지혜를 전수하는 역할`],
+  },
+  'major-06': {
+    basic: [`로맨틱하고 매력적임`, `열정적이고 기분에 좌우되는 경향이 있음`, `관심받고 주목받는 것을 좋아함`, `많은 사람들과 가벼운 관계로 두루 지내는 편`, `싸우는 것을 싫어해서 그냥 맞춰주는 편`, `타인의 시선을 굉장히 신경씀`, `이성에게 인기가 많지만 애정결핍이 있어 애정을 갈구하기도 함`],
+    strengths: [`사교성이 좋고 대인관계가 원만하며 트러블을 잘 일으키지 않음`, `사랑하는 사람을 위해 시간과 돈을 아낌없이 투자함`, `이성에게 인기가 많고 매력적임`],
+    weaknesses: [`우유부단해서 결정을 잘 못 내림`, `감정 기복이 크고 집착·질투·변덕·욕심이 많음`, `현실 감각이 떨어짐`, `유흥과 이성에게 돈을 많이 써서 돈을 잘 모으지 못함`, `타인의 시선을 의식해 가식적이고 꾸밈이 있는 모습을 보임`, `눈앞의 기쁨과 쾌락에 쉽게 빠짐`, `가식이 있어 깊은 관계를 맺기 어려울 수 있음`],
+    love: [`금방 사랑에 빠지는 금사빠 기질이 있음`, `꽂히면 그 순간부터 사랑이 시작됨`, `유혹에 약해 바람기가 다분함`, `사랑에 죽고 사랑에 사는 사랑꾼 기질`, `연인이 있어도 다른 이성이 다가오면 쉽게 넘어감`],
+    symbol: [`쌍둥이자리와 연결 — 소통·선택·관계를 상징`, `두 사람이 마주한 이미지처럼, 연결과 조화를 추구함`],
+  },
+  'major-07': {
+    basic: [`추진력과 집중력이 좋고 열정이 넘침`, `하고자 하는 것은 무조건 해야 직성이 풀리며 누구도 못 말림`, `카리스마가 있고, 여성이라도 남성적이고 시원시원한 성격`, `과감하고 자신감이 넘치며 화끈하고 터프함`, `승부사 기질이 있음`, `상남자 스타일로 따르는 사람이 많고 인기가 있음`, `관심받는 것을 좋아함`, `승부욕이 대단해 이겨야 직성이 풀림`, `인정받고자 하는 욕심이 큼`],
+    strengths: [`강한 추진력과 집중력, 넘치는 열정`, `카리스마와 리더십으로 사람들이 따름`, `승부사 기질로 목표를 향해 강하게 밀어붙이는 힘`],
+    weaknesses: [`성격이 급하고 답답한 걸 못 참음`, `목표만 보고 돌진해서 주변을 살피지 못함`, `타인을 무시하는 경향이 있고 폭력적일 수 있음`, `날카롭고 거칠며 무례함`, `언행이 경솔해 타인의 기분을 생각하지 않고 상처를 줌`, `주관적인 잣대를 가짐`, `경쟁자로 만나면 상당히 까다롭고 어려운 상대가 될 수 있음`],
+    love: [`저돌적이고 리드를 잘함`, `정력이 넘치고 바람기가 많음`, `금사빠 기질이 있음`, `성욕이 강하고 성적 취향이 독특할 수 있음`],
+    symbol: [`게자리와 연결 — 의지·추진력·자기 보호를 상징`, `전차를 모는 이미지처럼, 상반된 힘을 통제하며 나아감`],
+  },
+  'major-08': {
+    basic: [`여성 리더 같은 인물 — 여자임에도 카리스마가 있음 (대장부 같은 성격의 여성들과 관련 깊은 카드)`, `따뜻하고 너그러워서 함께 있으면 저절로 의지하게 됨`, `본인이 정말 좋아하는 일을 하려고 함`, `완벽주의적 성향이 있고 최고가 될 때까지 노력함`, `생활력이 강하고 열심히 삶`, `평소엔 화를 잘 안 내는 편`, `겉과 속이 같아서 가식이나 아부를 못함`, `감정을 솔직하고 직설적으로 표현하지만 애정표현은 서툼`, `자존심이 굉장히 강함`],
+    strengths: [`인내심이 있고 감정 제어를 잘함`, `동정심과 공감능력이 있어 힘든 사람이나 동물을 그냥 지나치지 못함`, `의리가 있고 배신하지 않음`, `사람을 능숙하게 다뤄서 사람 관리하는 일에 적성이 맞음`, `도움이 필요한 사람에게 기꺼이 도움을 줌`, `반대 입장의 사람도 끈기 있게 설득해냄 (강압적이지 않고 정신적으로 참여시킴)`],
+    weaknesses: [`한번 화가 나면 아무도 못 말리고, 물불 안 가리고 분노를 쏟아냄`, `다혈질이고 욱하는 기질이 있음`, `독불장군 기질 — 고집이 세고 자기주장이 강함`, `자존심을 건드리면 가만두지 않음`],
+    love: [`애정 표현은 서툰 편`, `대부분 편한 연애를 함`],
+    symbol: [`사자자리와 연결 — 용기·자존감·내면의 힘을 상징`, `사자를 부드럽게 다루는 이미지처럼, 강함을 온화함으로 다스림`],
+  },
+  'major-09': {
+    basic: [`혼자 있을 때 가장 편안하고 혼자만의 시간을 즐김`, `자기만의 세계에 깊이 빠져 있어 타인을 잘 들이지 않음`, `애늙은이 같다는 이야기를 자주 들음`, `내성적이고 소극적임`, `집돌이·집순이 성향이 강함`, `MBTI 중 가장 I스러운 INTJ와 성향이 비슷함`, `한 가지 생각에 잠기면 그 생각만 계속 파고듦`],
+    strengths: [`답답해 보여도 사람들이 신뢰하는 존재`, `소수의 사람과 깊은 관계를 유지함`],
+    weaknesses: [`자기만의 확고한 생각 때문에 고집이 굉장히 셈`, `타인과 교류가 잘 안 되고 타인의 의견을 받아들이지 않음`, `툭하면 연락이 안 되고 잠수를 탐`, `내 사람에게 간섭과 잔소리가 심함`, `근거 없이 무조건 의심하는 경우가 많음`, `자기주장만 하고 남의 말을 안 받아들이며 우김`, `사회성이 떨어짐`, `생각 없이 한 말도 본인 식으로 해석하고 파고들어 갈등을 만듦`],
+    love: [`대인관계와 연애에 서툼`, `쉽게 친해지지 못하고, 마음을 여는 데 시간이 오래 걸림`, `한번 마음을 준 사람에게는 집착이나 소유욕을 보이기도 함`],
+    symbol: [`처녀자리와 연결 — 성찰·분석·완벽주의를 상징`, `등불을 든 이미지처럼, 홀로 길을 밝히며 나아감`],
+  },
+  'major-10': {
+    basic: [`수레바퀴처럼 성격이 둥글둥글함`, `규칙적이고 반복되는 삶을 좋아함`, `무엇이든 순응하는 편`, `낙천적이고 긍정적임`, `개방적이고 활동적이며 이동이 잦은 특성이 있음`, `변덕이 있고 호기심이 강함`, `돌아다니는 것을 좋아함`, `즉흥적이고 에너지가 넘침`],
+    strengths: [`사교성과 사회성이 좋아 사람들과 쉽게 친해짐`, `꾸준하고 성실하게 노력하는 스타일`, `다재다능하고 예술적인 감각이 있음`, `소통을 잘하고 말하기를 좋아함`, `동정심이 강해 기꺼이 도움의 손길을 뻗음`],
+    weaknesses: [`주관이 뚜렷하지 않고 분위기에 잘 휩쓸림`, `끈기와 집중력이 부족함`, `산만하고 마무리를 잘 못함`, `무엇이든 쉽게 포기하고, 대인관계에서도 손절을 잘함`, `귀가 얇음`, `누군가 자신을 이용해도 잘 알아채지 못함`],
+    love: [`나에게 잘해주고 친절한 사람을 좋아함`],
+    symbol: [`목성과 연결 — 확장·행운·순환을 상징`, `돌아가는 수레바퀴 이미지처럼, 오르내림을 자연스럽게 받아들임`],
+  },
+  'major-11': {
+    basic: [`굉장히 신중하고 현실적임`, `완벽주의 성향이 있음`, `논리적·이성적·분석적이며 깐깐함`, `법을 준수하는 사람`, `받은 만큼 돌려주는 기브 앤 테이크 성향`, `진지하고 고지식함`, `남녀 구분 없이 중성적인 성향이 강함`, `성실하고 책임감이 강하며 원리원칙적임`],
+    strengths: [`결단력이 있고 맺고 끊는 것이 정확함`, `공과 사가 명확하고 감정에 휘둘리지 않음`, `정직하고 신뢰할 수 있는 사람`, `꼼꼼하고 치밀하게 일 처리를 함`],
+    weaknesses: [`신중한 만큼 우유부단해 결정까지 시간이 오래 걸림`, `잘잘못을 따지고 사람을 도덕적 잣대로 판단함`, `주관적이고 냉철하며 까칠함`, `감정에 이끌리지 않아 무정하게 비침`, `융통성이 없음`, `본인의 판단을 타인에게 강요함`, `냉정하고 비판적이며 눈이 높음`, `공감 능력이 부족함`, `자기 기준대로 사람을 판단하고 나눔`, `인간미가 없고 계산적이며 이기적으로 비칠 수 있음`],
+    love: [`자기만의 기준으로 상대의 사랑을 시험하듯 판단함 (예: "바빠도 나를 먼저 챙겨야 하는 거 아니야?", "넌 날 사랑하지 않아", "안 믿어, 거짓말")`, `의심이 많고 상대의 마음을 쉽게 믿지 못함`],
+    symbol: [`천칭자리와 연결 — 균형·공정·조화를 상징`, `저울과 검을 든 이미지처럼, 판단과 실행을 함께 지님`],
+  },
+  'major-12': {
+    basic: [`대인관계가 넓지 않음`, `소심하고 소극적이며 수동적임`, `생각이 깊고 겸손하며 배려심이 있음`, `4차원적인 면이 있음`, `마니아 기질이 있고 술을 좋아할 수 있음`],
+    strengths: [`머리가 비상하고 기발한 창의력이 있음`, `어떤 어려움도 참고 견디는 강한 인내심`, `타인에게 헌신적이라 본인이 손해를 보더라도 양보함`, `연민이 강해 타인을 위해 봉사함`, `거꾸로 매달린 관점처럼 남다른 시각과 통찰력이 있음`, `원하는 결과를 위해 기꺼이 인내하고 기다릴 줄 앎`],
+    weaknesses: [`과거에 집착하고 뒤끝이 있어 상처가 오래감`, `잡생각과 고민이 많아 실행력이 떨어짐`, `우유부단해서 답답하게 느껴짐`, `결정을 내리기까지 시간이 오래 걸림`, `도와주고도 오해를 받아 억울한 상황이 생길 수 있음`, `현실을 직시하지 못함`, `한번 빠지면 깊게 빠져 중독되기 쉬움 (술, 담배 등)`, `성격 탓에 손해 보는 일이 많음`],
+    love: [`연애할 때 상대에게 잡혀 살거나 끌려다니는 경우가 많음`, `한 연애가 끝난 뒤 다음 연애까지 시간이 오래 걸림`],
+    symbol: [`해왕성과 연결 — 희생·직관·초월을 상징`, `거꾸로 매달린 이미지처럼, 뒤집힌 시각에서 진실을 봄`],
+  },
+  'major-13': {
+    basic: [`감정이나 생각을 잘 감추지만 싫어하는 사람 앞에서 좋은 척은 못함`, `내향적임`, `감정보다 이성이 더 강함`, `한번 마음을 정하면 바꾸지 않음`, `자기주관이 확실함`, `좋고 싫음이 분명한 호불호`, `계산적이고 쓸데없는 지출을 싫어함`, `완벽주의 성향이 있음`, `비밀이 많고 생각이 많음`, `관심 있는 것엔 몰두하고 관심 없는 것엔 신경 안 씀`, `모험심이 강해 변화를 두려워하지 않음`, `겁이 없고 고집이 세며 명령받는 걸 싫어함`],
+    strengths: [`냉철하고 맺고 끊는 것이 분명함`, `결정에 후회하지 않음`, `신중하고 날카로우며 통찰력이 있음`, `리더십과 카리스마가 강함`, `관계를 끊어낼 때 단호하고 확실함`, `저축을 잘하는 계획적인 재정 관리`, `공과 사가 분명함`, `몰두하면 놀라운 집중력을 발휘함`],
+    weaknesses: [`사람을 잘 믿지 않음`, `냉소적인 면이 있음`, `쉽게 우울해지고 무기력해짐`, `관심 없는 일에는 지나치게 무관심함`, `고집이 세고 명령받는 것을 싫어함`],
+    love: [`관계에 있어 강렬하고 깊은 몰입을 보임`, `끝낼 땐 확실하게 정리하는 편`, `질투나 집착이 강하게 드러날 수 있음`],
+    symbol: [`전갈자리와 연결 — 전환·죽음과 재생·강렬함을 상징`, `해골 기사의 이미지처럼, 끝은 곧 새로운 시작임을 보여줌`],
+  },
+  'major-14': {
+    basic: [`대인관계가 원만함`, `다정하고 자상함`, `속내를 잘 드러내지 않음`, `예의가 바르고 겸손함`, `조용하고 온화함`, `상처를 잘 받지만 겉으로 티 내지 않음`, `안정적이고 현실적임`, `타인의 기분을 살피며 조심스럽게 말해 속을 알기 어려움`, `한결같고 감정 기복이 없으며 욕심이 없음`, `성실한 모범생 스타일`],
+    strengths: [`타인에게 맞춰주는 배려심이 뛰어남`, `인내심이 뛰어남`, `유연한 사고와 융통성이 있음`, `사람을 편안하게 해주는 능력`, `자신보다 타인을 먼저 생각하고 잘 들어줌`, `분쟁이 있을 때 중재를 잘함`],
+    weaknesses: [`자기 의견을 강하게 드러내지 못하고 우유부단함`, `결정장애가 있음`, `맺고 끊는 것을 못해 오해를 사기도 함`, `갈등을 싫어해서 그냥 남의 의견에 맞춰줌`, `타인을 우선시하다 보니 자존감이 낮고 스트레스가 많음`],
+    love: [`편안한 연애를 하는 편`],
+    symbol: [`사수자리와 연결 — 조화·절제·통합을 상징`, `두 잔의 물을 섞는 이미지처럼, 서로 다른 것을 융합함`],
+  },
+  'major-15': {
+    basic: [`주어진 상황에 최선을 다함`, `본능에 충실하고 감정에 솔직함`, `기분파이고 욕심이 많음`, `유흥을 좋아하고 즐김`, `성공에 대한 야망이 강함 (불법적인 방법도 불사할 정도)`, `재물에 대한 욕심이 큼`, `금전적으로 실속을 잘 챙기는 현실적인 성격`],
+    strengths: [`치명적인 매력으로 타인의 마음을 끌어당김`, `기발한 아이디어와 천재적인 발상을 함`, `실속을 잘 챙기는 현실 감각`],
+    weaknesses: [`감정기복이 심하고 자기 합리화를 함`, `유혹에 잘 빠지고 유혹도 잘함 (애정·금전·사기·도박·유흥)`, `갖고 싶은 건 반드시 가져야 함`, `목적을 위해 불법적인 방법도 서슴지 않음`, `어리광이 심하고 의존심이 강함`, `한번 집착하면 깊이 파고듦`, `아닌 사람과의 관계도 잘 못 끊음`, `부정적일 땐 무례하고 폭력적으로 변함`, `순수하게 믿다가 사기를 잘 당함`],
+    love: [`연인에게 집착과 의심이 매우 심함`, `소유욕이 강해 연인을 구속할 수 있음`, `성욕이 지나치게 강함`, `바람기가 충만한 나쁜 남자·나쁜 여자 스타일`],
+    symbol: [`염소자리와 연결 — 물질·욕망·속박을 상징`, `사슬에 묶인 이미지처럼, 스스로 만든 굴레에 갇혀 있음`],
+  },
+  'major-16': {
+    basic: [`도전정신이 강하고 과감함`, `지루한 걸 못 견뎌서 항상 변화를 추구함`, `무모할 정도로 열정적임`, `극단적이고 자극적인 것을 좋아함`, `고집이 굉장히 세고 자기 의견을 강하게 드러냄`, `당하고는 못 삶`, `승부욕이 강하면서도 포기가 빠름`],
+    strengths: [`변화를 두려워하지 않는 용기`, `뛰어난 적응력과 대처 능력`, `순발력이 좋고 상황 판단이 빠름`, `한계에 굴하지 않고 실패해도 다시 일어서는 대담함`],
+    weaknesses: [`성격이 급하고 충동적임`, `감정기복이 크고 스트레스에 약함`, `인내심과 끈기가 부족함`, `다혈질이 심하고 거칠며 폭력적일 수 있음`, `직설적이라 싸움을 만드는 타입`, `쉽게 타올랐다가 쉽게 식음`, `괴팍한 면이 있고 은혜를 원수로 갚기도 함`, `감정 조절이 어려워 스스로 대립을 만듦`, `뒷담화를 잘함`],
+    love: [`반복되는 데이트나 똑같은 패턴의 연애를 싫어하고, 늘 다른 자극을 원함`],
+    symbol: [`화성과 연결 — 파괴·각성·급변을 상징`, `번개 맞은 탑의 이미지처럼, 무너짐이 곧 해방이 됨`],
+  },
+  'major-17': {
+    basic: [`희망적이고 긍정적이며 낙천적임`, `감수성이 풍부하고 감정 기복과 변덕이 심함`, `이상을 추구해 호기심은 많지만 현실성이 떨어짐`, `마음이 여리고 순수하며 정과 눈물이 많음`, `항상 잘될 거라 믿어 자신감이 넘침`, `사람을 만나면 에너지를 얻는 외향적(E) 성향`, `이성에게 인기가 많고 끼가 넘치며 꾸미기를 좋아함`, `사람들 사이에서 튀는 걸 좋아하고 주인공이 되고 싶어함`],
+    strengths: [`사람을 쉽게 믿고 잘 퍼주고 도와줌 (다만 사기는 조심해야 함)`],
+    weaknesses: [`낙천적인 성격 탓에 생각 없이 돈을 씀`, `황소고집이라 맞는 말도 안 듣고 비판에는 귀를 닫음`, `타인을 배려하는 능력이 부족하고 자기중심적임`, `너무 이상적이고 낙천적이라 소통이 잘 안 됨`, `입장 바꿔 생각하지 못하고 자기 기준대로만 생각함`, `작심삼일에 끈기가 부족함`, `해준 만큼 격한 칭찬이나 보답을 바람`, `대인관계에서 오래 사랑받는 스타일은 아님`, `현실성 없는 고집을 끝까지 부림`, `꽂히면 바로 사야 하는 사치와 낭비벽이 있음`, `생각 없이 내뱉은 말로 타인에게 상처를 줌`, `늘 남 탓을 하고 자기 잘못을 인정하지 않음`],
+    love: [`이성에게 인기가 많고 끼가 넘침`, `한 사람만 보다가도 나중에 양다리를 걸치기도 함`],
+    symbol: [`물병자리와 연결 — 희망·치유·이상을 상징`, `별빛 아래 물을 붓는 이미지처럼, 고요한 회복과 재생을 나타냄`],
+  },
+  'major-18': {
+    basic: [`감정기복과 변덕이 매우 심함`, `내성적이고 소극적임`, `예민하고 의심이 많으며 섬세함`, `걱정과 생각이 많고 마음이 여리며 정이 많음`, `속내를 잘 드러내지 않는 비밀스러운 면이 있음`, `현실도피 삼아 술을 찾는 경우가 많고 술을 좋아함`],
+    strengths: [`영적인 능력이 뛰어나고 촉이 좋음`, `생각이 깊고 배려심과 이해심이 있음`, `동정심이 강하고 친절하며 상냥함`],
+    weaknesses: [`우울한 감정에 쉽게 빠지고 스트레스를 많이 받음`, `자존감과 자신감이 낮음`, `결정장애가 있음`, `맺고 끊는 게 확실하지 못하고 우유부단함`, `불안한 마음이 자주 찾아옴`, `거짓말을 잘하고 겉과 속이 다른 이중적인 면이 있음`, `의도 없는 말에도 의미부여를 해 망상에 빠지기 쉬움`, `이성적이지 못함`, `간사하고 교활하며 배신을 밥 먹듯이 할 수 있음`],
+    love: [`사람을 잘 믿지 못하고 연애 상대를 계속 의심함`, `상대의 속마음을 마음대로 예측하고 판단해버림`],
+    symbol: [`물고기자리와 연결 — 무의식·환상·불안을 상징`, `달빛 아래 길을 찾는 이미지처럼, 모호함 속에서 방향을 감지함`],
+  },
+  'major-19': {
+    basic: [`밝고 활발하며 작은 것에도 잘 웃음`, `활동적이고 열정이 넘침`, `주변에 사람이 많이 모이는 외향적(E) 성향`, `자신감이 넘치지만 철없고 솔직해서 의도치 않게 상처를 주기도 함`, `자신을 드러내고 나서는 걸 좋아함`, `남성적인 기질이 강함`, `거짓말을 하면 다 티가 남`, `자신이 힘든 것을 잘 이야기하지 않음`],
+    strengths: [`분위기 메이커로 주변 사람들을 항상 웃게 해줌`, `추진력이 좋고 도전정신이 강함`, `사교성과 유머감각이 뛰어나 인기가 많음`, `대인관계가 원만함`, `검은 속내가 없어 믿을 수 있는 신뢰감 있는 사람`, `리더십이 있고 운도 잘 따름`, `배려심이 깊고 의외로 속이 깊음`],
+    weaknesses: [`신중하지 못해 실수가 잦을 수 있음`, `의욕은 좋으나 끈기가 부족해 마무리가 약함`, `도와주는 사람들을 당연하게 여겨 상처를 줄 수 있음`, `비밀을 오래 지켜주지 못함`, `현실성이 부족함`, `직설적이고 성격이 급함`, `밝은 모습만 보여주려 하고 힘든 건 혼자 감당하려 함`],
+    love: [`밝고 적극적으로 애정을 표현함`, `연애에서도 자신감 넘치고 주도적`, `관계에서 즐거움과 활력을 중요하게 여김`],
+    symbol: [`태양과 연결 — 생명력·성취·자기 표현을 상징`, `환하게 빛나는 태양 아래의 이미지처럼, 숨김없이 밝게 드러남`],
+  },
+  'major-20': {
+    basic: [`냉정하고 이성적임`, `호불호가 확실하고 객관적임`, `강단이 있고 고집이 셈`, `자기주장과 신념이 강함`, `애매모호하고 결단력 없는 걸 싫어함`, `신념이 강하고 정의로움`, `정의를 위해, 피해를 막기 위해 나서길 좋아함`, `억울한 것을 참지 못함`],
+    strengths: [`결단력이 있고 빠르게 판단함`, `말주변이 좋아 신뢰를 잘 얻음`, `상황 판단이 빠르고 정확함`, `목표를 위해 성실히 노력함`, `타인을 위해 기꺼이 희생함`, `본인 이미지가 나빠지더라도 감수하며 올바르게 개혁하려 함`],
+    weaknesses: [`오지랖이 넓어 지나치게 참견할 수 있음`, `솔직함이 지나쳐 직설적이고 까칠해 보임`, `결과와 성과에 집착하는 경향`, `남을 평가하고 비판하길 좋아함`, `대화로 풀려 하지만 너무 직설적임`, `남의 일에 지나치게 개입하려 함`],
+    love: [`과거 연애의 영향을 오래 안고 있는 편`, `관계에서도 반성과 성장을 중요하게 여김`, `재회나 다시 만나는 인연에 의미를 두는 경향`],
+    symbol: [`명왕성·불의 원소와 연결 — 각성·부활·심판을 상징`, `나팔 소리에 깨어나는 이미지처럼, 무의식이 의식으로 떠오름`],
+  },
+  'major-21': {
+    basic: [`완벽주의 기질이 있음`, `활동적이고 역마살 기질이 강함`, `깔끔하고 똑 부러지는 성격`, `자기 자신을 잘 꾸미고 화려한 것을 좋아함`, `인정받고 싶은 욕구가 강함`],
+    strengths: [`능력이 뛰어나고 긍정적임`, `용기와 자신감이 있음`, `상황판단이 빠름`, `성실하고 책임감이 강함`, `끝매듭을 잘 지음`, `결단력이 강하고 목표를 크게 세움`],
+    weaknesses: [`고집이 세고 고지식함`, `머리는 좋지만 융통성이 떨어짐`, `시기 질투가 심함`, `본인이 잘났다고 생각함`, `완벽을 추구하다 스스로를 피곤하게 만듦`, `허세와 사치·낭비가 있음`, `완벽주의 탓에 남에게 일을 못 맡기고 혼자 다 하려 함`, `자기만의 세상에 빠져 자기중심적임`, `무리하게 일을 벌임`],
+    love: [`안정적이고 완성된 관계를 지향함`, `오랜 시간 함께한 인연을 소중히 여김`, `관계 안에서 성취감과 만족감을 느낌`],
+    symbol: [`토성과 연결 — 완성·통합·성취를 상징`, `화환 속에서 춤추는 이미지처럼, 여정의 완결과 조화를 나타냄`],
+  },
+  'wands-ace': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `막 피어나는 순수한 에너지 — 시작에 대한 설렘과 서투름이 함께 있음 (새로운 시작 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 에이스 — 새로운 시작을 나타내는 카드`],
+  },
+  'wands-02': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `두 가지 사이에서 균형을 찾거나 선택을 고민하는 성향 (균형과 선택 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 2 — 균형과 선택을 나타내는 카드`],
+  },
+  'wands-03': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `주변과 협력하며 함께 성장해가려는 성향 (성장과 협력 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 3 — 성장과 협력을 나타내는 카드`],
+  },
+  'wands-04': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `안정을 찾았지만 그 안에 머물러 정체되기 쉬운 성향 (안정과 정체 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 4 — 안정과 정체를 나타내는 카드`],
+  },
+  'wands-05': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `갈등이나 경쟁 속에서 흔들리기 쉬운 성향 (갈등과 변화 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 5 — 갈등과 변화를 나타내는 카드`],
+  },
+  'wands-06': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `균형을 되찾고 주변과 나누려는 성향 (조화와 나눔 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 6 — 조화와 나눔을 나타내는 카드`],
+  },
+  'wands-07': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `잠시 멈춰서 스스로를 점검하고 평가하는 성향 (성찰과 점검 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 7 — 성찰과 점검을 나타내는 카드`],
+  },
+  'wands-08': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `빠르게 움직이며 점점 능숙해지는 성향 (숙련과 속도 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 8 — 숙련과 속도를 나타내는 카드`],
+  },
+  'wands-09': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `거의 다 왔지만 지쳐 있는 상태 — 마지막 힘을 짜내는 성향 (인내와 결실 직전 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 9 — 인내와 결실 직전을 나타내는 카드`],
+  },
+  'wands-10': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `하나의 흐름이 끝나고 다음 단계로 넘어가려는 성향 (완성과 전환 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 10 — 완성과 전환을 나타내는 카드`],
+  },
+  'wands-page': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `호기심이 많고 아직은 미숙한 초심자의 에너지 (배움과 탐색 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 페이지 — 배움과 탐색을 나타내는 카드`],
+  },
+  'wands-knight': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `목표를 향해 저돌적으로 움직이는 젊은 에너지 (행동과 추구 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 나이트 — 행동과 추구를 나타내는 카드`],
+  },
+  'wands-queen': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `성숙하게 품고 다루는 포용력 있는 리더십 (성숙한 수용 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 퀸 — 성숙한 수용을 나타내는 카드`],
+  },
+  'wands-king': {
+    basic: [`열정적이고 에너지가 넘침`, `행동파 — 생각보다 몸이 먼저 움직임`, `도전과 모험을 즐기는 성향`, `경험을 바탕으로 통솔하는 완숙한 권위 (권위와 완숙 단계)`],
+    strengths: [`추진력과 실행력이 뛰어남`, `긍정적인 에너지로 주변에 활력을 줌`],
+    weaknesses: [`성급하고 인내심이 부족할 수 있음`, `쉽게 불타올랐다가 쉽게 식는 경향`],
+    love: [`열정적으로 다가가고 애정 표현이 적극적`, `권태를 못 견뎌 자극적이고 다이내믹한 관계를 선호`],
+    symbol: [`완드(지팡이) — 불의 원소, 의지와 창조적 에너지를 상징`, `완드 킹 — 권위와 완숙을 나타내는 카드`],
+  },
+  'cups-ace': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `막 피어나는 순수한 에너지 — 시작에 대한 설렘과 서투름이 함께 있음 (새로운 시작 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 에이스 — 새로운 시작을 나타내는 카드`],
+  },
+  'cups-02': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `두 가지 사이에서 균형을 찾거나 선택을 고민하는 성향 (균형과 선택 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 2 — 균형과 선택을 나타내는 카드`],
+  },
+  'cups-03': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `주변과 협력하며 함께 성장해가려는 성향 (성장과 협력 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 3 — 성장과 협력을 나타내는 카드`],
+  },
+  'cups-04': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `안정을 찾았지만 그 안에 머물러 정체되기 쉬운 성향 (안정과 정체 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 4 — 안정과 정체를 나타내는 카드`],
+  },
+  'cups-05': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `갈등이나 경쟁 속에서 흔들리기 쉬운 성향 (갈등과 변화 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 5 — 갈등과 변화를 나타내는 카드`],
+  },
+  'cups-06': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `균형을 되찾고 주변과 나누려는 성향 (조화와 나눔 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 6 — 조화와 나눔을 나타내는 카드`],
+  },
+  'cups-07': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `잠시 멈춰서 스스로를 점검하고 평가하는 성향 (성찰과 점검 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 7 — 성찰과 점검을 나타내는 카드`],
+  },
+  'cups-08': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `빠르게 움직이며 점점 능숙해지는 성향 (숙련과 속도 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 8 — 숙련과 속도를 나타내는 카드`],
+  },
+  'cups-09': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `거의 다 왔지만 지쳐 있는 상태 — 마지막 힘을 짜내는 성향 (인내와 결실 직전 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 9 — 인내와 결실 직전을 나타내는 카드`],
+  },
+  'cups-10': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `하나의 흐름이 끝나고 다음 단계로 넘어가려는 성향 (완성과 전환 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 10 — 완성과 전환을 나타내는 카드`],
+  },
+  'cups-page': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `호기심이 많고 아직은 미숙한 초심자의 에너지 (배움과 탐색 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 페이지 — 배움과 탐색을 나타내는 카드`],
+  },
+  'cups-knight': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `목표를 향해 저돌적으로 움직이는 젊은 에너지 (행동과 추구 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 나이트 — 행동과 추구를 나타내는 카드`],
+  },
+  'cups-queen': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `성숙하게 품고 다루는 포용력 있는 리더십 (성숙한 수용 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 퀸 — 성숙한 수용을 나타내는 카드`],
+  },
+  'cups-king': {
+    basic: [`감정이 풍부하고 정에 약함`, `관계 지향적이며 공감 능력이 뛰어남`, `분위기와 감정 변화에 민감함`, `경험을 바탕으로 통솔하는 완숙한 권위 (권위와 완숙 단계)`],
+    strengths: [`따뜻한 공감력으로 사람의 마음을 얻음`, `섬세하고 예술적인 감수성`],
+    weaknesses: [`감정 기복이 크고 쉽게 상처받음`, `우유부단하고 결정을 자꾸 미룸`],
+    love: [`로맨틱하고 애정 표현이 풍부함`, `감정 이입이 커서 쉽게 몰입하고 쉽게 아파함`],
+    symbol: [`컵(성배) — 물의 원소, 감정과 관계, 직관을 상징`, `컵 킹 — 권위와 완숙을 나타내는 카드`],
+  },
+  'swords-ace': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `막 피어나는 순수한 에너지 — 시작에 대한 설렘과 서투름이 함께 있음 (새로운 시작 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 에이스 — 새로운 시작을 나타내는 카드`],
+  },
+  'swords-02': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `두 가지 사이에서 균형을 찾거나 선택을 고민하는 성향 (균형과 선택 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 2 — 균형과 선택을 나타내는 카드`],
+  },
+  'swords-03': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `주변과 협력하며 함께 성장해가려는 성향 (성장과 협력 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 3 — 성장과 협력을 나타내는 카드`],
+  },
+  'swords-04': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `안정을 찾았지만 그 안에 머물러 정체되기 쉬운 성향 (안정과 정체 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 4 — 안정과 정체를 나타내는 카드`],
+  },
+  'swords-05': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `갈등이나 경쟁 속에서 흔들리기 쉬운 성향 (갈등과 변화 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 5 — 갈등과 변화를 나타내는 카드`],
+  },
+  'swords-06': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `균형을 되찾고 주변과 나누려는 성향 (조화와 나눔 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 6 — 조화와 나눔을 나타내는 카드`],
+  },
+  'swords-07': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `잠시 멈춰서 스스로를 점검하고 평가하는 성향 (성찰과 점검 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 7 — 성찰과 점검을 나타내는 카드`],
+  },
+  'swords-08': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `빠르게 움직이며 점점 능숙해지는 성향 (숙련과 속도 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 8 — 숙련과 속도를 나타내는 카드`],
+  },
+  'swords-09': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `거의 다 왔지만 지쳐 있는 상태 — 마지막 힘을 짜내는 성향 (인내와 결실 직전 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 9 — 인내와 결실 직전을 나타내는 카드`],
+  },
+  'swords-10': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `하나의 흐름이 끝나고 다음 단계로 넘어가려는 성향 (완성과 전환 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 10 — 완성과 전환을 나타내는 카드`],
+  },
+  'swords-page': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `호기심이 많고 아직은 미숙한 초심자의 에너지 (배움과 탐색 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 페이지 — 배움과 탐색을 나타내는 카드`],
+  },
+  'swords-knight': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `목표를 향해 저돌적으로 움직이는 젊은 에너지 (행동과 추구 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 나이트 — 행동과 추구를 나타내는 카드`],
+  },
+  'swords-queen': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `성숙하게 품고 다루는 포용력 있는 리더십 (성숙한 수용 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 퀸 — 성숙한 수용을 나타내는 카드`],
+  },
+  'swords-king': {
+    basic: [`논리적이고 분석적인 사고를 함`, `말과 생각의 속도가 빠르고 날카로움`, `객관적인 거리를 유지하려 함`, `경험을 바탕으로 통솔하는 완숙한 권위 (권위와 완숙 단계)`],
+    strengths: [`명확한 판단력과 논리적인 설득력`, `문제의 핵심을 정확히 짚어내는 능력`],
+    weaknesses: [`말이 날카로워 의도치 않게 상처를 줌`, `지나치게 이성적이라 냉정하게 비침`],
+    love: [`감정보다 대화와 이해를 우선함`, `솔직한 만큼 상처 주는 말을 할 때가 있음`],
+    symbol: [`소드(검) — 공기의 원소, 사고와 갈등, 진실을 상징`, `소드 킹 — 권위와 완숙을 나타내는 카드`],
+  },
+  'pentacles-ace': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `막 피어나는 순수한 에너지 — 시작에 대한 설렘과 서투름이 함께 있음 (새로운 시작 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 에이스 — 새로운 시작을 나타내는 카드`],
+  },
+  'pentacles-02': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `두 가지 사이에서 균형을 찾거나 선택을 고민하는 성향 (균형과 선택 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 2 — 균형과 선택을 나타내는 카드`],
+  },
+  'pentacles-03': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `주변과 협력하며 함께 성장해가려는 성향 (성장과 협력 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 3 — 성장과 협력을 나타내는 카드`],
+  },
+  'pentacles-04': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `안정을 찾았지만 그 안에 머물러 정체되기 쉬운 성향 (안정과 정체 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 4 — 안정과 정체를 나타내는 카드`],
+  },
+  'pentacles-05': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `갈등이나 경쟁 속에서 흔들리기 쉬운 성향 (갈등과 변화 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 5 — 갈등과 변화를 나타내는 카드`],
+  },
+  'pentacles-06': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `균형을 되찾고 주변과 나누려는 성향 (조화와 나눔 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 6 — 조화와 나눔을 나타내는 카드`],
+  },
+  'pentacles-07': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `잠시 멈춰서 스스로를 점검하고 평가하는 성향 (성찰과 점검 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 7 — 성찰과 점검을 나타내는 카드`],
+  },
+  'pentacles-08': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `빠르게 움직이며 점점 능숙해지는 성향 (숙련과 속도 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 8 — 숙련과 속도를 나타내는 카드`],
+  },
+  'pentacles-09': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `거의 다 왔지만 지쳐 있는 상태 — 마지막 힘을 짜내는 성향 (인내와 결실 직전 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 9 — 인내와 결실 직전을 나타내는 카드`],
+  },
+  'pentacles-10': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `하나의 흐름이 끝나고 다음 단계로 넘어가려는 성향 (완성과 전환 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 10 — 완성과 전환을 나타내는 카드`],
+  },
+  'pentacles-page': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `호기심이 많고 아직은 미숙한 초심자의 에너지 (배움과 탐색 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 페이지 — 배움과 탐색을 나타내는 카드`],
+  },
+  'pentacles-knight': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `목표를 향해 저돌적으로 움직이는 젊은 에너지 (행동과 추구 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 나이트 — 행동과 추구를 나타내는 카드`],
+  },
+  'pentacles-queen': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `성숙하게 품고 다루는 포용력 있는 리더십 (성숙한 수용 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 퀸 — 성숙한 수용을 나타내는 카드`],
+  },
+  'pentacles-king': {
+    basic: [`현실적이고 안정을 추구함`, `성실하고 꾸준하며 책임감이 강함`, `물질적 기반을 중요하게 여김`, `경험을 바탕으로 통솔하는 완숙한 권위 (권위와 완숙 단계)`],
+    strengths: [`끈기 있게 목표를 이루는 실행력`, `신뢰할 수 있는 안정감`],
+    weaknesses: [`변화를 두려워하고 고집이 셀 수 있음`, `물질적 가치에 지나치게 집착함`],
+    love: [`안정적이고 헌신적인 연애를 지향함`, `표현은 서툴지만 꾸준하게 곁을 지킴`],
+    symbol: [`펜타클(오망성) — 흙의 원소, 현실과 물질, 안정을 상징`, `펜타클 킹 — 권위와 완숙을 나타내는 카드`],
+  },
+};
+
+/* ---------------------------------------------------------
+   2e. CARD BIO (natural-prose personality descriptions for 카드 공부)
+--------------------------------------------------------- */
+const CARD_BIO = {
+  'major-00': { tagline: `일단 저지르고 보는 인생 자유러`, body: `계산기 두드릴 시간에 이미 반쯤 나가 있는 타입이죠. 순수하고 낙천적이라 나쁜 뜻은 1도 없는데, 문제는 필터 없이 던지는 말이 가끔 비수가 된다는 거예요. 본인은 전혀 눈치 못 채요. 자유를 너무 사랑해서 정해진 계획 없이 흘러가는 걸 좋아하고, 잔소리를 듣는 순간 마음속으론 이미 짐을 싸고 있어요. E 중의 E라 밖에서 노는 게 곧 충전이고, 새로운 아이디어를 술술 뱉어내는 창의력 뿜뿜 캐릭터예요. 문제는 시작은 화려한데 끝이 안 보인다는 것. 세 번째 취미로 넘어갈 때쯤 첫 번째 취미 도구는 이미 창고행이에요. 책임감이나 꾸준함과는 거리가 멀고, 자기중심적인 면 때문에 "나 서운했는데"라는 말을 종종 듣게 되죠. 연애는 더 심해요 — 자유가 걸린 순간 브레이크 없이 이탈하는 타입이라, 구속하려 드는 상대와는 반드시 트러블이 나요. 천왕성과 연결된 카드답게 조직 생활이나 틀에 박힌 분위기를 유독 못 견뎌요. 결론: 유쾌하고 사랑스럽지만, 옆에 있으면 가끔 "아 진짜 대책 없다" 소리가 절로 나오는 사람이에요.` },
+  'major-01': { tagline: `어디서든 분위기 메이커, 근데 좀 수상함`, body: `대인관계에 능숙하고 호감형이라 처음 만난 자리에서도 순식간에 중심인물이 돼요. 언변과 끼가 넘쳐서 이성에게 인기가 많고, 호기심 많은 만능 재주꾼이라 다방면에 다 잘해요. 옷도 잘 입고 자기관리도 확실하며, 일을 벌이는 걸 좋아해서 늘 뭔가 새로운 프로젝트가 진행 중이에요. 창의력으로 아이디어를 뚝딱 현실로 만드는 실행력이 강점이고, 말로 벌어먹고 살아도 될 정도의 언변을 가졌죠. 근데 이게 양날의 검이에요 — 허세와 허풍이 심해서, 작정하고 마음먹으면 없는 것도 있는 것처럼 만드는 능력자가 되거든요. 그래서 동업 상대로는 살짝 불안한 존재예요. 시작은 늘 화려한데 여기저기 관심이 옮겨 다니다 마무리는 흐지부지, 왕자병 기질에 칭찬 앞에서는 한없이 약해져요. 연애에서는 전형적인 나쁜 남자·나쁜 여자 스타일 — 한 사람만 보고 살기엔 유혹에 너무 약하고, 그러면서도 로맨틱한 멘트는 기가 막히게 잘해요. 수성과 연결된 카드로, 손에 도구를 쥔 이미지처럼 뭐든 다룰 줄 아는 재주꾼이에요. 매력 있는데 지갑은 조심하세요.` },
+  'major-02': { tagline: `한마디도 안 하지만 다 알고 있는 사람`, body: `비밀을 잘 지켜주는 믿음직한 존재이면서, 정작 본인 속내는 절대 안 보여줘요. 대인관계가 폭넓지 않고 내성적이라 MBTI로 치면 INXX에 가까운, 딱 봐도 '차갑고 고고해서 말 걸기 어려운 사람'인상을 줘요. 영적인 능력과 통찰력이 뛰어나 상담가 자질이 있고, 책임감 있고 청렴한 강점을 지녔어요. 문제는 그 신중함이 고집으로 변할 때예요 — 한번 결정한 건 절대 안 바뀌고, 앞과 뒤가 다른 이중적인 면에 뒤끝까지 있어서 몇 년 전 서운했던 걸 아직도 기억해요. 자기중심적이고 완벽주의라 스스로를 갉아먹을 만큼 생각과 의심이 많고, 갈등이 생겨도 티 안 내고 혼자 속으로 앓아요. 겉으론 멀쩡해 보이는데 속은 이미 파업 중인 스타일이랄까요. 연애에서는 표현이 서툴러서 짝사랑을 자주 하고, 상대를 오래 지켜본 뒤에야 마음을 열지만, 일단 마음을 주면 집착하거나 과거 얘기를 꺼내기 시작해요. 달과 연결된 카드로, 베일 뒤에 앉은 이미지처럼 드러난 것 너머를 보는 사람이에요. 친해지는 데 몇 달 걸리지만, 일단 친해지면 그 누구보다 든든한 편이에요.` },
+  'major-03': { tagline: `우아함 뒤에 숨겨진 은근한 여왕병`, body: `안정적이고 품위 있으며, 아이나 동물을 사랑하는 모성애 넘치는 사람이에요. 자신을 잘 가꾸고 화려하게 꾸미는 미인형이 많고, 활동적이면서도 은근히 게으르고, 무엇보다 자기애가 하늘을 찔러요. 내 사람에게는 한없이 따뜻하고 헌신적이라 곁에 있는 사람들을 엄마처럼 포용하고, 리더십도 있어서 부와 권력을 가진 경우가 많아요. 그런데 이 따뜻함엔 조건이 하나 붙어요 — 나를 떠받들어 줄 것. 화가 나면 극단적으로 변하고, 뜻대로 안 되면 은근슬쩍 몰아붙이기 시작하죠. 게으르면서도 허영심은 넘쳐서 큰돈을 한 번에 써버리기도 하고, 질투와 소유욕이 강해서 주변 사람을 피곤하게 만들 때가 있어요. 화나면 비꼬는 말투가 나오는 것도 특징이에요. 연애에서는 엄마처럼 챙기면서도 주도권만큼은 절대 놓지 않아요 — 챙겨주되 리모컨은 내가 쥐고 있는 스타일. 금성과 연결된 카드로, 자연과 함께 있는 이미지처럼 생명력과 창조성이 풍부해요. 곁에 있으면 참 편안한데, 은근히 눈치는 봐야 하는 사람이에요.` },
+  'major-04': { tagline: `내 말이 곧 법인 상남자`, body: `책임감이 굉장히 강하고 이상과 야망이 커서, 워커홀릭 소리를 들을 만큼 목표에 진심이에요. 승부욕과 성취욕이 대단해서 뭐든 성공시켜야 직성이 풀리고, 재물보다는 권력과 인정에 욕심이 많아요. 결단력과 리더십, 카리스마는 타고났고, 고난과 역경도 정면 돌파하는 추진력이 있어요. 자기 사람에게는 확실히 최선을 다하는 든든함도 있죠. 근데 문제는 이 사람 사전에 '다른 의견'이라는 단어가 없다는 거예요. 본인 말이 곧 정답이라 믿어서 소통 자체가 안 되고, 다혈질에 성격도 급해서 한 번 터지면 감당이 안 돼요. 보수적이고 가부장적인 면, 자존심이 하늘을 찌르는 것도 함께 따라와요. 감정 표현엔 서툴러서 종종 무정한 사람으로 오해받아요. 연애에서는 설렘보다 안정을 택하는데, 일이 우선이라 연인을 자주 외롭게 만들고, 자기 방식만 고집하며 순종적인 상대를 원해요. 양자리·화성과 연결된 카드로, 왕좌에 앉은 이미지처럼 질서를 세우려는 존재예요. 든든하지만, 대화는 각오하고 시작하세요.` },
+  'major-05': { tagline: `묻지도 않았는데 조언해주는 인생 선배`, body: `돈 욕심이 크지 않고 계산적이지 않으며, 성숙하고 지혜로운 데다 신용까지 좋아서 동업해도 될 만큼 믿음직해요. 의견 차이를 잘 중재하고, 고민을 잘 들어주는 상담가 스타일에, 한번 시작한 일은 끝까지 해내는 인내심도 있어요. 문제는 그 조언이 항상 아는 척으로 들린다는 거예요. 잘난 척과 잔소리가 세트로 붙어 다니고, 남을 지적하는 건 좋아하면서 정작 본인은 아쉬운 소리를 절대 못 해요. 융통성 없이 고집을 안 꺾다 보니 사회생활에서 은근히 환영받지 못하는 스타일이 되기도 하죠. 사람 말을 잘 믿는 편이라 배신당하는 일도 많고, 오지랖 넓게 도와주고도 말투 때문에 욕먹는 억울한 케이스가 종종 생겨요. 본인 가치관을 강요하고 새로운 걸 잘 못 받아들이는 것도 아쉬운 지점이에요. 연애에서는 안정적이고 전통적인 방식을 선호하고, 정착을 진지하게 생각하지만, 상대에게 자꾸 뭔가를 가르치려 드는 습관이 있어요. 황소자리와 연결된 카드로, 두 제자를 둔 스승의 이미지처럼 지혜를 전수하는 역할이에요. 좋은 말인데, 가끔은 그냥 들어만 주면 안 될까요?` },
+  'major-06': { tagline: `모두에게 다정하지만 정작 진짜 마음은 아무도 모름`, body: `로맨틱하고 매력적이며, 관심받는 걸 좋아해서 어딜 가나 사람들이 몰려요. 사교성이 좋아 대인관계는 원만하고, 사랑하는 사람에게는 시간과 돈을 아낌없이 투자하는 순정파 기질도 있어요. 그런데 이 다정함의 이면엔 타인의 시선을 심하게 신경 쓰는 마음이 있어요. 싸우기 싫어서 그냥 다 맞춰주고, 그러다 보니 정작 본심은 아무도 모르는 상태가 돼요. 우유부단해서 결정을 잘 못 내리고, 감정 기복과 집착·질투가 심하며, 현실 감각이 떨어져 돈 관리가 잘 안 돼요. 눈앞의 즐거움에 쉽게 흔들리고, 가식적인 모습 때문에 오히려 깊은 관계를 맺기 어려워지는 아이러니가 있어요. 연애에서는 금사빠 기질에 유혹에 약해 바람기가 다분한데, 연인이 있어도 다른 사람이 대시하면 은근슬쩍 흔들리는 사랑꾼 타입이에요. 쌍둥이자리와 연결된 카드로, 두 사람이 마주한 이미지처럼 연결과 조화를 추구해요. 매력은 인정, 근데 마음은 어디로 튈지 아무도 몰라요.` },
+  'major-07': { tagline: `일단 밟고 본다, 브레이크는 나중에`, body: `추진력과 집중력이 좋고 열정 만렙이라, 하고자 하는 건 누가 뭐라 해도 반드시 해내야 직성이 풀려요. 카리스마 있고 승부사 기질이라 상남자 스타일로 통하고, 따르는 사람도 많아요. 이겨야 직성이 풀리는 승부욕과 순발력, 위기 대처 능력이 강점이에요. 근데 문제는 속도예요. 앞만 보고 돌진하다 보니 주변을 못 살피고, 급한 성격에 답답한 걸 못 참아서 다혈질로 폭발할 때가 있어요. 날카롭고 거칠고 무례한 순간이 종종 나오고, 생각 없이 던진 말 때문에 상처받는 사람이 생기기도 해요. 이 사람을 경쟁자로 만나면 정말 피곤해요 — 주관이 워낙 확고해서 타협이 안 되거든요. 연애에서는 저돌적이고 리드를 잘하며, 정력이 넘쳐 바람기와 강한 성욕을 함께 지녔어요. 게자리와 연결된 카드로, 전차를 모는 이미지처럼 상반된 힘을 통제하며 나아가요. 목표까지 최단 거리로 가지만, 그 과정에 밟히는 사람은 없는지 한 번쯤 돌아봐야 해요.` },
+  'major-08': { tagline: `겉바속바, 부드러움 속에 숨겨진 강철 멘탈`, body: `여성이라도 카리스마 넘치는 대장부 스타일이 많고, 함께 있으면 왠지 모르게 의지하게 되는 든든한 존재예요. 좋아하는 일에는 완벽주의로 파고드는 생활력 강한 사람이고, 화를 잘 안 내지만 그건 감정이 없어서가 아니라 참는 거예요. 겉과 속이 같아서 가식이나 아부는 절대 못 하고, 애정 표현은 서투른데 자존심은 굉장히 강해요. 인내심과 감정 제어가 뛰어나고, 동정심과 의리로 똘똘 뭉쳐서 힘든 사람을 그냥 못 지나쳐요. 사람 다루는 능력도 좋고, 반대 의견도 강압 없이 끈기 있게 설득해내는 진짜 능력자예요. 근데 화가 폭발하는 그 순간은 조심해야 해요 — 평소엔 안 그러던 사람이 아무도 못 말릴 정도로 물불 안 가리거든요. 독불장군 기질에 자존심 건드리면 절대 가만 안 있어요. 연애는 표현이 서툴러서 편한 쪽을 선호해요. 사자자리와 연결된 카드로, 사자를 부드럽게 다루는 이미지처럼 강함을 온화함으로 다스려요. 화나게 하지만 않으면, 세상 든든한 내 편이에요.` },
+  'major-09': { tagline: `집이 최고, 혼자가 짱`, body: `혼자 있을 때가 제일 편안하고, 자기만의 세계가 확고해서 좀처럼 남을 그 안에 들이지 않아요. 애늙은이 소리를 자주 듣고, INTJ 느낌의 내향인 끝판왕이에요. 한번 꽂힌 생각은 끝까지 파고드는 집요함이 있는데, 이게 답답해 보여도 결국 사람들의 신뢰를 얻는 이유가 돼요. 소수의 사람과는 정말 깊게 지내는 스타일이거든요. 문제는 그 소수 안에 들어가기가 만만치 않다는 거예요. 고집이 세서 타인의 의견을 잘 안 받아들이고, 연락 잘 끊기는 걸로 유명하고(잠수 타는 거 특기), 내 사람에게는 오히려 간섭과 잔소리가 심해져요. 근거 없이 의심하고 우기는 습관, 사회성 부족, 아무 말이나 곱씹어서 갈등을 만드는 것도 특징이에요. 연애도 마찬가지로 서툴러서 친해지는 데 시간이 오래 걸리지만, 일단 마음을 열면 집착과 소유욕이 튀어나와요. 처녀자리와 연결된 카드로, 등불을 든 이미지처럼 홀로 길을 밝히며 나아가요. 연락이 뜸해도 삐치지 마세요, 원래 그런 사람이에요.` },
+  'major-10': { tagline: `오늘 여기, 내일 저기, 인생이 즉흥극`, body: `성격이 수레바퀴처럼 둥글둥글해서 어디서든 잘 어울리고, 낙천적이고 긍정적인 데다 활동적이라 늘 어딘가로 이동 중이에요. 사교성이 좋아 순식간에 친해지고, 다재다능하고 예술적 감각까지 있어 못하는 게 별로 없어요. 동정심이 강해 남을 잘 도와주는 따뜻한 면도 있고요. 근데 이 사람의 최대 약점은 '중심이 없다'는 거예요. 주관이 뚜렷하지 않아 분위기에 잘 휩쓸리고, 끈기와 집중력이 부족해서 뭘 시작해도 산만하게 끝나요. 쉽게 포기하고 대인관계에서도 손절이 빠른 편이라, 얼마 전까지 친했던 사람과 갑자기 연락이 끊기기도 해요. 귀가 얇아서 누가 이용해도 눈치를 못 채는 게 제일 걱정되는 부분이에요. 연애에서는 그냥 나에게 잘해주고 친절한 사람이면 마음이 열려요. 목성과 연결된 카드로, 돌아가는 수레바퀴 이미지처럼 오르내림을 자연스럽게 받아들여요. 재밌는 사람인 건 확실한데, 진지한 얘기는 다른 사람한테 하는 게 나을지도요.` },
+  'major-11': { tagline: `팩트로 승부하는 인간 저울`, body: `굉장히 신중하고 현실적이며 완벽주의라, 논리적이고 분석적인 사고로 뭐든 딱딱 정리해요. 법 잘 지키고, 받은 만큼 돌려주는 기브 앤 테이크의 화신이며, 성실하고 책임감 강한 원리원칙주의자예요. 결단력이 있어 맺고 끊는 게 정확하고, 감정에 안 휘둘리는 공과 사 구분, 꼼꼼한 일처리는 정말 믿음직해요. 근데 이 신중함이 지나치면 우유부단으로 변해서 결정에 하세월이 걸려요. 사람을 도덕적 잣대로 재단하는 버릇, 냉철하고 까칠한 인상, 무정하다는 오해를 사는 것도 세트로 따라와요. 융통성 없이 본인 판단을 강요하고, 공감 능력이 부족해서 인간미 없다는 말을 들을 때도 있어요. 연애에서는 자기만의 기준으로 상대의 사랑을 시험해요 — “바빠도 나 먼저 챙겨야 하는 거 아니야?” 같은 말, 어디서 들어본 적 있죠? 의심도 많은 편이에요. 천칭자리와 연결된 카드로, 저울과 검을 든 이미지처럼 판단과 실행을 함께 지녀요. 옳은 말만 하는데, 가끔은 그냥 넘어가 줘도 될 텐데 싶은 사람이에요.` },
+  'major-12': { tagline: `느긋해 보이지만 사실은 세상 다르게 보는 사람`, body: `대인관계가 넓지 않고 소심한 편이지만, 생각이 깊고 배려심 있는 4차원적인 매력이 있어요. 머리가 비상하고 창의력이 남다르며, 어떤 어려움도 묵묵히 견디는 인내심이 있어요. 손해 보더라도 타인을 위해 기꺼이 양보하는 헌신적인 마음, 남다른 시각으로 문제를 새롭게 바라보는 통찰력이 진짜 매력 포인트예요. 원하는 걸 위해서라면 오래 기다릴 줄도 알고요. 근데 그 기다림이 가끔 미련으로 변질돼요. 과거에 집착하고 뒤끝이 있어서 상처가 오래가고, 잡생각이 많아 정작 실행은 못 하는 우유부단함이 있어요. 결정 하나에 시간이 한참 걸리고, 도와줘 놓고 오히려 오해받는 억울한 상황도 자주 생겨요. 뭔가에 빠지면 깊게, 정말 깊게 빠지는 편이라 중독을 조심해야 해요. 연애에서는 상대에게 끌려다니거나 잡혀 사는 경우가 많고, 이별 후 다음 연애까지 유독 오래 걸려요. 해왕성과 연결된 카드로, 거꾸로 매달린 이미지처럼 뒤집힌 시각에서 진실을 봐요. 남들과 다르게 보는 눈, 사실은 그게 제일 큰 재능이에요.` },
+  'major-13': { tagline: `한번 아니면 아닌, 뒤도 안 돌아보는 사람`, body: `감정을 잘 숨기지만 싫은 사람 앞에서만큼은 티가 나요. 내향적이고 이성이 감정을 압도하는 타입이라, 한번 마음을 정하면 절대 안 바꾸고 그 결정에 후회도 안 해요. 호불호가 확실하고, 계산적이라 쓸데없는 지출은 딱 질색이에요. 냉철한 판단력, 결정에 흔들리지 않는 뚝심, 리더십과 카리스마, 여기에 저축까지 잘하는 계획성 있는 재정 관리까지 — 정말 믿음직한 사람이에요. 뭔가에 몰두하면 무서울 정도의 집중력을 보여주기도 하죠. 근데 사람을 잘 안 믿고 냉소적인 면이 있어서, 가끔 우울하고 무기력한 시기가 훅 찾아와요. 관심 없는 일엔 정말 1도 신경 안 쓰는 극단적인 무관심도 특징이에요. 연애는 강렬하고 깊게 몰입하지만, 끝날 땐 정말 확실하게 정리하고, 질투와 집착도 만만치 않게 드러나요. 전갈자리와 연결된 카드로, 해골 기사의 이미지처럼 끝은 곧 새로운 시작이라는 걸 보여줘요. 무섭게 단호하지만, 그만큼 확실한 사람이기도 해요.` },
+  'major-14': { tagline: `갈등 제로, 대신 속은 곪아가는 평화주의자`, body: `대인관계가 원만하고 다정하며, 예의 바르고 겸손해서 어딜 가나 좋은 사람이라는 평을 받아요. 조용하고 온화한 성격에, 상처를 받아도 티를 안 내는 강한 인내심이 있어요. 타인에게 맞춰주는 배려심, 사람을 편안하게 해주는 힘, 분쟁이 있을 때 중재하는 능력은 이 사람의 진짜 강점이에요. 감정 기복도 없고 욕심도 없는 성실한 모범생 스타일이죠. 근데 이 평화가 좀 위태로워요 — 자기 의견을 강하게 못 드러내서 결정장애가 심하고, 맺고 끊는 걸 못 해서 오해를 사기도 해요. 갈등이 싫어서 그냥 남 의견에 맞춰주다 보니, 정작 본인 자존감은 계속 낮아지고 스트레스만 쌓여가요. 겉으로는 평온한데 속은 이미 파도가 치고 있는 스타일이에요. 연애는 무난하고 편안한 쪽을 선호해요. 사수자리와 연결된 카드로, 두 잔의 물을 섞는 이미지처럼 서로 다른 것을 융합해요. 가끔은 싫으면 싫다고 말해도 괜찮아요, 진짜로.` },
+  'major-15': { tagline: `한번 꽂히면 브레이크가 없는 욕망 덩어리`, body: `본능에 충실하고 감정에 솔직한 만큼, 원하는 걸 향해선 정말 최선을 다해요. 기분파에 욕심이 많고 유흥을 사랑하며, 야망이 커서 목표를 위해서라면 편법도 서슴지 않을 정도예요. 그러면서도 실속은 확실히 챙기는 현실주의자이기도 하죠. 치명적인 매력으로 사람 마음을 확 끌어당기고, 천재적인 발상으로 아이디어를 뚝딱 내놓는 게 이 사람의 강점이에요. 근데 문제는 그 욕망을 다스리는 게 잘 안 된다는 것. 감정기복이 심하고 자기 합리화가 빠르며, 애정·금전·도박·유흥 뭐든 유혹에 쉽게 넘어가고 또 유혹도 잘해요. 갖고 싶은 건 반드시 가져야 직성이 풀리고, 한번 집착하면 정말 깊게 파고들어요. 아닌 관계도 잘 못 끊고, 부정적일 땐 무례하거나 폭력적으로 변할 수 있어요. 연애는 정말 위험해요 — 집착과 의심이 심하고 소유욕으로 구속하려 들며, 바람기까지 충만한 전형적인 나쁜 남자·나쁜 여자 스타일이에요. 염소자리와 연결된 카드로, 사슬에 묶인 이미지처럼 스스로 만든 굴레에 갇혀 있어요. 매력적인 만큼 위험하니, 마음의 준비는 하고 만나세요.` },
+  'major-16': { tagline: `평온함 = 지루함, 사고 한 방이 활력소`, body: `도전정신이 강하고 과감해서, 지루한 걸 도저히 못 견뎌 늘 변화를 찾아다녀요. 무모할 정도로 열정적이고 극단적이고 자극적인 걸 좋아하는데, 고집도 만만치 않아서 자기 의견은 절대 굽히지 않아요. 당하고는 절대 못 사는 성격이라 항상 맞서 싸우려 들어요. 변화 앞에서도 겁먹지 않는 용기, 뛰어난 적응력, 빠른 순발력, 실패해도 다시 일어서는 대담함은 진짜 멋진 강점이에요. 문제는 그 폭발력을 조절하는 게 잘 안 된다는 거예요. 성격이 급하고 충동적이며, 감정기복이 크고 스트레스에 약해서 참을성이 오래 못 가요. 다혈질에 거칠고, 직설적인 말투로 싸움을 만들며, 쉽게 타올랐다 쉽게 식는 냄비 근성도 있어요. 감정 조절이 안 돼서 스스로 대립을 만들고, 뒷담화도 은근히 잘하는 편이에요. 연애에서는 반복되는 패턴을 싫어해서 늘 새로운 자극을 원해요. 화성과 연결된 카드로, 번개 맞은 탑의 이미지처럼 무너짐이 곧 해방이 돼요. 파란만장하지만, 옆에 있으면 절대 심심하지는 않을 거예요.` },
+  'major-17': { tagline: `희망은 만렙, 현실 감각은 마이너스`, body: `희망적이고 긍정적이고 낙천적이라 어디서든 밝은 에너지를 뿜어내는 사람이에요. 감수성이 풍부하고 마음이 여려서 정과 눈물이 많고, 항상 잘될 거라 믿는 근거 없는 자신감의 소유자예요. 사람 만나면 힘이 나는 외향인이고, 인기 많고 끼가 넘치며 꾸미는 것도 좋아해서 어딜 가나 튀고 싶어해요. 사람을 쉽게 믿고 잘 퍼주는 정 많은 강점이 있지만, 그만큼 잘 속기도 하니 사기는 진짜 조심해야 해요. 낙천적인 게 지나쳐서 돈을 생각 없이 쓰고, 황소고집이라 맞는 말도 안 듣고 비판엔 아예 귀를 닫아버려요. 자기중심적이고 소통이 잘 안 되며, 입장 바꿔 생각하는 걸 잘 못해요. 작심삼일에 끈기 부족, 뭘 해주면 격한 칭찬을 바라는 것도 특징이고, 대인관계에서 오래 사랑받는 스타일은 아니에요. 사치와 낭비벽, 생각 없이 내뱉는 말로 상처 주기, 남 탓하는 습관까지 — 은근히 리스트가 길어요. 연애에서는 인기는 많은데 양다리를 걸치는 경우도 종종 생겨요. 물병자리와 연결된 카드로, 별빛 아래 물을 붓는 이미지처럼 고요한 회복과 재생을 나타내요. 희망을 주는 사람인데, 지갑은 각자 챙기세요.` },
+  'major-18': { tagline: `오늘의 기분은 오늘도 알 수 없음`, body: `감정기복과 변덕이 매우 심하고, 내성적이고 소극적인 사람이에요. 예민하고 의심 많고 섬세해서 걱정과 생각이 늘 많고, 그러면서도 마음은 여리고 정이 많아요. 속내는 절대 안 보여주는 비밀스러운 타입이고, 현실이 힘들면 술을 찾는 경향도 있어요. 영적인 능력과 촉이 뛰어나고, 생각이 깊고 배려심 있으며, 동정심 넘치는 친절함이 진짜 매력이에요. 근데 이 예민함이 문제를 만들어요 — 우울에 쉽게 빠지고 스트레스에 취약하며, 자존감과 자신감이 낮고 결정장애까지 있어요. 맺고 끊는 게 확실하지 않아 우유부단하고, 불안이 수시로 찾아오며, 거짓말도 곧잘 하는 이중적인 면이 있어요. 별거 아닌 말에도 의미부여를 해서 망상에 빠지기 쉽고, 이성보다 감정이 앞서요. 연애에서는 상대를 계속 의심하고, 마음대로 속마음을 예측하고 판단해버리는 습관이 있어요. 물고기자리와 연결된 카드로, 달빛 아래 길을 찾는 이미지처럼 모호함 속에서 방향을 감지해요. 예민한 만큼 섬세하니, 오늘 기분이 안 좋다면 그냥 조용히 곁에 있어주세요.` },
+  'major-19': { tagline: `걸어 다니는 비타민, 근데 본인 비타민은 없음`, body: `밝고 활발해서 작은 것에도 잘 웃고, 열정 넘치는 활동가예요. 사람이 많이 모이는 외향인이고, 자신감이 넘치다 못해 철없을 정도로 솔직해서 가끔 의도치 않게 상처를 줘요. 나서는 걸 좋아하고 거짓말은 다 티가 나는, 숨기는 게 없는 타입이에요. 분위기 메이커로 주변을 항상 웃게 만들고, 추진력과 도전정신이 뛰어나며, 사교성과 유머로 인기가 많아요. 검은 속내가 없어 믿을 수 있고, 리더십에 운도 잘 따라주며, 의외로 배려심 깊은 반전 매력도 있어요. 근데 이 밝음의 뒷면엔 그림자가 있어요 — 신중하지 못해 실수가 잦고, 끈기가 부족해서 마무리가 약하며, 도와주는 사람을 당연하게 여기다 상처를 주기도 해요. 비밀은 못 지키고, 현실성이 부족하며, 급한 성격에 힘든 건 절대 티 내지 않고 혼자 삼켜요. 정작 자기 자신은 잘 못 챙기는 아이러니한 사람이에요. 연애에서는 밝고 적극적으로 애정을 표현하며 관계의 즐거움을 중요하게 여겨요. 태양과 연결된 카드로, 환하게 빛나는 태양 아래의 이미지처럼 숨김없이 밝게 드러나요. 남들 챙기는 것만큼, 본인도 좀 챙기세요.` },
+  'major-20': { tagline: `정의감 뿜뿜, 근데 오지랖도 뿜뿜`, body: `냉정하고 이성적이며 호불호가 확실한 객관적인 사람이에요. 강단이 있고 고집도 세지만, 그게 다 확고한 신념에서 나와요. 정의롭고 억울한 걸 절대 못 참아서, 잘못된 걸 보면 손해를 감수하고서라도 나서요. 결단력이 빠르고, 말주변이 좋아 신뢰를 잘 얻으며, 상황 판단이 정확하고, 목표를 향해 성실히 노력해요. 타인을 위해 기꺼이 희생하고, 본인 이미지가 깎이더라도 옳은 방향으로 개혁하려는 뚝심이 진짜 멋진 강점이에요. 근데 그 정의감이 과하면 오지랖이 돼요. 남의 일에 지나치게 개입하려 들고, 솔직함이 지나쳐 직설적이고 까칠하다는 인상을 주며, 결과와 성과에 너무 집착하는 경향이 있어요. 남을 평가하고 비판하는 걸 좋아하는 것도 종종 부담스러운 지점이에요. 연애에서는 과거의 영향을 오래 안고 가는 편이고, 관계에서도 반성과 성장을 중요하게 여기며, 재회에 의미를 두기도 해요. 명왕성과 불의 원소와 연결된 카드로, 나팔 소리에 깨어나는 이미지처럼 무의식이 의식으로 떠올라요. 정의로운 건 좋은데, 가끔은 그냥 지나가도 괜찮아요.` },
+  'major-21': { tagline: `완벽을 향해 달리다 결국 혼자 지치는 사람`, body: `완벽주의 기질에 활동적이고 역마살까지 있어서 늘 뭔가를 이루려고 움직여요. 깔끔하고 똑 부러지는 성격에 자기관리도 철저하고, 화려한 걸 좋아하며 인정받고 싶은 욕구가 큰 편이에요. 능력이 뛰어나고 긍정적이며 용기와 자신감이 넘치고, 상황판단이 빠르고 성실하며 책임감이 강해요. 시작한 일은 확실하게 끝을 맺고, 결단력 있게 큰 목표를 세우는 게 이 사람의 진짜 매력이에요. 근데 완벽주의가 발목을 잡을 때가 있어요 — 고집이 세고 고지식해서 융통성이 떨어지고, 시기 질투가 심하며 은근히 잘난 척도 해요. 완벽을 추구하다 스스로를 피곤하게 만들고, 남에게 일을 못 맡기고 혼자 다 짊어지려는 습관이 있어요. 허세와 사치, 자기중심적인 면, 무리하게 일을 벌이는 것도 조심해야 할 부분이에요. 연애에서는 안정적이고 완성된 관계를 지향하며, 오래 함께한 인연을 소중히 여기고 성취감을 느껴요. 토성과 연결된 카드로, 화환 속에서 춤추는 이미지처럼 여정의 완결과 조화를 나타내요. 완벽하지 않아도 괜찮아요, 가끔은 남한테 맡겨보세요.` },
+  'wands-page': { tagline: `오늘은 이거, 내일은 저거 — 열정은 진심인데 지구력이 문제`, body: `호기심이 많고 도전적인 사람이에요. 뭔가를 하려는 도전정신은 강한데, 그 행동이 오래가지 않는 게 함정이에요. 신중하지도 진중하지도 못하고 좀 가벼운 편이라 관심이 금방 식어요. 노는 것과 새로운 사람 사귀는 걸 좋아하고, 열정은 넘치지만 현실 감각이 부족해서 실수가 많아요. 그래도 낙천적이고 긍정적이며 밝은 성격이 매력이에요. 굉장히 솔직해서 감정을 전할 때 돌려 말하지 못하고, 장난을 좋아하고 사람을 좋아해서 가끔은 타인을 귀찮게 하기도 해요. 충동적이라 쉽게 불타오르지만 또 쉽게 질려요. 뭔가를 시작할 때 두려움이 없고 자신감이 넘치는 반면, 어른스럽지 못하고 철이 없어서 신뢰를 잃기 쉬워요. 한 곳에서 오래 일하지 못하고 직장을 자주 옮기며, 불같은 성격 탓에 헤어지자는 말도 쉽게 뱉을 수 있어요. 성공하고 싶은 욕심이 커서 조바심을 내기도 하고요. 에너지가 넘치고 활동적이라 사교 모임, 여행, 동호회 활동을 좋아하고, 자신감이 너무 넘쳐서 무모한 행동을 하기도 해요. 소식과 이야기를 전달하는 메신저 역할을 자주 맡는 카드예요.` },
+  'wands-knight': { tagline: `불같이 타올랐다가 훅 꺼지는 열정 만수르`, body: `굉장히 열정적이고 승부욕이 강한 사람이에요. 성격이 급해서 답답한 것, 답답한 상황, 답답한 사람을 못 견뎌요. 불같이 타오르는데 열정이 식는 것도 순식간이고, 계획 없이 움직이다 꽂히면 바로 저질러버리는 타입이에요. 화가 많고 욱하는 기질이 심해서, 한번 화나면 눈에 뵈는 게 없어져요. 여자라 해도 남성적인 덕목이 강하고, 자존심이 세고 지는 걸 정말 싫어하며 고집도 세요. 다행히 화가 나면 다 쏟아내는 스타일이라 뒤끝은 없는 편이에요. 정력과 성욕이 강하고, 여기저기 돌아다니고 몸으로 체험하는 걸 좋아해서 직접 느껴봐야 직성이 풀려요.` },
+  'wands-queen': { tagline: `대장부 기질의 화끈한 리더, 화나면 무섭지만 뒤끝은 없음`, body: `대장부 기질을 가진 사람으로, 자존심이 굉장히 세고 주도적인 성격을 지녔어요. 완드 카드답게 불과 남성적인 에너지를 상징물로 지녀서, 여성이라도 남자같이 화끈한 성격을 보여요. 사회생활을 잘하고 사회적 지위나 능력이 있는 경우가 많으며, 낙천적이고 쿨해서 늘 주목받는 인기인이에요. 친절하고 따뜻하고 사랑스러우면서도, 냉정할 땐 굉장히 냉정해지는 반전이 있어요. 불같은 성격이라 욱하는 기질이 심하고 한번 화내면 세게 내지만, 뒤끝이 없어서 갑자기 화냈다가 갑자기 풀리고 또 금방 쿨해져요. 대인관계나 연인관계에서 주도권을 쥐려 하면서도 남의 일은 잘 도와주고, 오지랖이 넓어서 내 사람이 억울한 일을 당하면 발 벗고 나서서 해결해줘요. 연애 상대는 편안하게 감싸주고 엄마처럼 품어주지만, 집착과 의심이 많은 편이에요. 주변을 잘 챙기고 밝고 쾌활해서 사랑받는 사람인데, 그만큼 배신도 종종 당해요. 여성스러운 스타일은 아니고, 드세고 똑 부러지는 중성적인 성격에 외모 관리에도 신경을 많이 써요. 직설적이고 공격적인 화법을 쓰고, 화나면 싸움도 마다하지 않아요. 연애할 땐 조강지처 같은 면모로, 잘 못하는 살림도 기꺼이 해보려 해요. 책임감이 강해서 입 밖으로 낸 말은 반드시 지키려 하는데, 그게 이 사람에겐 곧 자존심을 지키는 일이에요.` },
+  'wands-king': { tagline: `완드 퀸의 완숙 버전, 화끈함은 그대로 카리스마는 플러스`, body: `완드 퀸과 결이 이어지는 카드로, 대장부 기질에 자존심이 세고 주도적인 성격을 지닌 사람이에요. 불과 남성적인 에너지를 상징하는 카드답게, 화끈하고 시원시원한 성격이 특징이에요. 사회생활을 잘하고 능력 있는 사람으로 통하며, 낙천적이고 쿨해서 늘 주목받는 인기인이죠. 친절하고 따뜻하다가도 냉정할 땐 굉장히 냉정해지고, 욱하는 기질이 있어 한번 화내면 세게 내지만 뒤끝은 없어서 금방 풀려요. 대인관계나 연인관계에서 주도권을 쥐려 하면서도, 오지랖 넓게 내 사람의 억울한 일은 발 벗고 나서서 해결해줘요. 연애 상대는 엄마처럼 편안하게 감싸주지만 집착과 의심도 많은 편이에요. 주변을 잘 챙기고 쾌활해서 사랑받지만 배신도 종종 당하고, 여성스럽기보단 드세고 똑 부러지는 중성적인 매력에 외모 관리에도 신경을 많이 써요. 직설적이고 공격적인 화법을 쓰며 화나면 싸움도 피하지 않아요. 연애할 땐 헌신적으로 챙기려 하고, 입 밖으로 낸 말은 꼭 지키려는 게 이 사람의 자존심이에요.` },
+  'cups-page': { tagline: `눈물 많은 감성 소년소녀, 근데 마무리는 어설픔`, body: `호기심이 많고 감성이 풍부해서, 섬세한 감수성에 눈물도 많은 다정한 사람이에요. 아직은 미숙하고 어설프지만 성실하게 열심히 해보려는 마음만큼은 진심이에요. 부드럽고 친절하고 따뜻하지만, 사실 타인을 배려한다기보다는 자신의 감정에 충실한 편이라 주변 사람들에게 의지하려는 성향이 강해요. 다행히 친화력이 좋아서 사람들이 먼저 다가와 도와주는 경우가 많아요. 보여지는 것과 예술에 관심이 많고, 감정적이고 예민해서 상처를 잘 받아요. 수동적이고 책임감이 부족하며, 낙천적이지만 그만큼 가벼워 보이기도 하고, 끈기가 부족해서 변명이 잦고 잘 삐쳐요. 현실 감각이 부족하고 계산적이지 못한 게 이 사람의 진짜 약점이에요. 호기심은 넘치는데 행동력과 집중력이 약해서 시작만 하고 끝을 못 보는 경우가 많고, 외로움에 약해서 혼자 있는 걸 싫어해요. 당장의 감정에 빠져서 멀리 내다보지 못하는 편이죠. 연애를 시작할 땐 상대에게 충실하지만, 오래 지속되면 슬슬 다른 곳으로 관심이 옮겨가요. 주변 상황에 잘 휩쓸리고 멘탈이 약하며, 돈도 잘 못 모으고, 이성보다 감정으로 판단하는 변덕스러운 마음의 소유자예요.` },
+  'cups-knight': { tagline: `부드러운 로맨티스트, 근데 마음은 자주 바뀜`, body: `적극적이진 않아도 부드러운 성격에 예의 바르고 배려심이 강한 사람이에요. 미적 감각이 뛰어나고 매력적이라, 사랑하는 사람에게는 로맨틱하게 부드럽게 다가가요. 자기애가 강하고 자신감이 있으며, 감정 표현에는 컵 페이지보다 훨씬 능숙해요. 다만 컵의 기운이라 현실 감각은 여전히 떨어지는 편이에요. 말을 잘하고 사람을 끌어당기는 힘이 있어 협상에 능하고, 타인을 위해 희생할 줄 알며 공감능력이 좋아 대인관계도 좋아요. 남자라 해도 여성스러운 감성을 지닌 경우가 많고, 애정 표현을 잘하는 반면 질투심이 강하고 자제력이 부족해요. 다정하고 자상해서 타인에게 상처 주지 않으려 애쓰지만, 정작 책임감은 부족한 편이에요. 느긋하고 매너 있고 따뜻하지만 답답한 면이 있고, 쉽게 사랑에 빠지는 만큼 쉽게 질리기도 해요. 우유부단하고 바람기가 다분한데 인기는 또 많아요. 당장의 감정이 우선이라 현실적인 판단을 못 해서 약속을 어기는 경우도 잦아요.` },
+  'cups-queen': { tagline: `모두의 상담사, 정작 본인 마음은 아무도 모름`, body: `공감능력이 뛰어나고 동정심이 강해서 불쌍한 사람을 그냥 지나치지 못하는 사람이에요. 타인을 배려하고 이해하며 친절하게 대하는, 여성스럽고 내성적이며 감수성이 예민한 성격이죠. 기분 나쁜 일이 있어도 대놓고 말 못 하고 속으로 앓는 타입이라, 쉽게 상처받고 한번 받은 상처는 오래 간직해요. 자신을 필요로 하는 사람을 외면하지 못하고 부탁도 잘 거절하지 못해요. 다정다감하고 부드럽고 착하지만, 남들에게 속내는 잘 안 드러내요. 감정 기복이 크고 변덕이 심하며, 사랑하는 사람에게는 헌신하다 못해 사랑이라는 이름으로 집착하고 의심하는 의처증 성향까지 나타날 수 있어요. 헌신적인 연애, 자신을 희생하는 연애, 가진 걸 다 퍼주는 연애를 하는 스타일이에요. (컵이 닫혀 있는 이미지는 말 못 할 비밀을 품고 있다는 뜻이기도 해요.) 감수성이 풍부하고 민감해서 우울증에 잘 빠지고, 히스테리·공황장애·불면증·조울증까지도 조심해야 해요. 타인의 감정은 잘 어루만지면서 정작 자기 감정에는 소홀한 게 이 사람의 아이러니예요. 영적인 능력이 있어 촉과 감이 좋지만, 가끔 신경질적이고 비관적으로 흘러갈 때가 있어요. 멘탈이 약해서 술이나 약 같은 것에 의존하고 중독되기 쉬워요. 사랑하는 사람을 위해 뭐든 해줄 수 있는, 그러다 결국 상처받는 사람이에요.` },
+  'cups-king': { tagline: `다정한 매너남·매너녀, 그런데 마음은 여러 곳에`, body: `다정하고 매너가 좋은데, 의도하지 않은 행동이 상대를 자꾸 착각하게 만드는 사람이에요. 주변에 사람이 많고 두루두루 대인관계를 잘 맺으며, 한 마음에 두 사람을 품을 수 있는 바람기가 있어요. 인기가 많고 친화력도 좋은 데다 눈치가 빨라 상대 기분에 잘 맞춰주는 센스까지 있고, 부드럽고 관대하게 사람을 리드해요. 타인의 눈과 평판을 신경 쓰는 편이라, 고백을 거절할 때도 상대가 민망하지 않게 예쁘게 거절해요. 그래서 상대는 쉽게 포기를 못 하죠. 항상 침착하고 평상심을 유지하지만 사실 감정 기복은 꽤 심할 수 있어요. 상대의 마음을 헤아릴 줄 알아서 대화가 잘 통하고 자상하며 로맨틱한 인물이지만, 직설적으로 말하지 못하고 같은 얘기도 자꾸 돌려서 해요. 싸울 때도 조용히 대화로 풀려는 타입이고, 강압적이고 공격적인 사람은 아예 상대를 안 하고 피해버려요. 남을 잘 도와주긴 하지만 자신이 손해 보면서까지 도와주진 않고, 변덕과 감정 기복이 있어 가끔 예민해질 때가 있어요. 상대가 무례해도 일단 참지만, 참다 참다 선을 넘었다 싶으면 그대로 인연을 끊어버려요. 늘 좋은 사람으로 보이려 하고 여자들에게 항상 잘해줘서, 연인 입장에선 오히려 불안할 수 있는 스타일이에요.` },
+  'swords-page': { tagline: `똑똑한데 말이 칼, 친해지기까지 오래 걸리는 타입`, body: `머리가 좋고 영리한 사람이에요. 냉철하고 이성적이며 옳고 그름을 확실히 따지려 해요. 생각이 굉장히 많고 신중해서, 뭔가를 시작하기 전에 온갖 현실적인 경우의 수를 다 따져봐요. 자기중심적이고 공감 능력이 낮으며 계산적이라 깊은 관계의 친구가 몇 안 되지만, 눈치가 빠르고 상황 판단이 뛰어나요. 다만 친해지기가 워낙 어려워서, 내 사람으로 만들기까지 시간이 오래 걸리는 편이에요. 예민하고 까탈스러우며 거침없이 말해서 사람들에게 상처를 주고, 화가 나거나 이해 안 되는 일이 있으면 말로 풀어야 직성이 풀려요. 자신감과 실행력은 부족해서 타인의 의견에 기대는 경향이 있지만, 논리적이고 이성적이라 말싸움에서는 절대 지지 않아요. 계획적이고 꼼꼼한 J 성향의 소유자예요. 자존심이 굉장히 강한데 남의 자존심은 신경 안 쓰고 막말을 하거나 무시하는 경향이 있어요. 의심과 집착이 강해서 사람을 잘 안 믿고, 그래서 늘 날이 서 있는 느낌을 줘요. 연애를 오래 못 하고, 잔소리가 심하며 상대의 단점을 캐려는 경향이 있어요. 매사에 비판적이고 '내 말은 맞고 네 말은 틀렸다'는 생각이 기본값이에요. 스트레스를 많이 받고 사서 걱정하는 스타일이며, 자신의 약점이나 빈틈을 보이지 않으려고 일상 대화에서도 계속 머리를 써요.` },
+  'swords-knight': { tagline: `일단 저질러, 그 다음은 생각 안 함 — 논리보다 빠른 주먹`, body: `성격이 급하고 충동적이고 경솔한 사람이에요. 자신의 생각을 절대 굽히지 않고, 두려운 게 없이 매우 공격적이고 도전적이에요. 마음이 급해서 하고자 하는 게 있으면 당장 실천해야 직성이 풀리는데, 그래서 실수가 잦아요. 자기주장이 강하고 자기중심적이라 타인의 의견을 존중하지 않고, 여기서도 저기서도 싸우고 있는 걸 발견하게 돼요. 말을 돌려 하는 법이 없고 공격적이라 싸움이 끊이질 않아요. 리더십은 있지만 남 밑에서는 일을 못 하고, 계급에 굴하지 않고 의견을 밀어붙여요. 본인의 판단이 이성적이고 냉철하다고 믿기 때문에, 자신만 옳다고 생각해요. 대화가 잘 안 되는 이유가 여기 있어요 — 자기주장만 하고 남의 말은 듣지 않으며, 다른 의견은 곧 틀린 것으로 취급해요. 여자라 해도 남성적인 성향이 강하고, 감정보다는 이성으로 움직이는 사람이에요. 논리와 이성으로 무장해서 공감능력이 부족하고 감정에 잘 안 휘둘리며, 맺고 끊음이 확실해 한번 등 돌리면 다시는 안 봐요. 언어적·육체적 폭력까지 갈 수 있는 폭력적인 성향이 강하고, 무서운 집착과 의심을 보이기도 해요. 두뇌 회전과 판단력은 확실히 빠른 편이에요. 자신의 생각을 타인에게 강요하려 들고, 무례하고 건방질 수 있으며, 싫어하는 사람이나 연인에게는 스토커 같은 집착을 보이기도 해요.` },
+  'swords-queen': { tagline: `빈틈없는 냉철함, 그 안엔 여린 마음이 숨어있음`, body: `자신의 감정을 잘 표현하지 못하는 사람이에요. 논리적이고 공정한 판단을 하고, 빈틈을 잘 안 보여줘요. 팔은 안으로 굽는다는데, 이 사람은 내 사람이라도 잘못한 건 감싸주지 않아요. 거칠고 비판적이며 날카로운 말투로 사람에게 상처를 주고, 확실한 걸 좋아해서 사설 긴 얘기는 딱 질색이에요. “그래서 결론이 뭔데?” — 이 한마디가 딱 이 사람 스타일이에요. 독립적이고 독선적이며 고집이 굉장히 세고 자기중심적인데, 판단력만큼은 확실히 좋아요. 자신의 판단이 곧 정답이라 생각해서 타인을 잘 안 받아들이고, 깐깐하고 공격적인 언행과 강한 의심을 보여요. 사람을 함부로 안 믿고 냉정해 보이는 이미지 때문에 다가가기 어려운 사람으로 비쳐요. 예민하고 히스테릭하며 쓸데없는 걱정과 생각으로 스트레스를 사서 받는 스타일이에요. 자신의 말이 맞고 다른 생각을 가진 사람은 다 틀렸다고 생각하며, 자기 보호 본능이 강해 대인관계에서 철벽을 쳐요. 이성과 사람에 대한 불신이 깔려 있고, 내 사람이라 여겨지면 집착을 보이기도 해요. 자존심이 강해서 약한 모습 보이는 걸 싫어하고 속 깊은 이야기는 꺼려요. 사실 상처받기가 두려워서 더 센 척하는 거예요. 속은 여리고 버려지는 걸 두려워해서, 결국 먼저 상대를 밀어내 버려요.` },
+  'swords-king': { tagline: `박학다식한 카리스마, 근데 대화는 일방통행`, body: `머리가 비상하고 똑똑하며 박학다식한 사람이에요. 차갑고 차분하며 말수가 적고 점잖고 어른스러운 인상을 줘요. 권위적이고 보수적이며 가부장적인 면이 있고, 권력에 대한 욕심과 남을 지배하려는 욕망이 있어요. 정직하고 올바르고 성실하며, 냉정하고 공정해서 정에 좌우되지 않는 이성적인 판단을 해요. 책임감이 강하고 공과 사가 분명하며 감정적으로 행동하지 않아요. 감정 표현을 잘 안 해서 연애 상대가 답답해할 수 있어요. 자신감이 강하고 추진력도 좋지만, 자기중심적이고 공감능력이 낮은 편이에요. 객관적으로 판단할 줄 알고, 카리스마와 단호한 리더십을 갖춘 사람이에요. 말을 함부로 내뱉지 않고, 자신이 꼭 지킬 수 있는 약속만 하며 듣기 좋으라고 하는 빈말은 없어요. 신뢰할 수 있는 인물이지만 독단적이고 고집이 세서 반감을 사기도 해요. 상대의 잘못을 그냥 넘어가지 않고 정확히 바로잡으려 해요. 대인관계나 애정관계에서 자신의 가치관과 생각을 상대에게 주입시키려 하고, 자기 말은 들으라 하면서 정작 본인은 남의 말을 안 들어요. 말로 타인에게 상처를 주고 말싸움에서 절대 양보하지 않아서, 주변 사람들이 어려워하고 무서워하는 편이에요.` },
+  'pentacles-page': { tagline: `안전제일주의 짠돌이, 근데 그만큼 믿음직함`, body: `안정적인 걸 선호하는 사람이에요. 한탕을 노리지 않고, 신중하고 조심스럽고 소극적인 편이라 위험을 감수하는 걸 싫어해요. 감정 표현에 서툴고 내성적이고 소심해서 짝사랑을 자주 해요. 현실적이고 성실한 사람으로, 뭔가를 얻고 싶다면 스스로 노력해서 얻으려 해요. 돈에 대한 집착이 강하고 함부로 쓰지 않는 짠돌이 기질이 있어요. 상당히 계산적이고 이해득실을 따져서 행동하며, 집중력이 뛰어난 착실한 노력파이자 악바리예요. 투자를 할 때도 원금 손실 위험이 있으면 아예 안 하거나 아주 소액만 넣어요. 자기중심적이고 공감능력이 떨어지며 완고한 면이 있지만, 인내심이 강하고 조용조용하며 침착해요. 계획적이고 미래지향적으로 움직이는 스타일이고, 뭔가를 배우는 걸 좋아하며 습득 능력도 뛰어나요. 의심과 걱정이 많아서 뭘 하기 전까지 시간이 오래 걸리고, 이성에게 인기 있는 스타일은 아니에요. 재치와 매력이 부족하고 너무 진지한 경향이 있지만, 사려 깊고 배려심이 있어요. 미성숙한 부분이 있지만 신뢰가 두터운 사람이에요.` },
+  'pentacles-knight': { tagline: `묵묵히 성실한 우직남, 답답할 정도로 신중함`, body: `신중하고 사려 깊으며 내면이 성숙한 사람이에요. 부지런히 성실하게, 또 꾸준하게 일을 끝까지 마무리하는 스타일이죠. 묵묵히 열심히 일하는 게 이 사람의 정체성이에요. 대단히 현실적이고 안정감을 좋아하며, 신뢰할 수 있는 인물로 책임감이 강하고 우직해요. 한탕을 싫어하고 늘 안전한 길을 선택하며, 보수적이고 고집이 센 편이에요. 완벽을 원하기 때문에 일 처리가 오래 걸리지만, 그만큼 완벽도가 높아요. 타인에게도 완벽을 바라서 잔소리가 심할 수 있고, 돈 욕심과 돈에 대한 집착이 강해요. 상대를 배려하면서도 고집은 절대 버리지 않고, 우유부단하고 속이 좁은 면이 있어요. 소심해서 하고 싶은 말을 다 못 하는데, 참다가 결국 한 번에 터뜨리는 스타일이에요. 충동적인 행동은 안 하고 생각하고 또 생각한 뒤에 행동하기 때문에, 이런 사람과 연애하면 최소한 불안하지는 않을 거예요. 연애에서도 신뢰를 주는 사람이지만, 조심성이 많고 소심하며 사람을 잘 안 믿는 편이에요.` },
+  'pentacles-queen': { tagline: `베풀 줄 아는 살림꾼, 근데 돈이 곧 자존심`, body: `금전 관리 능력이 뛰어나서 아낄 줄도 알고 베풀 줄도 아는 사람이에요. 감정 억제를 잘하고 타인 앞에서 이미지 관리를 잘하는데, 그만큼 이중적인 모습도 있어요. 모성애가 있어서 주변 사람이나 애인을 엄마처럼 챙기고 포용해주며, 편하고 안정적인 연애를 선호하고 상대를 편안하게 해줘요. 현실적이고 실리적이며 계산적이지만, 타인을 배려할 줄 알고 관대해서 도움이 필요하면 기꺼이 도와줘요. 좋아하는 사람을 위해서는 비싼 선물도 해주고 돈으로도 도움을 주는데, 베푸는 걸 좋아하면서도 그게 응당 돌아와야 한다고 생각하는 면이 있어요. 돈이 곧 자존심이자 원천이라 생각해서 돈에 대한 집착이 강하고, 없으면 불안해해요. 보여지는 모습에 신경을 많이 써서 부유하고 사랑스럽고 착한 사람으로 보이려 애써요. 동정심도 강하고 정이 많아서, 친구가 힘들다고 하면 위로보다 먼저 돈을 건네는 스타일이에요. 성실하고 책임감이 강하고, 내 사람에겐 잘하지만 아닌 사람에겐 냉정하고 선을 넘는 걸 싫어해요. 실제로는 돈이 없는데 돈 많은 척 허세를 부리는 모습으로 나타나기도 해요. 여러 이성을 만나며 사랑 없이 교제나 관계를 맺는 등 방탕한 모습을 즐기기도 해서, 진짜 자신의 모습을 아는 사람은 몇 없어요. 가식적이고 의심도 많은 편이에요.` },
+  'pentacles-king': { tagline: `돈과 권력의 정점, 근데 소통은 일방통행`, body: `욕심이 많은 사람이에요, 특히 금전에 대한 욕심이 강해요. 자기중심적이고 공감능력이 떨어지며, 머리도 똑똑하고 능력도 리더십도 있지만 이기적이고 남을 깔보는 경향이 있어요. 자존심도 고집도 굉장히 세서 소통이 잘 안 되고, 타인이 본인 말을 들어야 한다고 생각해요. 계산적이고 실용적이라 자신에게 이익이 되는 일에만 나서요. 사업 수완이 뛰어나고 사업가의 기질을 타고났으며, 완벽주의자이자 권위주의자예요. 남자는 하늘, 여자는 땅이라는 보수적인 마인드를 갖고 있기도 해요. 연인이 자신의 말에 고분고분 따르고 토를 달지 않는 걸 좋아하고, 애인이 마음에 안 들거나 오래 만날 생각이 없으면 돈을 아예 안 써요. 말을 함부로 하는 경향이 있어서 그로 인해 타인에게 상처를 주고, 무시당하는 걸 절대 못 참으며 존경받길 바라요. 꼼꼼하게 일을 처리하고 신중하게 임해서 실수는 거의 없지만, 보수적이고 융통성이 없으며 자기 일에만 관심을 갖고 타인의 일에는 무관심해 무정해 보여요. 애인이나 배우자에게 가부장적으로 굴고 집착을 하기도 하며, 돈으로 권력을 과시하는 스타일이에요.` },
+};
+
 
 // Practice-mode example questions (real-world consultation examples)
 const EXAMPLE_QUESTIONS = [
@@ -2288,6 +3079,7 @@ function selectMode(mode){
   document.getElementById('modePracticeBtn').classList.toggle('active', mode === 'practice');
   document.getElementById('modeNumberBtn').classList.toggle('active', mode === 'number');
   document.getElementById('modeCompatBtn').classList.toggle('active', mode === 'compat');
+  document.getElementById('modeStudyBtn').classList.toggle('active', mode === 'study');
 
   const examplePicker = document.getElementById('examplePicker');
   const pickMethodToggle = document.getElementById('pickMethodToggle');
@@ -2296,6 +3088,8 @@ function selectMode(mode){
   const numberHistoryPanel = document.getElementById('numberHistoryPanel');
   const compatSection = document.getElementById('compatSection');
   const compatHistoryPanel = document.getElementById('compatHistoryPanel');
+  const studySection = document.getElementById('studySection');
+  const studyDetailPanel = document.getElementById('studyDetailPanel');
 
   if(mode === 'number'){
     readingFlow.style.display = 'none';
@@ -2303,6 +3097,8 @@ function selectMode(mode){
     numberHistoryPanel.style.display = 'block';
     compatSection.style.display = 'none';
     compatHistoryPanel.style.display = 'none';
+    studySection.style.display = 'none';
+    studyDetailPanel.style.display = 'none';
     pickMethodToggle.style.display = 'none';
     renderNumberHistory();
     hideResult();
@@ -2315,8 +3111,23 @@ function selectMode(mode){
     numberHistoryPanel.style.display = 'none';
     compatSection.style.display = 'block';
     compatHistoryPanel.style.display = 'block';
+    studySection.style.display = 'none';
+    studyDetailPanel.style.display = 'none';
     pickMethodToggle.style.display = 'none';
     renderCompatHistory();
+    hideResult();
+    return;
+  }
+
+  if(mode === 'study'){
+    readingFlow.style.display = 'none';
+    numberSection.style.display = 'none';
+    numberHistoryPanel.style.display = 'none';
+    compatSection.style.display = 'none';
+    compatHistoryPanel.style.display = 'none';
+    studySection.style.display = 'block';
+    pickMethodToggle.style.display = 'none';
+    renderStudyGrid();
     hideResult();
     return;
   }
@@ -2326,6 +3137,8 @@ function selectMode(mode){
   numberHistoryPanel.style.display = 'none';
   compatSection.style.display = 'none';
   compatHistoryPanel.style.display = 'none';
+  studySection.style.display = 'none';
+  studyDetailPanel.style.display = 'none';
 
   if(mode === 'practice'){
     myInterpretationPanel.style.display = 'block';
@@ -2350,6 +3163,7 @@ document.getElementById('modeConsultBtn').addEventListener('click', ()=> selectM
 document.getElementById('modePracticeBtn').addEventListener('click', ()=> selectMode('practice'));
 document.getElementById('modeNumberBtn').addEventListener('click', ()=> selectMode('number'));
 document.getElementById('modeCompatBtn').addEventListener('click', ()=> selectMode('compat'));
+document.getElementById('modeStudyBtn').addEventListener('click', ()=> selectMode('study'));
 
 /* ---------------------------------------------------------
    3b2. SUN NUMBER / MOON NUMBER ANALYSIS
@@ -2656,16 +3470,27 @@ function renderNumberHistory(){
           </div>
         </div>
         <div class="history-entry-actions">
+          <button class="history-mini-btn" data-action="view">🔮 결과 보기</button>
           <button class="history-mini-btn" data-action="download">⬇️ 저장</button>
           <button class="history-mini-btn" data-action="pdf">🖨 PDF</button>
           <button class="history-mini-btn" data-action="delete">삭제</button>
         </div>
       </div>
-      <div class="history-entry-body">${escapeHtml(numberRecordToText(r))}</div>
     `;
+    const openThisView = ()=> openResultView({
+      title: 'MATAMO TAROT · 넘버 분석',
+      subText: `${r.date} · 생년월일 ${r.birthDate}`,
+      htmlBody: numberRecordToPrintHtml(r),
+      textBody: numberRecordToText(r),
+      filenamePrefix: `matamo-number-${r.id}`
+    });
     entry.querySelector('.history-entry-head').addEventListener('click', (e)=>{
       if(e.target.closest('.history-mini-btn')) return;
-      entry.querySelector('.history-entry-body').classList.toggle('open');
+      openThisView();
+    });
+    entry.querySelector('[data-action="view"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openThisView();
     });
     entry.querySelector('[data-action="pdf"]').addEventListener('click', (e)=>{
       e.stopPropagation();
@@ -2934,16 +3759,27 @@ function renderCompatHistory(){
           </div>
         </div>
         <div class="history-entry-actions">
+          <button class="history-mini-btn" data-action="view">🔮 결과 보기</button>
           <button class="history-mini-btn" data-action="download">⬇️ 저장</button>
           <button class="history-mini-btn" data-action="pdf">🖨 PDF</button>
           <button class="history-mini-btn" data-action="delete">삭제</button>
         </div>
       </div>
-      <div class="history-entry-body">${escapeHtml(compatRecordToText(r))}</div>
     `;
+    const openThisView = ()=> openResultView({
+      title: 'MATAMO TAROT · 궁합 보기',
+      subText: `${r.date} · ${r.nameA} × ${r.nameB}`,
+      htmlBody: compatRecordToPrintHtml(r),
+      textBody: compatRecordToText(r),
+      filenamePrefix: `matamo-compat-${r.id}`
+    });
     entry.querySelector('.history-entry-head').addEventListener('click', (e)=>{
       if(e.target.closest('.history-mini-btn')) return;
-      entry.querySelector('.history-entry-body').classList.toggle('open');
+      openThisView();
+    });
+    entry.querySelector('[data-action="view"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openThisView();
     });
     entry.querySelector('[data-action="download"]').addEventListener('click', (e)=>{
       e.stopPropagation();
@@ -2975,11 +3811,100 @@ function compatRecordToPrintHtml(r){
   return html;
 }
 
+document.getElementById('viewCompatBtn').addEventListener('click', ()=>{
+  if(!lastCompatResult){ showToast('먼저 궁합 보기를 눌러주세요.'); return; }
+  const record = buildCompatRecord();
+  openResultView({
+    title: 'MATAMO TAROT · 궁합 보기',
+    subText: `${record.date} · ${record.nameA} × ${record.nameB}`,
+    htmlBody: compatRecordToPrintHtml(record),
+    textBody: compatRecordToText(record),
+    filenamePrefix: 'matamo-tarot-compat'
+  });
+});
+
 document.getElementById('pdfCompatBtn').addEventListener('click', ()=>{
   if(!lastCompatResult){ showToast('저장할 궁합 결과가 없어요.'); return; }
   const record = buildCompatRecord();
   printAsPdf('MATAMO TAROT · 궁합 보기', compatRecordToPrintHtml(record));
 });
+
+/* ---------------------------------------------------------
+   3b4. CARD STUDY (78장 성격적 특성 공부하기)
+--------------------------------------------------------- */
+const STUDY_CATEGORIES = [
+  { key:'basic',      label:'기본 성향' },
+  { key:'strengths',  label:'강점' },
+  { key:'weaknesses', label:'약점' },
+  { key:'love',       label:'연애 성향' },
+  { key:'symbol',     label:'상징' }
+];
+
+// 카드 공부 모드는 메이저 아르카나(22) + 궁정 카드(페이지·나이트·퀸·킹, 16) = 38장만 다룸.
+// 숫자 카드(에이스~10, 4수트×10장=40장)는 제외.
+const STUDY_DECK = DECK.filter(card =>
+  card.id.startsWith('major-') || /-(page|knight|queen|king)$/.test(card.id)
+);
+
+function renderStudyGrid(){
+  const grid = document.getElementById('studyGrid');
+  grid.innerHTML = '';
+  STUDY_DECK.forEach((card, idx)=>{
+    const cell = document.createElement('div');
+    cell.className = 'choose-card';
+    cell.innerHTML = `
+      <div class="choose-card-img">
+        <img src="${card.img}" alt="${card.nameKr}" onerror="this.remove(); this.parentElement.querySelector('.choose-card-fallback').style.display='flex';">
+        <div class="choose-card-fallback">${card.nameKr}</div>
+      </div>
+      <div class="choose-card-name">${card.nameKr}</div>
+    `;
+    cell.addEventListener('click', ()=> selectStudyCard(card, idx));
+    grid.appendChild(cell);
+  });
+}
+
+const SUIT_ACCENT = {
+  wands: { icon: '🔥', color: '#e0764a' },
+  cups: { icon: '🌊', color: '#5a9fd6' },
+  swords: { icon: '⚔️', color: '#9aa3ad' },
+  pentacles: { icon: '🪙', color: '#8fae5a' }
+};
+
+function selectStudyCard(card, idx){
+  const bio = CARD_BIO[card.id];
+  const panel = document.getElementById('studyDetailPanel');
+  const imgTag = document.getElementById('studyDetailImgTag');
+  const fallback = document.getElementById('studyDetailFallback');
+
+  const suitKey = card.id.includes('-') && !card.id.startsWith('major-') ? card.id.split('-')[0] : null;
+  const accent = suitKey ? SUIT_ACCENT[suitKey] : null;
+
+  panel.style.setProperty('--study-accent', accent ? accent.color : 'var(--gold)');
+  const suitTag = accent ? `<span class="study-suit-icon">${accent.icon}</span>` : '';
+
+  document.getElementById('studyDetailNum').textContent = `${idx + 1} / 38 · ${card.nameEn}`;
+  document.getElementById('studyDetailName').innerHTML = `${suitTag}${card.nameKr}`;
+
+  imgTag.style.display = '';
+  fallback.style.display = 'none';
+  imgTag.src = card.img;
+  imgTag.alt = card.nameKr;
+  imgTag.onerror = function(){ this.style.display = 'none'; fallback.style.display = 'flex'; fallback.textContent = card.nameKr; };
+
+  const body = document.getElementById('studyDetailBody');
+  if(!bio){
+    body.innerHTML = `<div class="provider-msg">이 카드의 성격 소개가 아직 준비되지 않았어요.</div>`;
+  } else {
+    body.innerHTML = `
+      <div class="study-tagline">${escapeHtml(bio.tagline)}</div>
+      <div class="study-bio">${escapeHtml(bio.body)}</div>
+    `;
+  }
+
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior:'smooth', block:'start' });
+}
 
 /* ---------------------------------------------------------
    3c. PICK METHOD: random fan draw vs. choose-from-grid
@@ -3870,10 +4795,34 @@ function numberRecordToPrintHtml(r){
   return html;
 }
 
+document.getElementById('viewReadingBtn').addEventListener('click', ()=>{
+  if(!promptBox.textContent){ showToast('먼저 질문 만들기를 눌러주세요.'); return; }
+  const record = buildReadingRecord();
+  openResultView({
+    title: 'MATAMO TAROT · 리딩 기록',
+    subText: `${record.date} · ${record.mode === 'practice' ? '리딩연습하기' : '상담하기'} · ${record.spreadLabel}`,
+    htmlBody: readingRecordToPrintHtml(record),
+    textBody: readingToText(record),
+    filenamePrefix: 'matamo-tarot-reading'
+  });
+});
+
 document.getElementById('pdfReadingBtn').addEventListener('click', ()=>{
   if(!promptBox.textContent){ showToast('저장할 리딩이 없어요.'); return; }
   const record = buildReadingRecord();
   printAsPdf('MATAMO TAROT · 리딩 기록', readingRecordToPrintHtml(record));
+});
+
+document.getElementById('viewNumberBtn').addEventListener('click', ()=>{
+  if(!lastNumberResult){ showToast('먼저 분석하기를 눌러주세요.'); return; }
+  const record = buildNumberRecord();
+  openResultView({
+    title: 'MATAMO TAROT · 넘버 분석',
+    subText: `${record.date} · 생년월일 ${record.birthDate}`,
+    htmlBody: numberRecordToPrintHtml(record),
+    textBody: numberRecordToText(record),
+    filenamePrefix: 'matamo-tarot-number'
+  });
 });
 
 document.getElementById('pdfNumberBtn').addEventListener('click', ()=>{
@@ -3925,16 +4874,27 @@ function renderHistory(){
             </div>`).join('')}</div>
         </div>
         <div class="history-entry-actions">
+          <button class="history-mini-btn" data-action="view">🔮 결과 보기</button>
           <button class="history-mini-btn" data-action="download">⬇️ 저장</button>
           <button class="history-mini-btn" data-action="pdf">🖨 PDF</button>
           <button class="history-mini-btn" data-action="delete">삭제</button>
         </div>
       </div>
-      <div class="history-entry-body">${escapeHtml(readingToText(r))}</div>
     `;
+    const openThisView = ()=> openResultView({
+      title: 'MATAMO TAROT · 리딩 기록',
+      subText: `${r.date} · ${r.mode === 'practice' ? '리딩연습하기' : '상담하기'} · ${r.spreadLabel}`,
+      htmlBody: readingRecordToPrintHtml(r),
+      textBody: readingToText(r),
+      filenamePrefix: `matamo-tarot-reading-${r.id}`
+    });
     entry.querySelector('.history-entry-head').addEventListener('click', (e)=>{
       if(e.target.closest('.history-mini-btn')) return;
-      entry.querySelector('.history-entry-body').classList.toggle('open');
+      openThisView();
+    });
+    entry.querySelector('[data-action="view"]').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openThisView();
     });
     entry.querySelector('[data-action="download"]').addEventListener('click', (e)=>{
       e.stopPropagation();
