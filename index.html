@@ -722,6 +722,24 @@
     font-size: 14px; line-height: 1.6; color: var(--ink); white-space: pre-wrap;
   }
 
+  .spread-recommend{
+    margin-top: 14px;
+    background: rgba(201,163,90,0.1);
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13.5px; color: var(--ink); line-height:1.6;
+    display:flex; align-items:center; flex-wrap:wrap; gap: 10px;
+  }
+  .spread-recommend strong{ color: var(--gold-bright); }
+  .spread-recommend-btn{
+    background: var(--panel-light); border: 1px solid var(--gold); color: var(--gold-bright);
+    font-family:'Noto Sans KR', sans-serif; font-size: 12.5px; font-weight:600;
+    padding: 6px 12px; border-radius: 999px; cursor: pointer;
+    transition: transform .15s ease;
+  }
+  .spread-recommend-btn:hover{ transform: translateY(-1px); }
+
   .example-picker{ margin-bottom: 16px; }
   .example-picker label{
     display:block; font-size: 12.5px; color: var(--gold-bright);
@@ -1646,6 +1664,11 @@
       </div>
 
       <textarea id="question" placeholder="예) 요즘 진로 문제로 고민이 많아요. 지금 제가 놓치고 있는 게 있을까요?"></textarea>
+
+      <div class="spread-recommend" id="spreadRecommend" style="display:none;">
+        💡 이 질문엔 <strong id="spreadRecommendName"></strong> 배열법이 잘 어울려요.
+        <button class="spread-recommend-btn" id="spreadRecommendApply">이 배열법 적용하기</button>
+      </div>
     </section>
 
     <section class="panel">
@@ -4095,8 +4118,67 @@ document.getElementById('pmChooseBtn').addEventListener('click', ()=> selectPick
     document.getElementById('question').value = q.text;
     updateQuestionRecap();
     showToast(`[${q.category}] 예시 질문을 불러왔어요. 자유롭게 수정해도 좋아요.`);
+    showSpreadRecommendation(q.category);
   });
 })();
+
+// Category -> recommended spread. `variant` is only used when key === 'three'.
+const CATEGORY_SPREAD_MAP = {
+  '연애':      { key: 'five' },
+  '짝사랑':    { key: 'three', variant: 'advice' },
+  '재회':      { key: 'either' },
+  '결혼':      { key: 'five' },
+  '이별':      { key: 'either' },
+  '이직·취업': { key: 'either' },
+  '합격·시험': { key: 'three', variant: 'near' },
+  '승진':      { key: 'three', variant: 'cpr' },
+  '사업·창업': { key: 'celtic' },
+  '재물·금전': { key: 'five' },
+  '이사·부동산': { key: 'either' },
+  '계약·거래': { key: 'three', variant: 'advice' },
+  '건강':      { key: 'one' },
+  '가족':      { key: 'five' },
+  '인간관계':  { key: 'three', variant: 'advice' },
+  '학업·진학': { key: 'either' },
+  '자녀·육아': { key: 'five' },
+  '여행·이주': { key: 'either' },
+  '반려동물':  { key: 'one' },
+  '은퇴·노후': { key: 'celtic' }
+};
+
+function spreadRecommendLabel(rec){
+  if(rec.key === 'three'){
+    return `쓰리카드 (${THREE_VARIANTS[rec.variant].label})`;
+  }
+  return SPREADS[rec.key].label;
+}
+
+function showSpreadRecommendation(category){
+  const rec = CATEGORY_SPREAD_MAP[category];
+  const box = document.getElementById('spreadRecommend');
+  if(!rec){ box.style.display = 'none'; return; }
+  document.getElementById('spreadRecommendName').textContent = spreadRecommendLabel(rec);
+  box.style.display = 'flex';
+  box.dataset.key = rec.key;
+  box.dataset.variant = rec.variant || '';
+}
+
+document.getElementById('spreadRecommendApply').addEventListener('click', ()=>{
+  const box = document.getElementById('spreadRecommend');
+  const key = box.dataset.key;
+  if(!key) return;
+  selectSpread(key);
+  if(key === 'three' && box.dataset.variant){
+    selectThreeVariant(box.dataset.variant);
+  }
+  showToast('추천 배열법을 적용했어요.');
+  document.getElementById('spreadGrid').scrollIntoView({ behavior:'smooth', block:'center' });
+});
+
+// a manually-typed question has no known category, so hide any stale recommendation
+document.getElementById('question').addEventListener('input', ()=>{
+  document.getElementById('spreadRecommend').style.display = 'none';
+});
 
 /* ---------------------------------------------------------
    4. FAN RENDER
