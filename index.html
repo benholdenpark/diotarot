@@ -1435,8 +1435,8 @@ audio/bgm.mp3</pre>
       <span class="mode-desc">두 사람의 생년월일로 궁합을 봐요</span>
     </button>
     <button class="mode-btn" id="modeStudyBtn" data-mode="study">
-      <span class="mode-name">🎭 카드 공부</span>
-      <span class="mode-desc">78장 카드의 성격적 특성을 하나씩 배워요</span>
+      <span class="mode-name">🎭 타로 인물도감</span>
+      <span class="mode-desc">38장 카드의 성격을 하나씩 만나보세요</span>
     </button>
   </section>
 
@@ -1567,7 +1567,7 @@ audio/bgm.mp3</pre>
   </section>
 
   <section class="panel" id="studySection" style="display:none;">
-    <h2>🎭 카드 성격 공부</h2>
+    <h2>🎭 타로 인물도감</h2>
     <p class="sub">바보 카드(0번)부터 순서대로, 메이저 아르카나 22장과 궁정 카드(페이지·나이트·퀸·킹) 16장 — 총 38장의 성격을 하나의 글로 자연스럽게 읽어볼 수 있어요.</p>
     <div class="choose-grid" id="studyGrid"></div>
   </section>
@@ -1986,7 +1986,7 @@ function buildDeck(){
 const DECK = buildDeck(); // 78 cards, fixed order (used for legend)
 
 /* ---------------------------------------------------------
-   2d. CARD PERSONALITY PROFILES (for the 카드 공부 study mode)
+   2d. CARD PERSONALITY PROFILES (for the 타로 인물도감)
 --------------------------------------------------------- */
 const CARD_PERSONALITY = {
   'major-00': {
@@ -2538,7 +2538,7 @@ const CARD_PERSONALITY = {
 };
 
 /* ---------------------------------------------------------
-   2e. CARD BIO (natural-prose personality descriptions for 카드 공부)
+   2e. CARD BIO (natural-prose personality descriptions for 타로 인물도감)
 --------------------------------------------------------- */
 const CARD_BIO = {
   'major-00': { tagline: `일단 저지르고 보는 인생 자유러`, body: `계산기 두드릴 시간에 이미 반쯤 나가 있는 타입이죠. 순수하고 낙천적이라 나쁜 뜻은 1도 없는데, 문제는 필터 없이 던지는 말이 가끔 비수가 된다는 거예요. 본인은 전혀 눈치 못 채요. 자유를 너무 사랑해서 정해진 계획 없이 흘러가는 걸 좋아하고, 잔소리를 듣는 순간 마음속으론 이미 짐을 싸고 있어요. E 중의 E라 밖에서 노는 게 곧 충전이고, 새로운 아이디어를 술술 뱉어내는 창의력 뿜뿜 캐릭터예요. 문제는 시작은 화려한데 끝이 안 보인다는 것. 세 번째 취미로 넘어갈 때쯤 첫 번째 취미 도구는 이미 창고행이에요. 책임감이나 꾸준함과는 거리가 멀고, 자기중심적인 면 때문에 "나 서운했는데"라는 말을 종종 듣게 되죠. 연애는 더 심해요 — 자유가 걸린 순간 브레이크 없이 이탈하는 타입이라, 구속하려 드는 상대와는 반드시 트러블이 나요. 천왕성과 연결된 카드답게 조직 생활이나 틀에 박힌 분위기를 유독 못 견뎌요. 결론: 유쾌하고 사랑스럽지만, 옆에 있으면 가끔 "아 진짜 대책 없다" 소리가 절로 나오는 사람이에요.` },
@@ -3840,7 +3840,7 @@ const STUDY_CATEGORIES = [
   { key:'symbol',     label:'상징' }
 ];
 
-// 카드 공부 모드는 메이저 아르카나(22) + 궁정 카드(페이지·나이트·퀸·킹, 16) = 38장만 다룸.
+// 타로 인물도감 모드는 메이저 아르카나(22) + 궁정 카드(페이지·나이트·퀸·킹, 16) = 38장만 다룸.
 // 숫자 카드(에이스~10, 4수트×10장=40장)는 제외.
 const STUDY_DECK = DECK.filter(card =>
   card.id.startsWith('major-') || /-(page|knight|queen|king)$/.test(card.id)
