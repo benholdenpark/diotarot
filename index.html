@@ -1665,10 +1665,7 @@
 
       <textarea id="question" placeholder="예) 요즘 진로 문제로 고민이 많아요. 지금 제가 놓치고 있는 게 있을까요?"></textarea>
 
-      <div class="spread-recommend" id="spreadRecommend" style="display:none;">
-        💡 이 질문엔 <strong id="spreadRecommendName"></strong> 배열법이 잘 어울려요.
-        <button class="spread-recommend-btn" id="spreadRecommendApply">이 배열법 적용하기</button>
-      </div>
+      <div class="spread-recommend" id="spreadRecommend" style="display:none;"></div>
     </section>
 
     <section class="panel">
@@ -4118,33 +4115,56 @@ document.getElementById('pmChooseBtn').addEventListener('click', ()=> selectPick
     document.getElementById('question').value = q.text;
     updateQuestionRecap();
     showToast(`[${q.category}] 예시 질문을 불러왔어요. 자유롭게 수정해도 좋아요.`);
-    showSpreadRecommendation(q.category);
+    showSpreadRecommendation(q.text);
   });
 })();
 
-// Category -> recommended spread. `variant` is only used when key === 'three'.
-const CATEGORY_SPREAD_MAP = {
-  '연애':      { key: 'five' },
-  '짝사랑':    { key: 'three', variant: 'advice' },
-  '재회':      { key: 'either' },
-  '결혼':      { key: 'five' },
-  '이별':      { key: 'either' },
-  '이직·취업': { key: 'either' },
-  '합격·시험': { key: 'three', variant: 'near' },
-  '승진':      { key: 'three', variant: 'cpr' },
-  '사업·창업': { key: 'celtic' },
-  '재물·금전': { key: 'five' },
-  '이사·부동산': { key: 'either' },
-  '계약·거래': { key: 'three', variant: 'advice' },
-  '건강':      { key: 'one' },
-  '가족':      { key: 'five' },
-  '인간관계':  { key: 'three', variant: 'advice' },
-  '학업·진학': { key: 'either' },
-  '자녀·육아': { key: 'five' },
-  '여행·이주': { key: 'either' },
-  '반려동물':  { key: 'one' },
-  '은퇴·노후': { key: 'celtic' }
-};
+// Reads the QUESTION ITSELF (not just its category) and recommends one or
+// more spreads based on what kind of question it actually is. 5카드는 사용자
+// 에게 익숙하지 않은 배열법이라 추천 대상에서 제외했어요.
+function recommendSpreads(text){
+  if(!text || !text.trim()) return [];
+  const primary = [];
+  const halJiCount = (text.match(/할지/g) || []).length;
+
+  const isEither  = halJiCount >= 2 || /아니면|둘 중|어느 쪽/.test(text);
+  const isTiming  = /언제쯤|언제|시기가|타이밍|올해 안에|몇 개월 안에|몇 년 안에|다음 달|이번 달|얼마나 걸릴까요/.test(text);
+  const isCause   = /이유|원인|왜/.test(text);
+  const isGoal    = /목표|이루기 위해|성공하려면|해내려면|합격하려면|달성/.test(text);
+  const isAdvice  = /조언|어떻게 해야|방법이 있을까요|극복|풀어가|대처|해결/.test(text);
+  const isComplex = text.length > 130 || /여러|복잡|전반적으로/.test(text);
+  const isOutlook = /수 있을까요|될까요|생길까요|가능할까요/.test(text);
+
+  if(isEither)  primary.push({ key:'either' });
+  if(isTiming)  primary.push({ key:'timing' });
+  if(isCause)   primary.push({ key:'three', variant:'cpr' });
+  if(isGoal)    primary.push({ key:'magic7' });
+  if(isAdvice)  primary.push({ key:'three', variant:'advice' });
+  if(isComplex) primary.push({ key:'miniCeltic' });
+
+  if(primary.length === 0){
+    primary.push(isOutlook ? { key:'three', variant:'near' } : { key:'one' });
+  }
+
+  // complementary pairing: alongside a decision/deep spread, also offer a
+  // lighter "쓰리카드(상황·장애물·조언)" or matching alternative, since not
+  // everyone wants the heavier option for the same question
+  const has = (k, v) => primary.some(r => r.key === k && r.variant === v);
+  const extra = [];
+  if(has('either') && !has('three','advice')) extra.push({ key:'three', variant:'advice' });
+  if(has('timing') && !has('three','near'))    extra.push({ key:'three', variant:'near' });
+  if(has('magic7') && !has('three','advice') && !extra.some(r=>r.key==='three'&&r.variant==='advice')) extra.push({ key:'three', variant:'advice' });
+  if(has('miniCeltic') && !has('three','advice') && !extra.some(r=>r.key==='three'&&r.variant==='advice')) extra.push({ key:'three', variant:'advice' });
+
+  const all = primary.concat(extra);
+  const seen = new Set();
+  const out = [];
+  all.forEach(r=>{
+    const sig = r.key + ':' + (r.variant || '');
+    if(!seen.has(sig)){ seen.add(sig); out.push(r); }
+  });
+  return out.slice(0, 3); // cap at 3 so the box doesn't get overwhelming
+}
 
 function spreadRecommendLabel(rec){
   if(rec.key === 'three'){
@@ -4153,29 +4173,39 @@ function spreadRecommendLabel(rec){
   return SPREADS[rec.key].label;
 }
 
-function showSpreadRecommendation(category){
-  const rec = CATEGORY_SPREAD_MAP[category];
-  const box = document.getElementById('spreadRecommend');
-  if(!rec){ box.style.display = 'none'; return; }
-  document.getElementById('spreadRecommendName').textContent = spreadRecommendLabel(rec);
-  box.style.display = 'flex';
-  box.dataset.key = rec.key;
-  box.dataset.variant = rec.variant || '';
-}
-
-document.getElementById('spreadRecommendApply').addEventListener('click', ()=>{
-  const box = document.getElementById('spreadRecommend');
-  const key = box.dataset.key;
-  if(!key) return;
-  selectSpread(key);
-  if(key === 'three' && box.dataset.variant){
-    selectThreeVariant(box.dataset.variant);
+function applySpreadRecommendation(rec){
+  selectSpread(rec.key);
+  if(rec.key === 'three' && rec.variant){
+    selectThreeVariant(rec.variant);
   }
   showToast('추천 배열법을 적용했어요.');
   document.getElementById('spreadGrid').scrollIntoView({ behavior:'smooth', block:'center' });
-});
+}
 
-// a manually-typed question has no known category, so hide any stale recommendation
+function showSpreadRecommendation(text){
+  const box = document.getElementById('spreadRecommend');
+  const recs = recommendSpreads(text);
+  if(recs.length === 0){ box.style.display = 'none'; return; }
+
+  const introText = recs.length > 1 ? '이 질문엔 이런 배열법들이 잘 어울려요.' : '이 질문엔 이런 배열법이 잘 어울려요.';
+  const buttonsHtml = recs.map((rec, i) => {
+    const label = spreadRecommendLabel(rec);
+    return `<button class="spread-recommend-btn" data-idx="${i}">${escapeHtml(label)} 적용하기</button>`;
+  }).join('');
+
+  box.innerHTML = `💡 ${introText}${buttonsHtml}`;
+  box.style.display = 'flex';
+
+  recs.forEach((rec, i)=>{
+    box.querySelector(`[data-idx="${i}"]`).addEventListener('click', ()=> applySpreadRecommendation(rec));
+  });
+}
+
+// also works for freely-typed questions, not just the example dropdown —
+// recalculated once the person finishes typing (on blur), not on every keystroke
+document.getElementById('question').addEventListener('blur', (e)=>{
+  showSpreadRecommendation(e.target.value);
+});
 document.getElementById('question').addEventListener('input', ()=>{
   document.getElementById('spreadRecommend').style.display = 'none';
 });
