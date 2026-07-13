@@ -722,6 +722,17 @@
     font-size: 14px; line-height: 1.6; color: var(--ink); white-space: pre-wrap;
   }
 
+  .cards-recap{
+    background: rgba(201,163,90,0.08);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .cards-recap-row{
+    display:flex; flex-wrap: wrap; gap: 14px; margin-top: 4px;
+  }
+
   .spread-recommend{
     margin-top: 14px;
     background: rgba(201,163,90,0.1);
@@ -1797,6 +1808,10 @@
       <div class="question-recap" id="questionRecap" style="display:none;">
         <div class="question-recap-label">📌 나의 고민</div>
         <div class="question-recap-text" id="questionRecapText"></div>
+      </div>
+      <div class="cards-recap" id="cardsRecap" style="display:none;">
+        <div class="question-recap-label">🃏 뽑은 카드</div>
+        <div class="cards-recap-row" id="cardsRecapRow"></div>
       </div>
       <textarea id="myInterpretation" placeholder="예) 첫 번째 카드는 과거를 나타내는데, 이 사람이 겪었던 어려움을 상징하는 것 같아요. 두 번째 카드는..."></textarea>
     </section>
@@ -3242,6 +3257,30 @@ function updateQuestionRecap(){
   }
 }
 document.getElementById('question').addEventListener('input', updateQuestionRecap);
+
+// Keeps a small thumbnail row of the drawn (and revealed) cards visible just
+// above the "나의 해석" textarea, so the person doesn't have to scroll back
+// up to the tray while writing their interpretation.
+function updateCardsRecap(){
+  const recap = document.getElementById('cardsRecap');
+  const row = document.getElementById('cardsRecapRow');
+  const revealed = selections.filter(s => s && s.revealed);
+  if(revealed.length === 0){
+    recap.style.display = 'none';
+    row.innerHTML = '';
+    return;
+  }
+  row.innerHTML = revealed.map(s => `
+    <div class="history-card-thumb">
+      <div class="history-card-img">
+        <img src="${s.card.img}" alt="${escapeHtml(s.card.nameKr)}" onerror="this.remove(); this.parentElement.querySelector('.history-card-fallback').style.display='flex';">
+        <div class="history-card-fallback">${escapeHtml(s.card.nameKr)}</div>
+      </div>
+      <div class="history-card-label">${escapeHtml(s.position)}<br>${escapeHtml(s.card.nameKr)}</div>
+    </div>
+  `).join('');
+  recap.style.display = 'block';
+}
 
 // Clears everything about the current reading (question, spread, drawn
 // cards, timing/either configs) — shared by the manual "초기화" button and
@@ -4827,12 +4866,14 @@ function revealTrayCard(idx, slot){
     // compact mode (magic7) shows the name inside an on-card badge that
     // doesn't exist until reveal — simplest to just re-render the tray
     renderTray();
+    updateCardsRecap();
     return;
   }
 
   const cardEl = slot.querySelector('.tray-card');
   cardEl.classList.add('revealed');
   slot.querySelector('.tray-name').textContent = sel.card.nameKr;
+  updateCardsRecap();
 }
 
 document.getElementById('adviceBtn').addEventListener('click', ()=>{
@@ -4846,6 +4887,7 @@ document.getElementById('adviceBtn').addEventListener('click', ()=>{
 });
 
 function updateProgress(){
+  updateCardsRecap();
   const adviceBtn = document.getElementById('adviceBtn');
   if(!currentSpreadKey){
     progressText.innerHTML = '배열법을 먼저 선택해주세요.';
