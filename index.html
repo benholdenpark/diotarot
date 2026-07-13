@@ -9,24 +9,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --void:#0c0a15;
-    --void-2:#150f22;
-    --panel:#1a1428;
-    --panel-light:#241c38;
-    --wine:#4a1c3d;
-    --wine-2:#611f3e;
-    --gold:#c9a35a;
-    --gold-bright:#e8cd8f;
-    --ink:#f3ecdd;
-    --muted:#a89bc0;
-    --muted-dim:#6f628c;
-    --line: rgba(201,163,90,0.22);
-    --danger:#d97878;
+    --void:#211c38;
+    --void-2:#2a2447;
+    --panel:#332b52;
+    --panel-light:#413564;
+    --wine:#7a3f6d;
+    --wine-2:#93447a;
+    --gold:#d9b46e;
+    --gold-bright:#f6dda0;
+    --ink:#fbf7ee;
+    --muted:#c6bce2;
+    --muted-dim:#9c8fc0;
+    --line: rgba(217,180,110,0.32);
+    --danger:#e08a8a;
 
     --card-w: 64px;
     --card-h: 110px;
     --fan-radius: 300px;
-    --fan-height: 340px;
+    --fan-height: 424px;
     --tray-card-w: 108px;
     --tray-card-h: 184px;
   }
@@ -36,7 +36,7 @@
       --card-w: 38px;
       --card-h: 66px;
       --fan-radius: 155px;
-      --fan-height: 210px;
+      --fan-height: 232px;
       --tray-card-w: 78px;
       --tray-card-h: 132px;
     }
@@ -160,9 +160,9 @@
   .mode-btn .mode-desc{ display:block; font-size: 11.5px; color: var(--muted); line-height:1.4; }
 
   /* ---------- Fan section ---------- */
-  .fan-section{ position: relative; margin-top: 70px; margin-bottom: 52px; }
+  .fan-section{ position: relative; margin-top: 24px; margin-bottom: 28px; }
   @media (max-width: 720px){
-    .fan-section{ margin-top: 30px; }
+    .fan-section{ margin-top: 14px; margin-bottom: 20px; }
   }
 
   .fan-outer{
@@ -678,6 +678,20 @@
     letter-spacing: 0.02em;
   }
   .panel .sub{ color: var(--muted); font-size: 13px; margin: 0 0 20px; }
+
+  .panel-head-row{
+    display:flex; align-items:center; justify-content:space-between; gap: 12px;
+    margin-bottom: 6px;
+  }
+  .panel-head-row h2{ margin-bottom: 0; }
+  .reset-all-btn{
+    flex-shrink: 0;
+    background: var(--void-2); border: 1px solid var(--line); color: var(--muted);
+    font-family:'Noto Sans KR', sans-serif; font-size: 12px; font-weight:600;
+    padding: 7px 13px; border-radius: 999px; cursor:pointer;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .reset-all-btn:hover{ border-color: var(--gold); color: var(--gold-bright); }
 
   textarea{
     width:100%; min-height: 96px; resize: vertical;
@@ -1294,7 +1308,7 @@
     <p>안녕하세요. Dio입니다.<br>
     이 프로그램은 순수하게 재미로 즐기시고,<br>
     보다 정확한 타로 상담은 <strong>타로 마스터</strong>와 함께 하시기 바랍니다.<br><br>
-    고민을 작성하기 전에 <strong>셔플 버튼</strong>을 먼저 눌러주세요.<br><br>
+    카드를 뽑기 전에 <strong>셔플 버튼</strong>을 먼저 눌러주세요.<br><br>
     감사합니다.</p>
     <div class="intro-pc-note">💻 이 웹페이지는 PC에 최적화되어 있습니다.</div>
     <div class="intro-hint">화면을 클릭하면 닫혀요</div>
@@ -1453,11 +1467,6 @@ audio/bgm.mp3</pre>
     </button>
   </section>
 
-  <div class="pick-method-toggle" id="pickMethodToggle" style="display:none;">
-    <button class="pm-btn active" id="pmRandomBtn" data-method="random">🎲 직접 뽑기</button>
-    <button class="pm-btn" id="pmChooseBtn" data-method="choose">🔍 카드보며 뽑기</button>
-  </div>
-
   <section class="panel" id="numberSection" style="display:none;">
     <h2>🔢 썬 넘버 · 문 넘버 · 연도 카드</h2>
     <p class="sub">생년월일을 입력하면, 타고난 기질(썬 넘버)과 사회적으로 드러나는 성향(문 넘버), 그리고 올해의 흐름을 보여주는 연도 카드에 해당하는 메이저 아르카나 카드를 찾아드려요.</p>
@@ -1600,29 +1609,11 @@ audio/bgm.mp3</pre>
   </section>
 
   <div id="readingFlow">
-    <section class="fan-section">
-      <div id="randomPickWrap">
-        <div class="fan-outer">
-          <div class="fan-wrap" id="fanWrap"></div>
-          <a class="fan-logo" id="fanLogo" href="https://cafe.naver.com/matamotarot" target="_blank" rel="noopener noreferrer" title="MATAMO TAROT 네이버 카페 바로가기">
-            <img id="fanLogoImg" alt="MATAMO TAROT 로고">
-            <div class="logo-fallback">✦</div>
-          </a>
-        </div>
-        <div style="display:flex; justify-content:center;">
-          <button class="shuffle-btn" id="shuffleBtn">✦ 셔플</button>
-        </div>
-        <div class="fan-hint" id="fanHint">덱을 섞은 뒤, 마음이 가는 카드를 골라보세요.</div>
-      </div>
-
-      <div id="choosePickWrap" style="display:none;">
-        <div class="fan-hint" style="margin-bottom:14px;">78장 중에서 원하는 카드를 직접 클릭해서 골라보세요.</div>
-        <div class="choose-grid" id="chooseGrid"></div>
-      </div>
-    </section>
-
     <section class="panel">
-      <h2>1 · 고민을 적어주세요</h2>
+      <div class="panel-head-row">
+        <h2>1 · 고민을 적어주세요</h2>
+        <button class="reset-all-btn" id="resetAllBtn" title="질문, 배열법, 뽑은 카드를 모두 지우고 처음부터 다시 시작해요">🔄 초기화</button>
+      </div>
       <p class="sub">지금 마음에 걸리는 질문이나 상황을 편하게 적어주세요.</p>
 
       <div class="example-picker" id="examplePicker" style="display:none;">
@@ -1664,6 +1655,37 @@ audio/bgm.mp3</pre>
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="panel">
+      <h2>3 · 카드를 뽑아주세요</h2>
+      <p class="sub" id="pickStepSub">1·2단계에서 정한 배열법에 맞춰 카드를 뽑아주세요.</p>
+
+      <div class="pick-method-toggle" id="pickMethodToggle" style="display:none;">
+        <button class="pm-btn active" id="pmRandomBtn" data-method="random">🎲 직접 뽑기</button>
+        <button class="pm-btn" id="pmChooseBtn" data-method="choose">🔍 카드보며 뽑기</button>
+      </div>
+
+      <section class="fan-section">
+        <div id="randomPickWrap">
+          <div class="fan-outer">
+            <div class="fan-wrap" id="fanWrap"></div>
+            <a class="fan-logo" id="fanLogo" href="https://cafe.naver.com/matamotarot" target="_blank" rel="noopener noreferrer" title="MATAMO TAROT 네이버 카페 바로가기">
+              <img id="fanLogoImg" alt="MATAMO TAROT 로고">
+              <div class="logo-fallback">✦</div>
+            </a>
+          </div>
+          <div style="display:flex; justify-content:center;">
+            <button class="shuffle-btn" id="shuffleBtn">✦ 셔플</button>
+          </div>
+          <div class="fan-hint" id="fanHint">덱을 섞은 뒤, 마음이 가는 카드를 골라보세요.</div>
+        </div>
+
+        <div id="choosePickWrap" style="display:none;">
+          <div class="fan-hint" style="margin-bottom:14px;">78장 중에서 원하는 카드를 직접 클릭해서 골라보세요.</div>
+          <div class="choose-grid" id="chooseGrid"></div>
+        </div>
+      </section>
 
       <div class="progress-row">
         <div class="progress-text" id="progressText">배열법을 먼저 선택해주세요.</div>
@@ -1674,7 +1696,7 @@ audio/bgm.mp3</pre>
     </section>
 
     <section class="panel" id="myInterpretationPanel" style="display:none;">
-      <h2>3 · 나의 해석을 적어주세요</h2>
+      <h2>4 · 나의 해석을 적어주세요</h2>
       <p class="sub">뽑힌 카드를 보고, 스스로 먼저 해석해보세요. 이 내용을 바탕으로 AI가 슈퍼비전을 해드려요.</p>
       <div class="question-recap" id="questionRecap" style="display:none;">
         <div class="question-recap-label">📌 나의 고민</div>
@@ -1689,7 +1711,7 @@ audio/bgm.mp3</pre>
     </section>
 
     <section class="panel result-panel" id="resultPanel">
-      <h2 id="resultHeading">3 · AI에게 물어보기</h2>
+      <h2 id="resultHeading">4 · AI에게 물어보기</h2>
       <p class="sub" id="resultSub">아래 내용을 복사해서 Claude나 Gemini 창에 붙여넣고 답을 받아보세요. API 키 없이, 평소 쓰시는 계정 그대로 사용하시면 돼요.</p>
 
       <div class="prompt-box" id="promptBox"></div>
@@ -3100,7 +3122,45 @@ function updateQuestionRecap(){
 }
 document.getElementById('question').addEventListener('input', updateQuestionRecap);
 
+// Clears everything about the current reading (question, spread, drawn
+// cards, timing/either configs) — shared by the manual "초기화" button and
+// by automatic resets when switching between 상담하기/리딩연습하기, since
+// those are meant to be two separate reading sessions, not a shared one.
+function resetReadingState(){
+  shuffled = shuffleArr(DECK);
+  selections = [];
+  currentSpreadKey = null;
+  currentThreeVariant = 'pcf';
+  adviceCardRequested = false;
+
+  document.getElementById('question').value = '';
+  updateQuestionRecap();
+  document.getElementById('exampleSelect').value = '';
+  document.getElementById('myInterpretation').value = '';
+  validationEl.textContent = '';
+
+  document.querySelectorAll('.spread-btn').forEach(b => b.classList.remove('active'));
+  threeVariantGrid.style.display = 'none';
+  threeVariantGrid.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+  refreshSpreadBtnLabel('three');
+
+  timingConfig.style.display = 'none';
+  timingCount = 3;
+  timingLabels = ['', '', '', '', '', ''];
+  timingCountBtns.querySelectorAll('.tc-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.count) === 3));
+  renderTimingInputs();
+  applyTimingSpread();
+
+  eitherConfig.style.display = 'none';
+  eitherLabelAInput.value = '';
+  eitherLabelBInput.value = '';
+  applyEitherLabels();
+}
+
 function selectMode(mode){
+  const enteringReadingFlow = (mode === 'consult' || mode === 'practice');
+  const modeIsChanging = mode !== currentMode;
+
   currentMode = mode;
   document.getElementById('modeConsultBtn').classList.toggle('active', mode === 'consult');
   document.getElementById('modePracticeBtn').classList.toggle('active', mode === 'practice');
@@ -3167,12 +3227,22 @@ function selectMode(mode){
   studySection.style.display = 'none';
   studyDetailPanel.style.display = 'none';
 
+  if(modeIsChanging && enteringReadingFlow){
+    // 상담하기 and 리딩연습하기 are two separate reading sessions — starting
+    // one shouldn't carry over the other's question/spread/drawn cards
+    resetReadingState();
+    renderFan();
+    renderChooseGrid();
+    renderTray();
+    updateProgress();
+  }
+
   if(mode === 'practice'){
     myInterpretationPanel.style.display = 'block';
     examplePicker.style.display = 'block';
     pickMethodToggle.style.display = 'flex';
     interpretBtn.textContent = '슈퍼비전 요청 만들기';
-    resultHeading.textContent = '4 · AI 슈퍼비전 받기';
+    resultHeading.textContent = '5 · AI 슈퍼비전 받기';
     resultSub.textContent = '아래 내용을 복사해서 Claude나 Gemini 창에 붙여넣으면, 내가 쓴 해석에 대한 슈퍼비전을 받을 수 있어요.';
     updateQuestionRecap();
   } else {
@@ -3180,7 +3250,7 @@ function selectMode(mode){
     examplePicker.style.display = 'none';
     pickMethodToggle.style.display = 'flex';
     interpretBtn.textContent = '질문 만들기';
-    resultHeading.textContent = '3 · AI에게 물어보기';
+    resultHeading.textContent = '4 · AI에게 물어보기';
     resultSub.textContent = '아래 내용을 복사해서 Claude나 Gemini 창에 붙여넣고 답을 받아보세요. API 키 없이, 평소 쓰시는 계정 그대로 사용하시면 돼요.';
   }
   hideResult();
@@ -4107,36 +4177,23 @@ function shuffleJitter(){
 }
 
 document.getElementById('shuffleBtn').addEventListener('click', ()=>{
-  // full reset — shuffle starts everything over from scratch
+  // shuffle only — re-randomizes the deck and clears the current picks,
+  // but keeps the question, spread choice, and any A/B or timing labels
   shuffled = shuffleArr(DECK);
   selections = [];
-  currentSpreadKey = null;
-  currentThreeVariant = 'pcf';
   adviceCardRequested = false;
 
-  document.getElementById('question').value = '';
-  updateQuestionRecap();
-  document.getElementById('exampleSelect').value = '';
-  document.getElementById('myInterpretation').value = '';
-  validationEl.textContent = '';
+  renderFan();
+  shuffleJitter();
+  renderTray();
+  updateProgress();
+  hideResult();
+  showToast('카드를 다시 섞었어요.');
+});
 
-  document.querySelectorAll('.spread-btn').forEach(b => b.classList.remove('active'));
-  threeVariantGrid.style.display = 'none';
-  threeVariantGrid.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
-  refreshSpreadBtnLabel('three');
-
-  timingConfig.style.display = 'none';
-  timingCount = 3;
-  timingLabels = ['', '', '', '', '', ''];
-  timingCountBtns.querySelectorAll('.tc-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.count) === 3));
-  renderTimingInputs();
-  applyTimingSpread();
-
-  eitherConfig.style.display = 'none';
-  eitherLabelAInput.value = '';
-  eitherLabelBInput.value = '';
-  applyEitherLabels();
-
+document.getElementById('resetAllBtn').addEventListener('click', ()=>{
+  // full reset — starts everything over from scratch
+  resetReadingState();
   selectMode(currentMode); // re-apply the current mode's UI state without switching modes
 
   renderFan();
