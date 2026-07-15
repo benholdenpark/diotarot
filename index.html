@@ -777,6 +777,53 @@
     display:block; font-size: 12.5px; color: var(--gold-bright);
     margin-bottom: 8px; font-weight:600;
   }
+  .example-category-chips{
+    display:flex; flex-wrap:wrap; gap: 7px; margin-bottom: 10px;
+  }
+  .example-category-chip{
+    background: var(--void-2); border: 1px solid var(--line); color: var(--muted);
+    font-family:'Noto Sans KR', sans-serif; font-size: 11.5px; font-weight:600;
+    padding: 5px 11px; border-radius: 999px; cursor:pointer;
+    transition: border-color .15s ease, color .15s ease, transform .15s ease;
+  }
+  .example-category-chip:hover{
+    border-color: var(--gold); color: var(--gold-bright); transform: translateY(-1px);
+  }
+  .example-category-chip.active{
+    background: rgba(201,163,90,0.16); border-color: var(--gold); color: var(--gold-bright);
+  }
+
+  .example-question-list{
+    margin-top: 10px;
+    max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--void-2);
+    scroll-behavior: smooth;
+  }
+  .eq-category-heading{
+    position: sticky; top: 0; z-index: 2;
+    background: var(--panel-light);
+    color: var(--gold-bright);
+    font-family:'Nanum Myeongjo', serif; font-size: 13px; font-weight:700;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+    scroll-margin-top: 0px;
+  }
+  .eq-category-heading:first-child{ border-top: none; }
+  .eq-question-item{
+    display:block; width:100%; text-align:left;
+    background:none; border:none; cursor:pointer;
+    color: var(--muted); font-family:'Noto Sans KR', sans-serif; font-size: 12.5px;
+    line-height: 1.6; padding: 8px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background .15s ease, color .15s ease;
+  }
+  .eq-question-item:hover{ background: rgba(201,163,90,0.08); color: var(--gold-bright); }
+  .eq-question-item.active{ background: rgba(201,163,90,0.14); color: var(--gold-bright); }
+
   .example-picker select{
     width:100%;
     background: var(--void-2);
@@ -1857,9 +1904,11 @@
 
       <div class="example-picker" id="examplePicker" style="display:none;">
         <label for="exampleSelect">실전 예시 질문으로 연습하기 (선택 사항)</label>
+        <div class="example-category-chips" id="exampleCategoryChips"></div>
         <select id="exampleSelect">
           <option value="">— 예시 질문을 선택하면 아래에 자동으로 채워져요 —</option>
         </select>
+        <div class="example-question-list" id="exampleQuestionList"></div>
       </div>
 
       <textarea id="question" placeholder="예) 요즘 진로 문제로 고민이 많아요. 지금 제가 놓치고 있는 게 있을까요?"></textarea>
@@ -4664,8 +4713,72 @@ document.getElementById('autoDrawBtn').addEventListener('click', autoRandomDraw)
 --------------------------------------------------------- */
 (function initExampleQuestions(){
   const select = document.getElementById('exampleSelect');
+  const chipsWrap = document.getElementById('exampleCategoryChips');
+  const listWrap = document.getElementById('exampleQuestionList');
   let currentGroup = null;
   let currentGroupEl = null;
+
+  function loadQuestion(idx, sourceLabel){
+    const q = EXAMPLE_QUESTIONS[idx];
+    document.getElementById('question').value = q.text;
+    select.value = idx;
+    listWrap.querySelectorAll('.eq-question-item').forEach(el=>{
+      el.classList.toggle('active', Number(el.dataset.idx) === idx);
+    });
+    updateQuestionRecap();
+    showToast(`[${q.category}] ${sourceLabel || '예시 질문을 불러왔어요.'} 자유롭게 수정해도 좋아요.`);
+    showSpreadRecommendation(q.text);
+  }
+
+  const categoriesInOrder = [];
+  EXAMPLE_QUESTIONS.forEach(q=>{
+    if(!categoriesInOrder.includes(q.category)) categoriesInOrder.push(q.category);
+  });
+
+  // visible, scrollable list of every question grouped under a category
+  // heading — lets the person actually see all the "영역"(areas) and their
+  // questions at a glance, rather than only inside a collapsed <select>.
+  categoriesInOrder.forEach(category=>{
+    const heading = document.createElement('div');
+    heading.className = 'eq-category-heading';
+    heading.dataset.category = category;
+    heading.textContent = category;
+    listWrap.appendChild(heading);
+
+    EXAMPLE_QUESTIONS.forEach((q, idx)=>{
+      if(q.category !== category) return;
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'eq-question-item';
+      item.dataset.idx = idx;
+      const firstLine = q.text.split('\n')[0];
+      item.textContent = firstLine.length > 46 ? firstLine.slice(0, 46) + '…' : firstLine;
+      item.addEventListener('click', ()=>{
+        chipsWrap.querySelectorAll('.example-category-chip').forEach(c=>{
+          c.classList.toggle('active', c.textContent === category);
+        });
+        loadQuestion(idx, '예시 질문을 불러왔어요.');
+      });
+      listWrap.appendChild(item);
+    });
+  });
+
+  // one chip per category — clicking a chip scrolls the visible list down
+  // to that category's heading line (doesn't pick a question by itself;
+  // the person picks the specific question from the list underneath it)
+  categoriesInOrder.forEach(category=>{
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'example-category-chip';
+    chip.textContent = category;
+    chip.addEventListener('click', ()=>{
+      chipsWrap.querySelectorAll('.example-category-chip').forEach(c=> c.classList.remove('active'));
+      chip.classList.add('active');
+      const heading = listWrap.querySelector(`.eq-category-heading[data-category="${CSS.escape(category)}"]`);
+      if(heading) heading.scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+    chipsWrap.appendChild(chip);
+  });
 
   EXAMPLE_QUESTIONS.forEach((q, idx)=>{
     if(q.category !== currentGroup){
@@ -4683,11 +4796,8 @@ document.getElementById('autoDrawBtn').addEventListener('click', autoRandomDraw)
   });
   select.addEventListener('change', ()=>{
     if(select.value === '') return;
-    const q = EXAMPLE_QUESTIONS[Number(select.value)];
-    document.getElementById('question').value = q.text;
-    updateQuestionRecap();
-    showToast(`[${q.category}] 예시 질문을 불러왔어요. 자유롭게 수정해도 좋아요.`);
-    showSpreadRecommendation(q.text);
+    chipsWrap.querySelectorAll('.example-category-chip').forEach(c=> c.classList.remove('active'));
+    loadQuestion(Number(select.value), '예시 질문을 불러왔어요.');
   });
 })();
 
