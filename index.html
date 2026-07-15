@@ -3814,6 +3814,14 @@ function resetReadingState(){
   validationEl.textContent = '';
   document.getElementById('spreadRecommend').style.display = 'none';
 
+  // the example-question picker (chips + visible list) also needs to
+  // forget which question was previously selected, or switching back into
+  // this mode later would show a stale "결혼" (etc.) selection still lit up
+  document.querySelectorAll('.example-category-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.eq-question-item').forEach(el => el.classList.remove('active'));
+  const eqList = document.getElementById('exampleQuestionList');
+  if(eqList) eqList.scrollTop = 0;
+
   document.querySelectorAll('.spread-btn').forEach(b => b.classList.remove('active'));
   threeVariantGrid.style.display = 'none';
   threeVariantGrid.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
@@ -4776,7 +4784,7 @@ document.getElementById('autoDrawBtn').addEventListener('click', autoRandomDraw)
       chipsWrap.querySelectorAll('.example-category-chip').forEach(c=> c.classList.remove('active'));
       chip.classList.add('active');
       const heading = listWrap.querySelector(`.eq-category-heading[data-category="${CSS.escape(category)}"]`);
-      if(heading) heading.scrollIntoView({ behavior:'smooth', block:'nearest' });
+      if(heading) heading.scrollIntoView({ behavior:'smooth', block:'start' });
       chip.blur();
     });
     chipsWrap.appendChild(chip);
