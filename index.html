@@ -4779,7 +4779,15 @@ document.getElementById('autoDrawBtn').addEventListener('click', autoRandomDraw)
       chipsWrap.querySelectorAll('.example-category-chip').forEach(c=> c.classList.remove('active'));
       chip.classList.add('active');
       const heading = listWrap.querySelector(`.eq-category-heading[data-category="${CSS.escape(category)}"]`);
-      if(heading) heading.scrollIntoView({ behavior:'smooth', block:'start' });
+      if(heading){
+        // scrollIntoView() scrolls every scrollable ancestor it needs to,
+        // including the page itself — here we only want the little list
+        // box to scroll, so we compute the target offset manually instead
+        const listRect = listWrap.getBoundingClientRect();
+        const headingRect = heading.getBoundingClientRect();
+        const targetTop = headingRect.top - listRect.top + listWrap.scrollTop;
+        listWrap.scrollTo({ top: targetTop, behavior: 'smooth' });
+      }
     });
     chipsWrap.appendChild(chip);
   });
@@ -6069,6 +6077,7 @@ function renderHistory(){
 /* ---------------------------------------------------------
    12. INIT
 --------------------------------------------------------- */
+selectMode('consult'); // syncs UI state (pick-method toggle etc.) for the default mode — the button already *looks* active in the static HTML, but that alone doesn't run the logic that shows/hides everything else
 renderFan();
 updateProgress();
 renderHistory();
