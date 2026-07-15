@@ -4753,19 +4753,16 @@ document.getElementById('autoDrawBtn').addEventListener('click', autoRandomDraw)
 
     EXAMPLE_QUESTIONS.forEach((q, idx)=>{
       if(q.category !== category) return;
-      const item = document.createElement('button');
-      item.type = 'button';
+      const item = document.createElement('div');
       item.className = 'eq-question-item';
       item.dataset.idx = idx;
       const firstLine = q.text.split('\n')[0];
       item.textContent = firstLine.length > 46 ? firstLine.slice(0, 46) + '…' : firstLine;
-      item.addEventListener('mousedown', (e)=> e.preventDefault()); // stops the browser from focus-scrolling the page when this button is clicked
       item.addEventListener('click', ()=>{
         chipsWrap.querySelectorAll('.example-category-chip').forEach(c=>{
           c.classList.toggle('active', c.textContent === category);
         });
         loadQuestion(idx, '예시 질문을 불러왔어요.');
-        item.blur();
       });
       listWrap.appendChild(item);
     });
@@ -4775,17 +4772,14 @@ document.getElementById('autoDrawBtn').addEventListener('click', autoRandomDraw)
   // to that category's heading line (doesn't pick a question by itself;
   // the person picks the specific question from the list underneath it)
   categoriesInOrder.forEach(category=>{
-    const chip = document.createElement('button');
-    chip.type = 'button';
+    const chip = document.createElement('div');
     chip.className = 'example-category-chip';
     chip.textContent = category;
-    chip.addEventListener('mousedown', (e)=> e.preventDefault());
     chip.addEventListener('click', ()=>{
       chipsWrap.querySelectorAll('.example-category-chip').forEach(c=> c.classList.remove('active'));
       chip.classList.add('active');
       const heading = listWrap.querySelector(`.eq-category-heading[data-category="${CSS.escape(category)}"]`);
       if(heading) heading.scrollIntoView({ behavior:'smooth', block:'start' });
-      chip.blur();
     });
     chipsWrap.appendChild(chip);
   });
