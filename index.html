@@ -803,14 +803,12 @@
     scroll-behavior: smooth;
   }
   .eq-category-heading{
-    position: sticky; top: 0; z-index: 2;
     background: var(--panel-light);
     color: var(--gold-bright);
     font-family:'Nanum Myeongjo', serif; font-size: 13px; font-weight:700;
     padding: 9px 14px;
     border-bottom: 1px solid var(--line);
     border-top: 1px solid var(--line);
-    scroll-margin-top: 0px;
   }
   .eq-category-heading:first-child{ border-top: none; }
   .eq-question-item{
@@ -4753,11 +4751,13 @@ document.getElementById('autoDrawBtn').addEventListener('click', autoRandomDraw)
       item.dataset.idx = idx;
       const firstLine = q.text.split('\n')[0];
       item.textContent = firstLine.length > 46 ? firstLine.slice(0, 46) + '…' : firstLine;
+      item.addEventListener('mousedown', (e)=> e.preventDefault()); // stops the browser from focus-scrolling the page when this button is clicked
       item.addEventListener('click', ()=>{
         chipsWrap.querySelectorAll('.example-category-chip').forEach(c=>{
           c.classList.toggle('active', c.textContent === category);
         });
         loadQuestion(idx, '예시 질문을 불러왔어요.');
+        item.blur();
       });
       listWrap.appendChild(item);
     });
@@ -4771,11 +4771,13 @@ document.getElementById('autoDrawBtn').addEventListener('click', autoRandomDraw)
     chip.type = 'button';
     chip.className = 'example-category-chip';
     chip.textContent = category;
+    chip.addEventListener('mousedown', (e)=> e.preventDefault());
     chip.addEventListener('click', ()=>{
       chipsWrap.querySelectorAll('.example-category-chip').forEach(c=> c.classList.remove('active'));
       chip.classList.add('active');
       const heading = listWrap.querySelector(`.eq-category-heading[data-category="${CSS.escape(category)}"]`);
-      if(heading) heading.scrollIntoView({ behavior:'smooth', block:'start' });
+      if(heading) heading.scrollIntoView({ behavior:'smooth', block:'nearest' });
+      chip.blur();
     });
     chipsWrap.appendChild(chip);
   });
