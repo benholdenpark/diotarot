@@ -238,10 +238,12 @@
   .manual-toggle:hover{ transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.45); }
   .faq-toggle{ top: 68px; }
   .backup-toggle{ top: 120px; }
+  .changelog-toggle{ top: 172px; }
   @media (max-width: 560px){
     .manual-toggle{ top: 10px; left: 10px; font-size: 11.5px; padding: 7px 11px; }
     .faq-toggle{ top: 54px; }
     .backup-toggle{ top: 98px; }
+    .changelog-toggle{ top: 142px; }
   }
 
   .manual-overlay{
@@ -304,6 +306,31 @@
   }
   .manual-content th{ background: rgba(201,163,90,0.1); color: var(--gold-bright); font-weight:600; }
   .manual-content td{ color: var(--ink); }
+
+  /* ---------- Changelog (업데이트 내역) ---------- */
+  .changelog-entry{
+    position: relative;
+    padding: 0 0 22px 22px;
+    border-left: 2px solid var(--line);
+    margin-left: 4px;
+  }
+  .changelog-entry:last-child{ padding-bottom: 2px; }
+  .changelog-entry::before{
+    content:''; position:absolute; left:-6px; top: 3px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--gold); box-shadow: 0 0 0 3px var(--panel);
+  }
+  .changelog-date{
+    font-family:'Cinzel', serif; font-size: 11.5px; letter-spacing: 0.06em;
+    color: var(--gold-bright); font-weight:600; margin-bottom: 8px;
+  }
+  .changelog-entry ul{ margin: 0; padding-left: 18px; }
+  .changelog-entry li{ font-size: 13px; line-height: 1.7; margin-bottom: 3px; color: var(--ink); }
+  .changelog-note{
+    font-size: 11.5px; color: var(--muted-dim); margin: 0 0 20px; line-height: 1.6;
+    background: rgba(201,163,90,0.06); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 12px;
+  }
 
   /* ---------- Result View modal ---------- */
   .result-view-overlay{
@@ -1574,6 +1601,7 @@
 <button class="manual-toggle" id="manualToggle" title="사용자 매뉴얼">📖 매뉴얼</button>
 <button class="manual-toggle faq-toggle" id="faqToggle" title="자주 묻는 질문">❓ FAQ</button>
 <button class="manual-toggle backup-toggle" id="backupToggle" title="전체 백업 / 복원">💾 백업</button>
+<button class="manual-toggle changelog-toggle" id="changelogToggle" title="업데이트 내역">📋 업데이트 내역</button>
 
 <div class="manual-overlay" id="manualOverlay">
   <div class="manual-panel">
@@ -1741,6 +1769,61 @@
       <input type="file" id="backupImportInput" accept="application/json,.json" style="margin-bottom:12px; color: var(--muted); font-size: 13px;">
       <button class="action-btn" id="backupImportBtn" style="width:100%;">📂 선택한 파일 가져오기</button>
       <div class="admin-login-msg" id="backupMsg" style="color: var(--gold-bright);"></div>
+    </div>
+  </div>
+</div>
+
+<div class="manual-overlay" id="changelogOverlay">
+  <div class="manual-panel">
+    <button class="manual-close" id="changelogClose" title="닫기">✕</button>
+    <div class="manual-content">
+      <h3 class="manual-h1">📋 업데이트 내역</h3>
+      <p class="manual-credit">MATAMO TAROT가 그동안 어떻게 발전해왔는지 굵직한 흐름만 모아봤어요</p>
+
+      <div class="changelog-note">날짜는 실제 배포 기록 기준이며, 자잘한 오타·문구 수정 등은 생략하고 큰 변화 위주로만 정리했어요.</div>
+
+      <div class="changelog-entry">
+        <div class="changelog-date">2026.07.16</div>
+        <ul>
+          <li>방문자 카운터를 Google Apps Script + 구글시트 기반으로 전환 (오늘/총 누적 방문수 표시)</li>
+          <li>리딩연습하기를 🔁 일반 연습 / 🎯 약점카드 연습 두 갈래로 분리 — 평소 어려운 카드를 배열법의 원하는 자리에 고정해서 훈련 가능</li>
+          <li>방문자 카운터 날짜 비교 버그 수정 (오늘 방문수가 0으로 표시되던 문제)</li>
+          <li>약점카드 고정이 뽑기 방식(직접 뽑기/카드보며 뽑기/랜덤 뽑기)을 전환해도 유지되도록 수정</li>
+        </ul>
+      </div>
+
+      <div class="changelog-entry">
+        <div class="changelog-date">2026.07.15</div>
+        <ul>
+          <li>새 배열법 추가 — 상대방 속마음(겉모습·진심 비교), 6카드(아치형)</li>
+          <li>✨ 랜덤 뽑기 방식 추가 (버튼 한 번으로 전체 카드 뽑기)</li>
+          <li>🔮 결과 보기 모달 신설 — 질문·카드·AI 답변을 한 화면에서 확인</li>
+          <li>PDF 직접 다운로드 지원 (인쇄창 없이 클릭 한 번으로 저장)</li>
+          <li>💾 전체 백업/복원 기능 추가 (모든 기록을 JSON 파일로 내보내기·불러오기)</li>
+          <li>🎭 타로 인물도감 모드 신설 — 38장(메이저+궁정 카드) 캐릭터 소개</li>
+          <li>카드 뒷면 디자인을 자체 제작 SVG로 교체 (180도 회전 대칭)</li>
+          <li>배열법 자동 추천 기능 구축, 💕 궁합 보기 모드 추가</li>
+          <li>배경음악 자동재생 제거 → 버튼으로만 재생</li>
+        </ul>
+      </div>
+
+      <div class="changelog-entry">
+        <div class="changelog-date">2026.07.12 – 07.14</div>
+        <ul>
+          <li>매직세븐·켈틱크로스·미니 켈틱·시기 보기 등 배열법 다양화</li>
+          <li>🔢 넘버 분석 모드(썬/문 넘버, 연도 카드) 구축</li>
+          <li>실전 예시 질문 데이터베이스 확충</li>
+        </ul>
+      </div>
+
+      <div class="changelog-entry">
+        <div class="changelog-date">2026.07.10 – 07.11</div>
+        <ul>
+          <li>MATAMO TAROT 첫 배포 — 단일 HTML 파일 기반 타로 리딩 웹앱 시작</li>
+          <li>🔮 상담하기 / ✍️ 리딩연습하기 기본 구조 마련</li>
+          <li>상담하기 모드에도 "랜덤으로 뽑기" · "내가 골라서 뽑기" 두 가지 방식 적용</li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
@@ -2314,6 +2397,22 @@
       showToast('백업을 가져왔어요.');
     };
     reader.readAsText(file);
+  });
+})();
+
+(function initChangelog(){
+  const toggle = document.getElementById('changelogToggle');
+  const overlay = document.getElementById('changelogOverlay');
+  const closeBtn = document.getElementById('changelogClose');
+
+  function open(){ overlay.classList.add('open'); }
+  function close(){ overlay.classList.remove('open'); }
+
+  toggle.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', (e)=>{ if(e.target === overlay) close(); });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && overlay.classList.contains('open')) close();
   });
 })();
 
@@ -4973,6 +5072,8 @@ function selectPickMethod(method){
   // a confusing way, so start the card selection over when it changes
   selections = [];
   adviceCardRequested = false;
+  applyWeakCardFix(); // re-fix the weak card's slot if weak-card practice is active — otherwise
+                       // switching from 직접 뽑기 to 카드보며 뽑기/랜덤 뽑기 silently drops the fix
   renderFan();
   renderChooseGrid();
   renderTray();
