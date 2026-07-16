@@ -428,21 +428,31 @@
   /* ---------- Visitor counter ---------- */
   .visitor-badge{
     position: fixed; top: 16px; right: 16px; z-index: 60;
-    background: var(--panel-light);
-    border: 1px solid var(--gold);
-    border-radius: 8px;
-    padding: 4px 6px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
-    display: flex; align-items: center;
-    opacity: 0.92;
+    background: linear-gradient(160deg, var(--panel-light), var(--panel));
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 7px 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+    display: flex; align-items: center; gap: 12px;
   }
-  .visitor-badge span{
-    display:block; font-family:'Noto Sans KR', sans-serif; font-size: 11.5px;
-    font-weight:600; color: var(--gold-bright); white-space: nowrap;
+  .visitor-stat{ display:flex; flex-direction:column; align-items:center; line-height:1.15; }
+  .visitor-num{
+    font-family:'Cinzel', serif; font-size: 14px; font-weight:600;
+    color: var(--gold-bright); letter-spacing: 0.02em;
+  }
+  .visitor-label{
+    font-family:'Noto Sans KR', sans-serif; font-size: 8.5px; font-weight:600;
+    color: var(--muted-dim); letter-spacing: 0.14em; margin-top: 2px;
+  }
+  .visitor-divider{ width:1px; align-self: stretch; background: var(--line); }
+  .visitor-loading{
+    font-family:'Noto Sans KR', sans-serif; font-size: 11px;
+    font-weight:500; color: var(--muted-dim); white-space: nowrap;
   }
   @media (max-width: 560px){
-    .visitor-badge{ top: 10px; right: 10px; padding: 3px 6px; }
-    .visitor-badge span{ font-size: 10.5px; }
+    .visitor-badge{ top: 10px; right: 10px; padding: 5px 10px; gap: 9px; }
+    .visitor-num{ font-size: 12px; }
+    .visitor-label{ font-size: 7.5px; }
   }
 
   .bgm-toggle{
@@ -1617,12 +1627,18 @@
       <table>
         <tr><th>모드</th><th>설명</th></tr>
         <tr><td>🔮 상담하기</td><td>카드를 뽑고 AI(Claude/Gemini)에게 해석을 받는 기본 모드</td></tr>
-        <tr><td>✍️ 리딩연습하기</td><td>내가 먼저 직접 해석을 작성하고, AI에게 슈퍼비전(피드백) + "고수의 리딩" 예시까지 받는 연습용 모드. 실전 예시 질문 200개를 20개 카테고리(연애·이직·합격 등)로 제공</td></tr>
+        <tr><td>✍️ 리딩연습하기</td><td>내가 먼저 직접 해석을 작성하고, AI에게 슈퍼비전(피드백) + "고수의 리딩" 예시까지 받는 연습용 모드. "🔁 일반 연습"과 "🎯 약점카드 연습" 중 선택 가능하며, 실전 예시 질문 300개를 21개 카테고리(연애·이직·합격·학생상담 등)로 제공</td></tr>
         <tr><td>🔢 넘버 분석</td><td>생년월일로 썬 넘버·문 넘버·연도 카드를 확인</td></tr>
         <tr><td>💕 궁합 보기</td><td>두 사람의 생년월일로 궁합을 확인</td></tr>
         <tr><td>🎭 타로 인물도감</td><td>메이저 아르카나 22장 + 궁정 카드 16장, 총 38장의 성격을 재미있는 글로 읽어보는 도감</td></tr>
       </table>
       <p>⚠️ 상담하기 ↔ 리딩연습하기는 서로 다른 리딩으로 취급돼요. 모드를 전환하면 질문·배열법·뽑은 카드가 자동으로 초기화돼요.</p>
+
+      <h4>2-1. 리딩연습하기 — 일반 연습 vs 약점카드 연습</h4>
+      <ul>
+        <li><strong>🔁 일반 연습</strong> — 질문을 쓰고 배열법을 골라 자유롭게 카드를 뽑은 뒤, 직접 해석을 써보고 AI에게 피드백을 받는 기존 방식이에요.</li>
+        <li><strong>🎯 약점카드 연습</strong> — 평소 해석하기 어려운 카드를 하나 골라서, 배열법의 원하는 자리에 미리 고정해두고 연습해요. 나머지 자리는 평소처럼 뽑으면 되고, 고른 카드는 자동으로 "자주 어려워하는 카드" 목록에 쌓여서 내가 어떤 카드를 유독 어려워하는지 패턴을 확인할 수 있어요. AI 피드백도 그 카드의 해석을 특히 신랄하게 짚어주는 방향으로 요청돼요. (정방향만 다뤄요.)</li>
+      </ul>
 
       <h4>3. 카드 뽑는 방법 세 가지</h4>
       <ul>
@@ -1689,8 +1705,8 @@
       <ul>
         <li><strong>✦ 셔플 버튼</strong> — 카드만 다시 섞어요 (뽑았던 카드만 초기화, 질문·배열법 설정은 유지)</li>
         <li><strong>🔄 초기화 버튼</strong> ("1 · 고민을 적어주세요" 옆) — 질문·배열법·뽑은 카드까지 전부 지우고 처음부터 다시 시작</li>
-        <li><strong>📖 매뉴얼 / ❓ FAQ / 💾 백업</strong> — 왼쪽 상단 버튼들</li>
-        <li><strong>오른쪽 상단 방문자 수</strong> — 배포된 사이트에서 자동 집계</li>
+        <li><strong>📖 매뉴얼 / ❓ FAQ / 💾 백업 / 📋 업데이트 내역</strong> — 왼쪽 상단 버튼들</li>
+        <li><strong>오른쪽 상단 방문자 수</strong> — 오늘 방문자 수와 전체 누적 방문자 수를 함께 보여줘요</li>
         <li><strong>오른쪽 하단 🎵</strong> — 배경음악 재생/정지 (직접 눌러야 재생돼요, 자동재생 아님)</li>
       </ul>
     </div>
@@ -1719,6 +1735,10 @@
       <p><strong>Q. 셔플 버튼을 누르면 질문이나 배열법도 지워지나요?</strong><br>A. 아니요. "✦ 셔플"은 카드만 다시 섞어요 (뽑았던 카드만 초기화). 질문, 배열법, A/B 선택 라벨 같은 설정은 그대로 남아요. 전부 다 지우고 처음부터 시작하고 싶으면 "1 · 고민을 적어주세요" 옆의 "🔄 초기화" 버튼을 눌러주세요.</p>
 
       <p><strong>Q. 상담하기에서 뽑은 카드가 리딩연습하기로 가도 남아있나요?</strong><br>A. 아니요. 두 모드는 서로 다른 리딩으로 취급해서, 모드를 전환하면 질문·배열법·뽑은 카드가 자동으로 초기화돼요. 하나의 리딩을 이어서 진행하고 싶다면 같은 모드 안에서만 작업해주세요.</p>
+
+      <p><strong>Q. "🔁 일반 연습"이랑 "🎯 약점카드 연습"은 뭐가 달라요?</strong><br>A. 일반 연습은 카드를 자유롭게 뽑아서 해석해보는 기존 방식이에요. 약점카드 연습은 평소 해석하기 어려운 카드를 하나 직접 골라서 배열법의 원하는 자리에 미리 고정해두는 방식이에요. 나머지 자리는 평소처럼 뽑으면 되고, 고른 카드는 자동으로 기록에 쌓여서 내가 어떤 카드를 자주 어려워하는지 확인할 수 있어요. 뽑는 방식(직접 뽑기/카드보며 뽑기/랜덤 뽑기)을 중간에 바꿔도 고정해둔 카드는 그대로 유지돼요.</p>
+
+      <p><strong>Q. 방문자 수는 어떻게 세는 거예요?</strong><br>A. 오른쪽 상단에 오늘 방문자 수와 전체 누적 방문자 수가 함께 표시돼요. 같은 브라우저 탭에서는 새로고침해도 중복으로 세지 않고, 세션당 한 번만 집계돼요.</p>
 
       <p><strong>Q. "저장하기"를 눌렀는데 어디서 확인하나요?</strong><br>A. 각 모드 화면을 아래로 스크롤하면 "저장된 리딩"(또는 넘버 분석/궁합) 목록이 있어요. 항목을 클릭하면 예쁘게 정리된 창으로 다시 볼 수 있어요.</p>
 
@@ -1785,43 +1805,44 @@
       <div class="changelog-entry">
         <div class="changelog-date">2026.07.16</div>
         <ul>
-          <li>방문자 카운터를 Google Apps Script + 구글시트 기반으로 전환 (오늘/총 누적 방문수 표시)</li>
-          <li>리딩연습하기를 🔁 일반 연습 / 🎯 약점카드 연습 두 갈래로 분리 — 평소 어려운 카드를 배열법의 원하는 자리에 고정해서 훈련 가능</li>
-          <li>방문자 카운터 날짜 비교 버그 수정 (오늘 방문수가 0으로 표시되던 문제)</li>
-          <li>약점카드 고정이 뽑기 방식(직접 뽑기/카드보며 뽑기/랜덤 뽑기)을 전환해도 유지되도록 수정</li>
+          <li>왼쪽 상단에서 오늘 방문자 수와 전체 누적 방문자 수를 바로 확인할 수 있어요</li>
+          <li>리딩연습하기가 "🔁 일반 연습"과 "🎯 약점카드 연습" 두 가지로 나뉘었어요. 평소 해석하기 어려운 카드를 하나 골라 원하는 자리에 고정해두고 집중적으로 연습할 수 있어요</li>
+          <li>오늘 방문자 수가 항상 0으로 잘못 표시되던 문제를 고쳤어요</li>
+          <li>약점카드 연습에서 카드 뽑는 방식(직접 뽑기 ↔ 카드보며 뽑기 ↔ 랜덤 뽑기)을 바꿔도 고정해둔 카드가 사라지지 않도록 고쳤어요</li>
         </ul>
       </div>
 
       <div class="changelog-entry">
         <div class="changelog-date">2026.07.15</div>
         <ul>
-          <li>새 배열법 추가 — 상대방 속마음(겉모습·진심 비교), 6카드(아치형)</li>
-          <li>✨ 랜덤 뽑기 방식 추가 (버튼 한 번으로 전체 카드 뽑기)</li>
-          <li>🔮 결과 보기 모달 신설 — 질문·카드·AI 답변을 한 화면에서 확인</li>
-          <li>PDF 직접 다운로드 지원 (인쇄창 없이 클릭 한 번으로 저장)</li>
-          <li>💾 전체 백업/복원 기능 추가 (모든 기록을 JSON 파일로 내보내기·불러오기)</li>
-          <li>🎭 타로 인물도감 모드 신설 — 38장(메이저+궁정 카드) 캐릭터 소개</li>
-          <li>카드 뒷면 디자인을 자체 제작 SVG로 교체 (180도 회전 대칭)</li>
-          <li>배열법 자동 추천 기능 구축, 💕 궁합 보기 모드 추가</li>
-          <li>배경음악 자동재생 제거 → 버튼으로만 재생</li>
+          <li>새로운 배열법 두 가지가 생겼어요 — 상대방 속마음(겉모습과 진짜 속마음 비교), 6카드(아치 모양)</li>
+          <li>버튼 한 번으로 필요한 카드를 전부 뽑아주는 "✨ 랜덤 뽑기" 방식이 추가됐어요</li>
+          <li>질문·카드·AI 답변을 한 화면에 예쁘게 정리해서 보여주는 "🔮 결과 보기" 창이 생겼어요</li>
+          <li>PDF 저장이 훨씬 편해졌어요 — 인쇄창을 거치지 않고 클릭 한 번으로 바로 파일이 다운로드돼요</li>
+          <li>지금까지 저장한 모든 리딩·분석 기록을 파일 하나로 백업하고, 다른 기기에서 다시 불러올 수 있는 기능이 생겼어요</li>
+          <li>메이저 아르카나와 궁정 카드 38장의 성격을 재미있게 소개하는 "🎭 타로 인물도감" 모드가 생겼어요</li>
+          <li>카드 뒷면 디자인이 사이트 분위기에 맞는 새로운 그림으로 바뀌었어요</li>
+          <li>질문을 적으면 어울리는 배열법을 자동으로 추천해주는 기능이 생겼어요</li>
+          <li>두 사람의 생년월일로 궁합을 볼 수 있는 "💕 궁합 보기" 모드가 생겼어요</li>
+          <li>배경음악이 이제 자동으로 재생되지 않아요 — 원하실 때 🎵 버튼을 눌러야 재생돼요</li>
         </ul>
       </div>
 
       <div class="changelog-entry">
         <div class="changelog-date">2026.07.12 – 07.14</div>
         <ul>
-          <li>매직세븐·켈틱크로스·미니 켈틱·시기 보기 등 배열법 다양화</li>
-          <li>🔢 넘버 분석 모드(썬/문 넘버, 연도 카드) 구축</li>
-          <li>실전 예시 질문 데이터베이스 확충</li>
+          <li>매직세븐·켈틱크로스·시기 보기 등 고를 수 있는 배열법이 훨씬 다양해졌어요</li>
+          <li>생년월일로 타고난 기질과 올해의 흐름을 볼 수 있는 "🔢 넘버 분석" 모드가 생겼어요</li>
+          <li>바로 가져다 쓸 수 있는 실전 예시 질문이 더 풍부해졌어요</li>
         </ul>
       </div>
 
       <div class="changelog-entry">
         <div class="changelog-date">2026.07.10 – 07.11</div>
         <ul>
-          <li>MATAMO TAROT 첫 배포 — 단일 HTML 파일 기반 타로 리딩 웹앱 시작</li>
-          <li>🔮 상담하기 / ✍️ 리딩연습하기 기본 구조 마련</li>
-          <li>상담하기 모드에도 "랜덤으로 뽑기" · "내가 골라서 뽑기" 두 가지 방식 적용</li>
+          <li>MATAMO TAROT가 처음 문을 열었어요</li>
+          <li>🔮 상담하기와 ✍️ 리딩연습하기, 두 가지 기본 모드로 시작했어요</li>
+          <li>상담하기에서도 "랜덤으로 뽑기"와 "내가 골라서 뽑기" 두 가지 방식으로 카드를 뽑을 수 있게 됐어요</li>
         </ul>
       </div>
     </div>
@@ -1832,7 +1853,7 @@
 <audio id="bgmAudio" loop preload="auto"></audio>
 
 <div class="visitor-badge" id="visitorBadge">
-  <span id="visitorBadgeText">방문자 수 불러오는 중...</span>
+  <span class="visitor-loading" id="visitorBadgeText">방문자 수 불러오는 중...</span>
 </div>
 
 <div class="wrap">
@@ -2246,7 +2267,18 @@
     .then(res => res.json())
     .then(data => {
       if(!alreadyHitThisSession) sessionStorage.setItem('matamo_visit_hit', '1');
-      el.textContent = `오늘 ${data.today.toLocaleString('ko-KR')} · 총 ${data.total.toLocaleString('ko-KR')}`;
+      const badge = document.getElementById('visitorBadge');
+      badge.innerHTML = `
+        <div class="visitor-stat">
+          <span class="visitor-num">${data.today.toLocaleString('en-US')}</span>
+          <span class="visitor-label">TODAY</span>
+        </div>
+        <div class="visitor-divider"></div>
+        <div class="visitor-stat">
+          <span class="visitor-num">${data.total.toLocaleString('en-US')}</span>
+          <span class="visitor-label">TOTAL</span>
+        </div>
+      `;
     })
     .catch(() => {
       document.getElementById('visitorBadge').style.display = 'none';
@@ -5994,6 +6026,9 @@ function buildPrompt(question, spread, myInterpretation){
   const weakCardNote = isWeakCardDrill
     ? `\n\n※ 이번 연습은 제가 평소 해석을 어려워하는 카드인 "${weakCardChoice.nameKr}(${weakCardChoice.nameEn})"를 일부러 ${weakCardPosIndex + 1}번 자리(${currentPositions()[weakCardPosIndex]})에 고정해두고 진행한 약점 카드 훈련입니다. 다른 카드들보다 이 카드에 대한 제 해석을 특히 더 꼼꼼하고 신랄하게 짚어주세요. 상투적이거나 피상적인 의미에만 머물렀는지, 이 자리(포지션)의 맥락과 제대로 연결짓지 못했는지 가차없이 지적해주세요.`
     : '';
+  const weakCardClosing = isWeakCardDrill
+    ? `\n5. 맨 마지막에는 다른 항목들과 구분되는 별도 섹션으로 "🎯 약점 카드 총평"을 만들어서, 이번 상담 전체를 놓고 봤을 때 "${weakCardChoice.nameKr}(${weakCardChoice.nameEn})" 카드에 대한 제 해석 실력을 종합적으로 총평해주세요. 이번 한 번의 리딩에 국한하지 말고, 이 카드를 대할 때 제가 반복적으로 보이는 습관이나 맹점이 있다면 그것까지 짚어서 마무리해주세요.`
+    : '';
 
   if(currentMode === 'practice'){
     return `당신은 대한민국 최고의 타로 상담사이자, 후배 상담사를 키우는 수퍼바이저입니다. 따뜻한 마음씨로 진심을 다해 아끼면서도, 필요할 땐 돌려 말하지 않고 핵심을 짚어주는 솔직한 피드백도 서슴지 않는 성격입니다.
@@ -6012,7 +6047,7 @@ ${myInterpretation}${weakCardNote}
 1. 잘 짚은 부분 (구체적으로 어떤 점이 좋았는지)
 2. 놓쳤거나 보완하면 좋을 부분 (카드의 다른 의미, 위치 간의 연결, 질문과의 연관성 등)
 3. 더 깊이 볼 수 있는 관점이나 질문 (제가 스스로 더 생각해볼 만한 지점)
-4. 마지막으로, 위 피드백과는 별도로 "고수의 리딩" 섹션을 추가해서, 같은 카드와 같은 질문을 가지고 경력 많은 베테랑 타로 상담사라면 실제로 어떻게 리딩했을지 하나의 완성된 해석 예시로 보여주세요. 제 해석을 고치는 게 아니라, 처음부터 새로 짜인 모범 답안처럼 작성해주세요.
+4. 마지막으로, 위 피드백과는 별도로 "고수의 리딩" 섹션을 추가해서, 같은 카드와 같은 질문을 가지고 경력 많은 베테랑 타로 상담사라면 실제로 어떻게 리딩했을지 하나의 완성된 해석 예시로 보여주세요. 제 해석을 고치는 게 아니라, 처음부터 새로 짜인 모범 답안처럼 작성해주세요.${weakCardClosing}
 
 듣기 좋은 말만 하지 말고, 부족한 부분이 있다면 애정을 담아 직설적으로 짚어주세요. 한국어로 답변해주세요.`;
   }
