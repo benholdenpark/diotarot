@@ -409,10 +409,13 @@
     display: flex; align-items: center;
     opacity: 0.92;
   }
-  .visitor-badge img{ display:block; height: 20px; }
+  .visitor-badge span{
+    display:block; font-family:'Noto Sans KR', sans-serif; font-size: 11.5px;
+    font-weight:600; color: var(--gold-bright); white-space: nowrap;
+  }
   @media (max-width: 560px){
-    .visitor-badge{ top: 10px; right: 10px; padding: 3px 5px; }
-    .visitor-badge img{ height: 17px; }
+    .visitor-badge{ top: 10px; right: 10px; padding: 3px 6px; }
+    .visitor-badge span{ font-size: 10.5px; }
   }
 
   .bgm-toggle{
@@ -592,6 +595,37 @@
   .choose-card.used .choose-card-img{ opacity: 0.3; filter: grayscale(0.6); }
   .choose-card.used:hover .choose-card-img{ transform:none; filter: grayscale(0.6); }
   .choose-card.used .choose-card-name{ opacity: 0.4; }
+  .choose-card.selected .choose-card-img{
+    outline: 2px solid var(--gold); outline-offset: 2px;
+    box-shadow: 0 0 14px rgba(201,163,90,0.55);
+  }
+  .choose-card.selected .choose-card-name{ color: var(--gold-bright); font-weight:700; }
+
+  /* ---------- Weak-card practice panel ---------- */
+  .weak-card-selected{
+    text-align:center; font-size: 14px; color: var(--ink);
+    background: var(--panel-light); border: 1px solid var(--gold);
+    border-radius: 8px; padding: 10px 14px; margin-bottom: 16px;
+  }
+  .weak-card-position-row{
+    display:flex; align-items:center; gap: 10px; justify-content:center;
+    margin-top: 18px; flex-wrap: wrap;
+  }
+  .weak-card-position-row label{ font-size: 13px; color: var(--muted); }
+  .weak-card-position-row select{
+    font-family:'Noto Sans KR', sans-serif; font-size: 13.5px;
+    background: var(--void-2); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 6px; padding: 7px 10px;
+  }
+  .weak-card-history{ margin-top: 22px; text-align:center; }
+  .weak-card-history-title{ font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
+  .weak-card-history-empty{ font-size: 12.5px; color: var(--muted); }
+  .weak-card-history-list{ display:flex; flex-wrap:wrap; gap: 6px; justify-content:center; }
+  .weak-card-history-chip{
+    font-size: 12px; color: var(--muted); background: var(--void-2);
+    border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px;
+  }
+  .weak-card-history-chip b{ color: var(--gold-bright); margin-left: 3px; }
 
   /* ---------- Card study detail panel ---------- */
   #studyDetailPanel{ --study-accent: var(--gold); }
@@ -1715,7 +1749,7 @@
 <audio id="bgmAudio" loop preload="auto"></audio>
 
 <div class="visitor-badge" id="visitorBadge">
-  <img src="https://api.visitorbadge.io/api/VisitorHit?user=matamotarot&repo=matamo-tarot-site&countColor=%23c9a35a&titleColor=%23a89bc0&style=flat-square" alt="방문자 수" onerror="this.parentElement.style.display='none';">
+  <span id="visitorBadgeText">방문자 수 불러오는 중...</span>
 </div>
 
 <div class="wrap">
@@ -1900,6 +1934,11 @@
       </div>
       <p class="sub">지금 마음에 걸리는 질문이나 상황을 편하게 적어주세요.</p>
 
+      <div class="pick-method-toggle" id="practiceSubModeToggle" style="display:none;">
+        <button class="pm-btn active" id="practiceSubNormalBtn" data-submode="normal">🔁 일반 연습</button>
+        <button class="pm-btn" id="practiceSubWeakBtn" data-submode="weak">🎯 약점카드 연습</button>
+      </div>
+
       <div class="example-picker" id="examplePicker" style="display:none;">
         <label for="exampleSelect">실전 예시 질문으로 연습하기 (선택 사항)</label>
         <div class="example-category-chips" id="exampleCategoryChips"></div>
@@ -1943,6 +1982,24 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="panel" id="weakCardPanel" style="display:none;">
+      <h2>🎯 약점 카드 고정하기</h2>
+      <p class="sub">평소 해석이 어려운 카드를 하나 골라, 위에서 고른 배열법의 원하는 자리에 고정해서 연습해보세요. 나머지 자리는 평소처럼 뽑으면 돼요.</p>
+
+      <div class="weak-card-selected" id="weakCardSelected" style="display:none;"></div>
+
+      <div class="choose-grid" id="weakCardGrid"></div>
+
+      <div class="weak-card-position-row" id="weakCardPositionRow" style="display:none;">
+        <label for="weakCardPositionSelect">이 카드를 고정할 자리</label>
+        <select id="weakCardPositionSelect">
+          <option value="">— 먼저 배열법을 선택해주세요 —</option>
+        </select>
+      </div>
+
+      <div class="weak-card-history" id="weakCardHistory"></div>
     </section>
 
     <section class="panel">
@@ -2088,6 +2145,31 @@
 <div id="printArea"></div>
 
 <script>
+/* ---------------------------------------------------------
+   -2. VISITOR COUNTER (Google Apps Script + Sheet backend)
+--------------------------------------------------------- */
+(function initVisitorCounter(){
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwRdAQ_W6CYlHA-RmrGtCs5-ESrQSGlnaiH8-rA7arUnn3_ZVHAW1_vbdo9ojbYLZlx/exec';
+  const el = document.getElementById('visitorBadgeText');
+  if(!el) return;
+
+  // "hit" records today's visit and returns the up-to-date counts in one call.
+  // Only counted once per browser tab session (sessionStorage), so refreshing
+  // the same page repeatedly doesn't inflate the count.
+  const alreadyHitThisSession = sessionStorage.getItem('matamo_visit_hit') === '1';
+  const action = alreadyHitThisSession ? 'stats' : 'hit';
+
+  fetch(`${APPS_SCRIPT_URL}?action=${action}`)
+    .then(res => res.json())
+    .then(data => {
+      if(!alreadyHitThisSession) sessionStorage.setItem('matamo_visit_hit', '1');
+      el.textContent = `오늘 ${data.today.toLocaleString('ko-KR')} · 총 ${data.total.toLocaleString('ko-KR')}`;
+    })
+    .catch(() => {
+      document.getElementById('visitorBadge').style.display = 'none';
+    });
+})();
+
 /* ---------------------------------------------------------
    -1. INTRO POPUP (dismiss on click)
 --------------------------------------------------------- */
@@ -3743,6 +3825,9 @@ let selections = []; // {position, card}
 let currentMode = 'consult'; // 'consult' | 'practice'
 let cardPickMethod = 'random'; // 'random' (fan) | 'choose' (78-card grid) — only relevant in practice mode
 let adviceCardRequested = false;
+let practiceSubMode = 'normal'; // 'normal' | 'weak' — only meaningful when currentMode === 'practice'
+let weakCardChoice = null;      // card object fixed for 약점카드 연습 (chosen fresh each session)
+let weakCardPosIndex = null;    // 0-based index into the spread's base positions where it's fixed
 
 function currentPositions(){
   if(!currentSpreadKey) return [];
@@ -3752,6 +3837,183 @@ function currentPositions(){
 function totalNeeded(){
   return currentPositions().length;
 }
+
+// selections is normally filled strictly in order (index 0, 1, 2, ...), but
+// weak-card practice needs to pre-fill one specific index before the rest
+// are drawn. These two helpers make "how many filled" / "what's the next
+// slot to fill" work correctly whether or not selections has holes, while
+// behaving exactly like the old selections.length-based logic when there
+// are no holes (i.e. normal mode is unaffected).
+function filledCount(){
+  return selections.filter(Boolean).length;
+}
+function nextEmptyIndex(){
+  const total = totalNeeded();
+  for(let i = 0; i < total; i++){
+    if(!selections[i]) return i;
+  }
+  return -1;
+}
+
+/* ---------------------------------------------------------
+   3a2. WEAK-CARD PRACTICE (약점카드 연습)
+--------------------------------------------------------- */
+const WEAK_CARD_LOG_KEY = 'matamo_weak_cards';
+
+function getWeakCardLog(){
+  try{ return JSON.parse(localStorage.getItem(WEAK_CARD_LOG_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function logWeakCard(card){
+  const arr = getWeakCardLog();
+  arr.push({ id: card.id, nameKr: card.nameKr, date: new Date().toISOString() });
+  localStorage.setItem(WEAK_CARD_LOG_KEY, JSON.stringify(arr));
+}
+function weakCardFrequency(){
+  const arr = getWeakCardLog();
+  const counts = {};
+  arr.forEach(entry=>{
+    if(!counts[entry.id]) counts[entry.id] = { nameKr: entry.nameKr, count: 0 };
+    counts[entry.id].count++;
+  });
+  return Object.values(counts).sort((a,b)=> b.count - a.count);
+}
+function renderWeakCardHistory(){
+  const el = document.getElementById('weakCardHistory');
+  if(!el) return;
+  const freq = weakCardFrequency();
+  if(freq.length === 0){
+    el.innerHTML = '<p class="weak-card-history-empty">아직 기록이 없어요. 카드를 선택하면 자동으로 쌓여요.</p>';
+    return;
+  }
+  el.innerHTML = `
+    <div class="weak-card-history-title">📊 그동안 자주 어려워한 카드</div>
+    <div class="weak-card-history-list">
+      ${freq.slice(0, 10).map(f => `<span class="weak-card-history-chip">${escapeHtml(f.nameKr)}<b>${f.count}</b></span>`).join('')}
+    </div>
+  `;
+}
+
+function renderWeakCardGrid(){
+  const grid = document.getElementById('weakCardGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  DECK.forEach(card=>{
+    const selected = weakCardChoice && weakCardChoice.id === card.id;
+    const cell = document.createElement('div');
+    cell.className = 'choose-card' + (selected ? ' selected' : '');
+    cell.innerHTML = `
+      <div class="choose-card-img">
+        <img src="${card.img}" alt="${card.nameKr}" onerror="this.remove(); this.parentElement.querySelector('.choose-card-fallback').style.display='flex';">
+        <div class="choose-card-fallback">${card.nameKr}</div>
+      </div>
+      <div class="choose-card-name">${card.nameKr}</div>
+    `;
+    cell.addEventListener('click', ()=> onWeakCardPick(card));
+    grid.appendChild(cell);
+  });
+}
+
+function updateWeakCardSelectedLabel(){
+  const el = document.getElementById('weakCardSelected');
+  if(!el) return;
+  if(!weakCardChoice){
+    el.style.display = 'none';
+    return;
+  }
+  el.style.display = 'block';
+  el.innerHTML = `선택한 약점 카드: <strong>${escapeHtml(weakCardChoice.nameKr)}</strong> (${escapeHtml(weakCardChoice.nameEn)})`;
+}
+
+function renderWeakCardPositionOptions(){
+  const sel = document.getElementById('weakCardPositionSelect');
+  const row = document.getElementById('weakCardPositionRow');
+  if(!sel || !row) return;
+  if(!currentSpreadKey){
+    row.style.display = 'none';
+    return;
+  }
+  const positions = SPREADS[currentSpreadKey].positions;
+  sel.innerHTML = '<option value="">— 자리를 선택해주세요 —</option>' +
+    positions.map((p, i) => `<option value="${i}">${i+1}. ${escapeHtml(p)}</option>`).join('');
+  sel.value = (weakCardPosIndex !== null) ? String(weakCardPosIndex) : '';
+  row.style.display = 'block';
+}
+
+// Places the fixed weak card into its chosen slot, and removes it from the
+// draw pool so it can never be pulled a second time by accident.
+function applyWeakCardFix(){
+  if(!(currentMode === 'practice' && practiceSubMode === 'weak')) return;
+  if(!weakCardChoice || weakCardPosIndex === null || !currentSpreadKey) return;
+  const positions = currentPositions();
+  if(weakCardPosIndex >= positions.length) return;
+  selections[weakCardPosIndex] = { position: positions[weakCardPosIndex], card: weakCardChoice, revealed:true };
+  shuffled = shuffleArr(DECK.filter(c => c.id !== weakCardChoice.id));
+}
+
+function onWeakCardPick(card){
+  weakCardChoice = card;
+  weakCardPosIndex = null; // force re-choosing where this (newly picked) card sits
+  logWeakCard(card);
+  selections = [];
+  shuffled = shuffleArr(DECK.filter(c => c.id !== card.id));
+
+  renderWeakCardGrid();
+  renderWeakCardHistory();
+  updateWeakCardSelectedLabel();
+  renderWeakCardPositionOptions();
+  renderFan();
+  renderChooseGrid();
+  renderTray();
+  updateProgress();
+}
+
+// The two card-drawing entry points (fan + choose-grid) should refuse to
+// draw until a weak card and its fixed slot are both chosen — otherwise the
+// point of the exercise (practicing that specific card in that specific
+// position) silently falls through.
+function weakModeBlocked(){
+  return currentMode === 'practice' && practiceSubMode === 'weak' && (!weakCardChoice || weakCardPosIndex === null);
+}
+
+function selectPracticeSubMode(sub){
+  practiceSubMode = sub;
+  document.getElementById('practiceSubNormalBtn').classList.toggle('active', sub === 'normal');
+  document.getElementById('practiceSubWeakBtn').classList.toggle('active', sub === 'weak');
+  document.getElementById('weakCardPanel').style.display = (sub === 'weak') ? 'block' : 'none';
+
+  selections = [];
+  adviceCardRequested = false;
+
+  if(sub === 'weak'){
+    renderWeakCardGrid();
+    renderWeakCardHistory();
+    updateWeakCardSelectedLabel();
+    renderWeakCardPositionOptions();
+  } else {
+    weakCardChoice = null;
+    weakCardPosIndex = null;
+    shuffled = shuffleArr(DECK); // restore the full pool in case weak mode had excluded a card
+  }
+
+  renderFan();
+  renderChooseGrid();
+  renderTray();
+  updateProgress();
+  hideResult();
+}
+document.getElementById('practiceSubNormalBtn').addEventListener('click', ()=> selectPracticeSubMode('normal'));
+document.getElementById('practiceSubWeakBtn').addEventListener('click', ()=> selectPracticeSubMode('weak'));
+document.getElementById('weakCardPositionSelect').addEventListener('change', (e)=>{
+  const v = e.target.value;
+  weakCardPosIndex = (v === '') ? null : Number(v);
+  selections = [];
+  applyWeakCardFix();
+  renderFan();
+  renderChooseGrid();
+  renderTray();
+  updateProgress();
+});
 
 const myInterpretationPanel = document.getElementById('myInterpretationPanel');
 const resultHeading = document.getElementById('resultHeading');
@@ -3806,6 +4068,12 @@ function resetReadingState(){
   currentSpreadKey = null;
   currentThreeVariant = 'pcf';
   adviceCardRequested = false;
+  practiceSubMode = 'normal';
+  weakCardChoice = null;
+  weakCardPosIndex = null;
+  document.getElementById('practiceSubNormalBtn').classList.add('active');
+  document.getElementById('practiceSubWeakBtn').classList.remove('active');
+  document.getElementById('weakCardPanel').style.display = 'none';
 
   document.getElementById('question').value = '';
   updateQuestionRecap();
@@ -3924,6 +4192,7 @@ function selectMode(mode){
     myInterpretationPanel.style.display = 'block';
     examplePicker.style.display = 'block';
     pickMethodToggle.style.display = 'flex';
+    document.getElementById('practiceSubModeToggle').style.display = 'flex';
     interpretBtn.textContent = '슈퍼비전 요청 만들기';
     resultHeading.textContent = '5 · AI 슈퍼비전 받기';
     resultSub.textContent = '아래 내용을 복사해서 Claude나 Gemini 창에 붙여넣으면, 내가 쓴 해석에 대한 슈퍼비전을 받을 수 있어요.';
@@ -3932,6 +4201,8 @@ function selectMode(mode){
     myInterpretationPanel.style.display = 'none';
     examplePicker.style.display = 'none';
     pickMethodToggle.style.display = 'flex';
+    document.getElementById('practiceSubModeToggle').style.display = 'none';
+    document.getElementById('weakCardPanel').style.display = 'none';
     interpretBtn.textContent = '질문 만들기';
     resultHeading.textContent = '4 · AI에게 물어보기';
     resultSub.textContent = '아래 내용을 복사해서 Claude나 Gemini 창에 붙여넣고 답을 받아보세요. API 키 없이, 평소 쓰시는 계정 그대로 사용하시면 돼요.';
@@ -4779,15 +5050,7 @@ document.getElementById('autoDrawBtn').addEventListener('click', autoRandomDraw)
       chipsWrap.querySelectorAll('.example-category-chip').forEach(c=> c.classList.remove('active'));
       chip.classList.add('active');
       const heading = listWrap.querySelector(`.eq-category-heading[data-category="${CSS.escape(category)}"]`);
-      if(heading){
-        // scrollIntoView() scrolls every scrollable ancestor it needs to,
-        // including the page itself — here we only want the little list
-        // box to scroll, so we compute the target offset manually instead
-        const listRect = listWrap.getBoundingClientRect();
-        const headingRect = heading.getBoundingClientRect();
-        const targetTop = headingRect.top - listRect.top + listWrap.scrollTop;
-        listWrap.scrollTo({ top: targetTop, behavior: 'smooth' });
-      }
+      if(heading) heading.scrollIntoView({ behavior:'smooth', block:'start' });
     });
     chipsWrap.appendChild(chip);
   });
@@ -4977,8 +5240,12 @@ function onSlotClick(i, slot){
     showToast('먼저 배열법을 선택해주세요.');
     return;
   }
+  if(weakModeBlocked()){
+    showToast('먼저 약점 카드와 고정할 자리를 선택해주세요.');
+    return;
+  }
   if(slot.dataset.locked === '1') return;
-  if(selections.length >= totalNeeded()){
+  if(filledCount() >= totalNeeded()){
     showToast('이미 필요한 카드를 모두 선택했어요.');
     return;
   }
@@ -4988,8 +5255,9 @@ function onSlotClick(i, slot){
   slot.classList.add('picked'); // stays face-down in the fan; reveal happens in the tray below
   slot.style.zIndex = 500; // rise above neighboring cards so the lift-up is visible
 
-  const position = currentPositions()[selections.length];
-  selections.push({ position, card, revealed:false });
+  const idx = nextEmptyIndex();
+  const position = currentPositions()[idx];
+  selections[idx] = { position, card, revealed:false };
   renderTray();
   updateProgress();
 }
@@ -5002,25 +5270,30 @@ function autoRandomDraw(){
     showToast('먼저 배열법을 선택해주세요.');
     return;
   }
-  if(selections.length >= totalNeeded()){
+  if(weakModeBlocked()){
+    showToast('먼저 약점 카드와 고정할 자리를 선택해주세요.');
+    return;
+  }
+  if(filledCount() >= totalNeeded()){
     showToast('이미 필요한 카드를 모두 선택했어요.');
     return;
   }
 
   const positions = currentPositions();
-  const usedIds = new Set(selections.map(s => s.card.id));
+  const usedIds = new Set(selections.filter(Boolean).map(s => s.card.id));
   const pool = shuffled.filter(c => !usedIds.has(c.id));
 
-  while(selections.length < totalNeeded() && pool.length){
+  let idx = nextEmptyIndex();
+  while(idx !== -1 && pool.length){
     const card = pool.shift();
-    const position = positions[selections.length];
-    selections.push({ position, card, revealed:true });
+    selections[idx] = { position: positions[idx], card, revealed:true };
+    idx = nextEmptyIndex();
   }
 
   renderFan();
   // re-apply the "picked/locked" look to whichever fan slots ended up used,
   // so the fan visually matches the new selections
-  const usedNow = new Set(selections.map(s => s.card.id));
+  const usedNow = new Set(selections.filter(Boolean).map(s => s.card.id));
   document.querySelectorAll('.card-slot').forEach(slot=>{
     const idx = Number(slot.dataset.index);
     if(shuffled[idx] && usedNow.has(shuffled[idx].id)){
@@ -5044,7 +5317,7 @@ const chooseGrid = document.getElementById('chooseGrid');
 function renderChooseGrid(){
   if(cardPickMethod !== 'choose') return;
   chooseGrid.innerHTML = '';
-  const usedIds = new Set(selections.map(s => s.card.id));
+  const usedIds = new Set(selections.filter(Boolean).map(s => s.card.id));
 
   DECK.forEach(card=>{
     const used = usedIds.has(card.id);
@@ -5069,13 +5342,18 @@ function onChooseCardClick(card){
     showToast('먼저 배열법을 선택해주세요.');
     return;
   }
-  if(selections.length >= totalNeeded()){
+  if(weakModeBlocked()){
+    showToast('먼저 약점 카드와 고정할 자리를 선택해주세요.');
+    return;
+  }
+  if(filledCount() >= totalNeeded()){
     showToast('이미 필요한 카드를 모두 선택했어요.');
     return;
   }
-  const position = currentPositions()[selections.length];
+  const idx = nextEmptyIndex();
+  const position = currentPositions()[idx];
   // the card was already visible when picked, so reveal it in the tray right away
-  selections.push({ position, card, revealed:true });
+  selections[idx] = { position, card, revealed:true };
   renderChooseGrid();
   renderTray();
   updateProgress();
@@ -5104,6 +5382,7 @@ document.getElementById('shuffleBtn').addEventListener('click', ()=>{
   shuffled = shuffleArr(DECK);
   selections = [];
   adviceCardRequested = false;
+  applyWeakCardFix(); // re-fix the weak card's slot if weak-card practice is active
 
   renderFan();
   shuffleJitter();
@@ -5255,6 +5534,7 @@ function selectSpread(key){
   currentSpreadKey = key;
   selections = [];
   adviceCardRequested = false;
+  weakCardPosIndex = null; // positions differ per spread, so any earlier fixed slot no longer applies
   document.querySelectorAll('.spread-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.key === key);
   });
@@ -5285,6 +5565,10 @@ function selectSpread(key){
     eitherConfig.style.display = 'none';
   }
 
+  if(practiceSubMode === 'weak'){
+    renderWeakCardPositionOptions();
+  }
+
   renderFan();
   renderChooseGrid();
   renderTray();
@@ -5297,10 +5581,14 @@ function selectThreeVariant(vKey){
   SPREADS.three.positions = THREE_VARIANTS[vKey].positions;
   selections = [];
   adviceCardRequested = false;
+  weakCardPosIndex = null; // position labels changed, so re-confirm the fixed slot
   document.querySelectorAll('.variant-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.vkey === vKey);
   });
   refreshSpreadBtnLabel('three');
+  if(practiceSubMode === 'weak'){
+    renderWeakCardPositionOptions();
+  }
   renderFan();
   renderChooseGrid();
   renderTray();
@@ -5545,7 +5833,7 @@ function revealTrayCard(idx, slot){
 document.getElementById('adviceBtn').addEventListener('click', ()=>{
   if(!currentSpreadKey || adviceCardRequested) return;
   const baseCount = SPREADS[currentSpreadKey].count;
-  if(selections.length !== baseCount) return; // only offered once the base spread is complete
+  if(filledCount() !== baseCount) return; // only offered once the base spread is complete
   adviceCardRequested = true;
   renderTray();
   updateProgress();
@@ -5562,7 +5850,7 @@ function updateProgress(){
     return;
   }
   const need = totalNeeded();
-  const have = selections.length;
+  const have = filledCount();
   const label = currentSpreadKey === 'three'
     ? `${SPREADS.three.label} (${THREE_VARIANTS[currentThreeVariant].label})`
     : SPREADS[currentSpreadKey].label;
@@ -5600,7 +5888,11 @@ function showToast(msg){
    9. PROMPT GENERATION
 --------------------------------------------------------- */
 function buildPrompt(question, spread, myInterpretation){
-  const cardLines = selections.map(s => `- ${s.position}: ${s.card.nameKr} (${s.card.nameEn})`).join('\n');
+  const cardLines = selections.filter(Boolean).map(s => `- ${s.position}: ${s.card.nameKr} (${s.card.nameEn})`).join('\n');
+  const isWeakCardDrill = currentMode === 'practice' && practiceSubMode === 'weak' && weakCardChoice && weakCardPosIndex !== null;
+  const weakCardNote = isWeakCardDrill
+    ? `\n\n※ 이번 연습은 제가 평소 해석을 어려워하는 카드인 "${weakCardChoice.nameKr}(${weakCardChoice.nameEn})"를 일부러 ${weakCardPosIndex + 1}번 자리(${currentPositions()[weakCardPosIndex]})에 고정해두고 진행한 약점 카드 훈련입니다. 다른 카드들보다 이 카드에 대한 제 해석을 특히 더 꼼꼼하고 신랄하게 짚어주세요. 상투적이거나 피상적인 의미에만 머물렀는지, 이 자리(포지션)의 맥락과 제대로 연결짓지 못했는지 가차없이 지적해주세요.`
+    : '';
 
   if(currentMode === 'practice'){
     return `당신은 대한민국 최고의 타로 상담사이자, 후배 상담사를 키우는 수퍼바이저입니다. 따뜻한 마음씨로 진심을 다해 아끼면서도, 필요할 땐 돌려 말하지 않고 핵심을 짚어주는 솔직한 피드백도 서슴지 않는 성격입니다.
@@ -5613,7 +5905,7 @@ function buildPrompt(question, spread, myInterpretation){
 ${cardLines}
 
 제가 작성한 해석:
-${myInterpretation}
+${myInterpretation}${weakCardNote}
 
 다음 기준으로 피드백해주세요:
 1. 잘 짚은 부분 (구체적으로 어떤 점이 좋았는지)
@@ -5659,7 +5951,7 @@ interpretBtn.addEventListener('click', ()=>{
     validationEl.textContent = '고민을 먼저 적어주세요.';
     return;
   }
-  if(!currentSpreadKey || selections.length !== totalNeeded()){
+  if(!currentSpreadKey || filledCount() !== totalNeeded()){
     validationEl.textContent = '카드를 모두 선택해주세요.';
     return;
   }
@@ -5795,9 +6087,10 @@ function buildReadingRecord(){
     id: Date.now(),
     date: new Date().toLocaleString('ko-KR'),
     mode: currentMode,
+    weakCard: (currentMode === 'practice' && practiceSubMode === 'weak' && weakCardChoice) ? weakCardChoice.nameKr : null,
     question: document.getElementById('question').value.trim(),
     spreadLabel: currentSpreadLabel(),
-    cards: selections.map(s => ({ position: s.position, nameKr: s.card.nameKr, nameEn: s.card.nameEn, img: s.card.img })),
+    cards: selections.filter(Boolean).map(s => ({ position: s.position, nameKr: s.card.nameKr, nameEn: s.card.nameEn, img: s.card.img })),
     myInterpretation: currentMode === 'practice' ? document.getElementById('myInterpretation').value.trim() : '',
     prompt: promptBox.textContent,
     claudeAnswer: document.getElementById('claudePaste').value.trim(),
@@ -6077,7 +6370,6 @@ function renderHistory(){
 /* ---------------------------------------------------------
    12. INIT
 --------------------------------------------------------- */
-selectMode('consult'); // syncs UI state (pick-method toggle etc.) for the default mode — the button already *looks* active in the static HTML, but that alone doesn't run the logic that shows/hides everything else
 renderFan();
 updateProgress();
 renderHistory();
