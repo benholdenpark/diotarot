@@ -428,21 +428,31 @@
   /* ---------- Visitor counter ---------- */
   .visitor-badge{
     position: fixed; top: 16px; right: 16px; z-index: 60;
-    background: var(--panel-light);
-    border: 1px solid var(--gold);
-    border-radius: 8px;
-    padding: 4px 6px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
-    display: flex; align-items: center;
-    opacity: 0.92;
+    background: linear-gradient(160deg, var(--panel-light), var(--panel));
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 7px 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+    display: flex; align-items: center; gap: 12px;
   }
-  .visitor-badge span{
-    display:block; font-family:'Noto Sans KR', sans-serif; font-size: 11.5px;
-    font-weight:600; color: var(--gold-bright); white-space: nowrap;
+  .visitor-stat{ display:flex; flex-direction:column; align-items:center; line-height:1.15; }
+  .visitor-num{
+    font-family:'Cinzel', serif; font-size: 14px; font-weight:600;
+    color: var(--gold-bright); letter-spacing: 0.02em;
+  }
+  .visitor-label{
+    font-family:'Noto Sans KR', sans-serif; font-size: 8.5px; font-weight:600;
+    color: var(--muted-dim); letter-spacing: 0.14em; margin-top: 2px;
+  }
+  .visitor-divider{ width:1px; align-self: stretch; background: var(--line); }
+  .visitor-loading{
+    font-family:'Noto Sans KR', sans-serif; font-size: 11px;
+    font-weight:500; color: var(--muted-dim); white-space: nowrap;
   }
   @media (max-width: 560px){
-    .visitor-badge{ top: 10px; right: 10px; padding: 3px 6px; }
-    .visitor-badge span{ font-size: 10.5px; }
+    .visitor-badge{ top: 10px; right: 10px; padding: 5px 10px; gap: 9px; }
+    .visitor-num{ font-size: 12px; }
+    .visitor-label{ font-size: 7.5px; }
   }
 
   .bgm-toggle{
@@ -653,6 +663,72 @@
     border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px;
   }
   .weak-card-history-chip b{ color: var(--gold-bright); margin-left: 3px; }
+
+  /* ---------- Weak-card cycle practice (약점카드 순환 연습) ---------- */
+  .cycle-progress-dots{ display:flex; justify-content:center; gap: 14px; margin-bottom: 22px; }
+  .cycle-dot{
+    width: 34px; height: 34px; border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    border: 1px solid var(--line); background: var(--void-2);
+    font-family:'Cinzel', serif; font-size: 13px; color: var(--muted);
+    transition: all 0.25s ease;
+  }
+  .cycle-dot.active{ border-color: var(--gold); color: var(--gold-bright); box-shadow: 0 0 0 3px rgba(201,163,90,0.12); }
+  .cycle-dot.done{ background: var(--gold); border-color: var(--gold); color: #1a1410; }
+
+  .cycle-round-block{
+    background: var(--void-2); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px; margin-bottom: 18px;
+  }
+  .cycle-round-block.active{ border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,163,90,0.1); }
+  .cycle-round-block.completed{ opacity: 0.88; }
+  .cycle-round-head{
+    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap: 8px;
+    margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line);
+  }
+  .cycle-round-num{ font-family:'Cinzel', serif; font-size: 15px; color: var(--gold-bright); font-weight:600; }
+  .cycle-round-pos{ font-size: 12.5px; color: var(--muted); }
+  .cycle-round-question{
+    font-size: 13px; color: var(--ink); line-height:1.6; margin-bottom: 16px;
+    padding: 10px 14px; background: var(--void); border: 1px solid var(--line);
+    border-radius: 8px; border-left: 3px solid var(--gold);
+  }
+  .cycle-mini-row{ display:flex; justify-content:center; gap: 14px; flex-wrap:wrap; margin-bottom: 16px; }
+  .cycle-mini-card{ width: 92px; text-align:center; position:relative; }
+  .cycle-mini-card.weak{ width: 100px; z-index: 2; }
+  .cycle-mini-badge{
+    display:inline-block; font-size: 10px; font-weight:700; letter-spacing:0.03em;
+    color: #1a1410; background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+    border-radius: 999px; padding: 3px 9px; margin-bottom: 6px;
+    box-shadow: 0 2px 8px rgba(201,163,90,0.5);
+  }
+  .cycle-mini-card-img{
+    width: 92px; height: 138px; border-radius: 8px; overflow:hidden;
+    border: 1px solid var(--line); background: var(--void); position:relative;
+    transition: all 0.25s ease;
+  }
+  .cycle-mini-card.weak .cycle-mini-card-img{
+    width: 100px; height: 150px; margin: 0 auto;
+    border: 2px solid var(--gold-bright);
+    box-shadow: 0 0 0 4px rgba(201,163,90,0.18), 0 0 22px rgba(201,163,90,0.5);
+  }
+  .cycle-mini-card-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .cycle-mini-fallback{
+    display:none; position:absolute; inset:0; align-items:center; justify-content:center;
+    font-size: 11px; color: var(--muted); text-align:center; padding: 6px;
+  }
+  .cycle-mini-pos{ font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .cycle-mini-name{ font-size: 12px; color: var(--ink); font-weight:600; }
+  .cycle-mini-card.weak .cycle-mini-pos{ color: var(--gold-bright); font-weight:600; }
+  .cycle-mini-card.weak .cycle-mini-name{ color: var(--gold-bright); }
+  .cycle-round-interp-label{ font-size: 12.5px; color: var(--gold-bright); font-weight:600; margin-bottom: 8px; }
+  .cycle-round-interp-text{
+    font-size: 13.5px; color: var(--muted); line-height:1.7; white-space: pre-wrap;
+    background: var(--void); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+  }
+  .cycle-round-block.active textarea{ margin-bottom: 14px; }
+  .cycle-round-actions{ display:flex; gap: 10px; flex-wrap:wrap; }
+  .cycle-round-actions .interpret-btn{ flex:1; min-width: 180px; }
 
   /* ---------- Card study detail panel ---------- */
   #studyDetailPanel{ --study-accent: var(--gold); }
@@ -1617,12 +1693,18 @@
       <table>
         <tr><th>모드</th><th>설명</th></tr>
         <tr><td>🔮 상담하기</td><td>카드를 뽑고 AI(Claude/Gemini)에게 해석을 받는 기본 모드</td></tr>
-        <tr><td>✍️ 리딩연습하기</td><td>내가 먼저 직접 해석을 작성하고, AI에게 슈퍼비전(피드백) + "고수의 리딩" 예시까지 받는 연습용 모드. 실전 예시 질문 200개를 20개 카테고리(연애·이직·합격 등)로 제공</td></tr>
+        <tr><td>✍️ 리딩연습하기</td><td>내가 먼저 직접 해석을 작성하고, AI에게 슈퍼비전(피드백) + "고수의 리딩" 예시까지 받는 연습용 모드. "🔁 일반 연습"과 "🎯 약점카드 연습" 중 선택 가능하며, 실전 예시 질문 300개를 21개 카테고리(연애·이직·합격·학생상담 등)로 제공</td></tr>
         <tr><td>🔢 넘버 분석</td><td>생년월일로 썬 넘버·문 넘버·연도 카드를 확인</td></tr>
         <tr><td>💕 궁합 보기</td><td>두 사람의 생년월일로 궁합을 확인</td></tr>
         <tr><td>🎭 타로 인물도감</td><td>메이저 아르카나 22장 + 궁정 카드 16장, 총 38장의 성격을 재미있는 글로 읽어보는 도감</td></tr>
       </table>
       <p>⚠️ 상담하기 ↔ 리딩연습하기는 서로 다른 리딩으로 취급돼요. 모드를 전환하면 질문·배열법·뽑은 카드가 자동으로 초기화돼요.</p>
+
+      <h4>2-1. 리딩연습하기 — 일반 연습 vs 약점카드 연습</h4>
+      <ul>
+        <li><strong>🔁 일반 연습</strong> — 질문을 쓰고 배열법을 골라 자유롭게 카드를 뽑은 뒤, 직접 해석을 써보고 AI에게 피드백을 받는 기존 방식이에요.</li>
+        <li><strong>🎯 약점카드 연습</strong> — 평소 해석하기 어려운 카드를 하나 골라서, 배열법의 원하는 자리에 미리 고정해두고 연습해요. 나머지 자리는 평소처럼 뽑으면 되고, 고른 카드는 자동으로 "자주 어려워하는 카드" 목록에 쌓여서 내가 어떤 카드를 유독 어려워하는지 패턴을 확인할 수 있어요. AI 피드백도 그 카드의 해석을 특히 신랄하게 짚어주는 방향으로 요청돼요. (정방향만 다뤄요.)</li>
+      </ul>
 
       <h4>3. 카드 뽑는 방법 세 가지</h4>
       <ul>
@@ -1689,8 +1771,8 @@
       <ul>
         <li><strong>✦ 셔플 버튼</strong> — 카드만 다시 섞어요 (뽑았던 카드만 초기화, 질문·배열법 설정은 유지)</li>
         <li><strong>🔄 초기화 버튼</strong> ("1 · 고민을 적어주세요" 옆) — 질문·배열법·뽑은 카드까지 전부 지우고 처음부터 다시 시작</li>
-        <li><strong>📖 매뉴얼 / ❓ FAQ / 💾 백업</strong> — 왼쪽 상단 버튼들</li>
-        <li><strong>오른쪽 상단 방문자 수</strong> — 배포된 사이트에서 자동 집계</li>
+        <li><strong>📖 매뉴얼 / ❓ FAQ / 💾 백업 / 📋 업데이트 내역</strong> — 왼쪽 상단 버튼들</li>
+        <li><strong>오른쪽 상단 방문자 수</strong> — 오늘 방문자 수와 전체 누적 방문자 수를 함께 보여줘요</li>
         <li><strong>오른쪽 하단 🎵</strong> — 배경음악 재생/정지 (직접 눌러야 재생돼요, 자동재생 아님)</li>
       </ul>
     </div>
@@ -1719,6 +1801,10 @@
       <p><strong>Q. 셔플 버튼을 누르면 질문이나 배열법도 지워지나요?</strong><br>A. 아니요. "✦ 셔플"은 카드만 다시 섞어요 (뽑았던 카드만 초기화). 질문, 배열법, A/B 선택 라벨 같은 설정은 그대로 남아요. 전부 다 지우고 처음부터 시작하고 싶으면 "1 · 고민을 적어주세요" 옆의 "🔄 초기화" 버튼을 눌러주세요.</p>
 
       <p><strong>Q. 상담하기에서 뽑은 카드가 리딩연습하기로 가도 남아있나요?</strong><br>A. 아니요. 두 모드는 서로 다른 리딩으로 취급해서, 모드를 전환하면 질문·배열법·뽑은 카드가 자동으로 초기화돼요. 하나의 리딩을 이어서 진행하고 싶다면 같은 모드 안에서만 작업해주세요.</p>
+
+      <p><strong>Q. "🔁 일반 연습"이랑 "🎯 약점카드 연습"은 뭐가 달라요?</strong><br>A. 일반 연습은 카드를 자유롭게 뽑아서 해석해보는 기존 방식이에요. 약점카드 연습은 평소 해석하기 어려운 카드를 하나 직접 골라서 배열법의 원하는 자리에 미리 고정해두는 방식이에요. 나머지 자리는 평소처럼 뽑으면 되고, 고른 카드는 자동으로 기록에 쌓여서 내가 어떤 카드를 자주 어려워하는지 확인할 수 있어요. 뽑는 방식(직접 뽑기/카드보며 뽑기/랜덤 뽑기)을 중간에 바꿔도 고정해둔 카드는 그대로 유지돼요.</p>
+
+      <p><strong>Q. 방문자 수는 어떻게 세는 거예요?</strong><br>A. 오른쪽 상단에 오늘 방문자 수와 전체 누적 방문자 수가 함께 표시돼요. 같은 브라우저 탭에서는 새로고침해도 중복으로 세지 않고, 세션당 한 번만 집계돼요.</p>
 
       <p><strong>Q. "저장하기"를 눌렀는데 어디서 확인하나요?</strong><br>A. 각 모드 화면을 아래로 스크롤하면 "저장된 리딩"(또는 넘버 분석/궁합) 목록이 있어요. 항목을 클릭하면 예쁘게 정리된 창으로 다시 볼 수 있어요.</p>
 
@@ -1785,43 +1871,44 @@
       <div class="changelog-entry">
         <div class="changelog-date">2026.07.16</div>
         <ul>
-          <li>방문자 카운터를 Google Apps Script + 구글시트 기반으로 전환 (오늘/총 누적 방문수 표시)</li>
-          <li>리딩연습하기를 🔁 일반 연습 / 🎯 약점카드 연습 두 갈래로 분리 — 평소 어려운 카드를 배열법의 원하는 자리에 고정해서 훈련 가능</li>
-          <li>방문자 카운터 날짜 비교 버그 수정 (오늘 방문수가 0으로 표시되던 문제)</li>
-          <li>약점카드 고정이 뽑기 방식(직접 뽑기/카드보며 뽑기/랜덤 뽑기)을 전환해도 유지되도록 수정</li>
+          <li>왼쪽 상단에서 오늘 방문자 수와 전체 누적 방문자 수를 바로 확인할 수 있어요</li>
+          <li>리딩연습하기가 "🔁 일반 연습"과 "🎯 약점카드 연습" 두 가지로 나뉘었어요. 평소 해석하기 어려운 카드를 하나 골라 원하는 자리에 고정해두고 집중적으로 연습할 수 있어요</li>
+          <li>오늘 방문자 수가 항상 0으로 잘못 표시되던 문제를 고쳤어요</li>
+          <li>약점카드 연습에서 카드 뽑는 방식(직접 뽑기 ↔ 카드보며 뽑기 ↔ 랜덤 뽑기)을 바꿔도 고정해둔 카드가 사라지지 않도록 고쳤어요</li>
         </ul>
       </div>
 
       <div class="changelog-entry">
         <div class="changelog-date">2026.07.15</div>
         <ul>
-          <li>새 배열법 추가 — 상대방 속마음(겉모습·진심 비교), 6카드(아치형)</li>
-          <li>✨ 랜덤 뽑기 방식 추가 (버튼 한 번으로 전체 카드 뽑기)</li>
-          <li>🔮 결과 보기 모달 신설 — 질문·카드·AI 답변을 한 화면에서 확인</li>
-          <li>PDF 직접 다운로드 지원 (인쇄창 없이 클릭 한 번으로 저장)</li>
-          <li>💾 전체 백업/복원 기능 추가 (모든 기록을 JSON 파일로 내보내기·불러오기)</li>
-          <li>🎭 타로 인물도감 모드 신설 — 38장(메이저+궁정 카드) 캐릭터 소개</li>
-          <li>카드 뒷면 디자인을 자체 제작 SVG로 교체 (180도 회전 대칭)</li>
-          <li>배열법 자동 추천 기능 구축, 💕 궁합 보기 모드 추가</li>
-          <li>배경음악 자동재생 제거 → 버튼으로만 재생</li>
+          <li>새로운 배열법 두 가지가 생겼어요 — 상대방 속마음(겉모습과 진짜 속마음 비교), 6카드(아치 모양)</li>
+          <li>버튼 한 번으로 필요한 카드를 전부 뽑아주는 "✨ 랜덤 뽑기" 방식이 추가됐어요</li>
+          <li>질문·카드·AI 답변을 한 화면에 예쁘게 정리해서 보여주는 "🔮 결과 보기" 창이 생겼어요</li>
+          <li>PDF 저장이 훨씬 편해졌어요 — 인쇄창을 거치지 않고 클릭 한 번으로 바로 파일이 다운로드돼요</li>
+          <li>지금까지 저장한 모든 리딩·분석 기록을 파일 하나로 백업하고, 다른 기기에서 다시 불러올 수 있는 기능이 생겼어요</li>
+          <li>메이저 아르카나와 궁정 카드 38장의 성격을 재미있게 소개하는 "🎭 타로 인물도감" 모드가 생겼어요</li>
+          <li>카드 뒷면 디자인이 사이트 분위기에 맞는 새로운 그림으로 바뀌었어요</li>
+          <li>질문을 적으면 어울리는 배열법을 자동으로 추천해주는 기능이 생겼어요</li>
+          <li>두 사람의 생년월일로 궁합을 볼 수 있는 "💕 궁합 보기" 모드가 생겼어요</li>
+          <li>배경음악이 이제 자동으로 재생되지 않아요 — 원하실 때 🎵 버튼을 눌러야 재생돼요</li>
         </ul>
       </div>
 
       <div class="changelog-entry">
         <div class="changelog-date">2026.07.12 – 07.14</div>
         <ul>
-          <li>매직세븐·켈틱크로스·미니 켈틱·시기 보기 등 배열법 다양화</li>
-          <li>🔢 넘버 분석 모드(썬/문 넘버, 연도 카드) 구축</li>
-          <li>실전 예시 질문 데이터베이스 확충</li>
+          <li>매직세븐·켈틱크로스·시기 보기 등 고를 수 있는 배열법이 훨씬 다양해졌어요</li>
+          <li>생년월일로 타고난 기질과 올해의 흐름을 볼 수 있는 "🔢 넘버 분석" 모드가 생겼어요</li>
+          <li>바로 가져다 쓸 수 있는 실전 예시 질문이 더 풍부해졌어요</li>
         </ul>
       </div>
 
       <div class="changelog-entry">
         <div class="changelog-date">2026.07.10 – 07.11</div>
         <ul>
-          <li>MATAMO TAROT 첫 배포 — 단일 HTML 파일 기반 타로 리딩 웹앱 시작</li>
-          <li>🔮 상담하기 / ✍️ 리딩연습하기 기본 구조 마련</li>
-          <li>상담하기 모드에도 "랜덤으로 뽑기" · "내가 골라서 뽑기" 두 가지 방식 적용</li>
+          <li>MATAMO TAROT가 처음 문을 열었어요</li>
+          <li>🔮 상담하기와 ✍️ 리딩연습하기, 두 가지 기본 모드로 시작했어요</li>
+          <li>상담하기에서도 "랜덤으로 뽑기"와 "내가 골라서 뽑기" 두 가지 방식으로 카드를 뽑을 수 있게 됐어요</li>
         </ul>
       </div>
     </div>
@@ -1832,7 +1919,7 @@
 <audio id="bgmAudio" loop preload="auto"></audio>
 
 <div class="visitor-badge" id="visitorBadge">
-  <span id="visitorBadgeText">방문자 수 불러오는 중...</span>
+  <span class="visitor-loading" id="visitorBadgeText">방문자 수 불러오는 중...</span>
 </div>
 
 <div class="wrap">
@@ -2020,6 +2107,7 @@
       <div class="pick-method-toggle" id="practiceSubModeToggle" style="display:none;">
         <button class="pm-btn active" id="practiceSubNormalBtn" data-submode="normal">🔁 일반 연습</button>
         <button class="pm-btn" id="practiceSubWeakBtn" data-submode="weak">🎯 약점카드 연습</button>
+        <button class="pm-btn" id="practiceSubCycleBtn" data-submode="cycle">🔄 약점카드 순환 연습</button>
       </div>
 
       <div class="example-picker" id="examplePicker" style="display:none;">
@@ -2085,7 +2173,23 @@
       <div class="weak-card-history" id="weakCardHistory"></div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="cycleCardPanel" style="display:none;">
+      <h2>🔄 순환할 약점 카드 고르기</h2>
+      <p class="sub">이 카드가 3카드 배열법(위에서 고른 프레임)의 세 자리를 한 바퀴 돌면서 고정돼요. 같은 질문으로 세 번의 리딩을 이어서 연습하고, 끝나면 세 번을 한꺼번에 슈퍼비전 받아요. 나머지 두 자리는 매 회차 랜덤으로 뽑혀요.</p>
+
+      <div class="weak-card-selected" id="cycleCardSelected" style="display:none;"></div>
+
+      <div class="choose-grid" id="cycleCardGrid"></div>
+    </section>
+
+    <section class="panel" id="cycleStatusPanel" style="display:none;">
+      <h2>3 · 회차별로 순서대로 진행해주세요</h2>
+      <p class="sub">1회차부터 3회차까지 아래로 쭉 이어져요. 회차마다 카드를 확인하고 해석을 적으면, 바로 다음 회차가 그 아래에 이어서 나와요.</p>
+      <div class="cycle-progress-dots" id="cycleProgressDots"></div>
+      <div id="cycleRoundsContainer"></div>
+    </section>
+
+    <section class="panel" id="drawStepPanel">
       <h2>3 · 카드를 뽑아주세요</h2>
       <p class="sub" id="pickStepSub">1·2단계에서 정한 배열법에 맞춰 카드를 뽑아주세요.</p>
 
@@ -2095,7 +2199,7 @@
         <button class="pm-btn" id="pmAutoBtn" data-method="auto">✨ 랜덤 뽑기</button>
       </div>
 
-      <section class="fan-section">
+      <section class="fan-section" id="fanSection">
         <div id="randomPickWrap">
           <div class="fan-outer">
             <div class="fan-wrap" id="fanWrap"></div>
@@ -2146,7 +2250,7 @@
       <textarea id="myInterpretation" placeholder="예) 첫 번째 카드는 과거를 나타내는데, 이 사람이 겪었던 어려움을 상징하는 것 같아요. 두 번째 카드는..."></textarea>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="interpretStepPanel">
       <button class="interpret-btn" id="interpretBtn" disabled>질문 만들기</button>
       <div class="validation" id="validation"></div>
     </section>
@@ -2246,7 +2350,18 @@
     .then(res => res.json())
     .then(data => {
       if(!alreadyHitThisSession) sessionStorage.setItem('matamo_visit_hit', '1');
-      el.textContent = `오늘 ${data.today.toLocaleString('ko-KR')} · 총 ${data.total.toLocaleString('ko-KR')}`;
+      const badge = document.getElementById('visitorBadge');
+      badge.innerHTML = `
+        <div class="visitor-stat">
+          <span class="visitor-num">${data.today.toLocaleString('en-US')}</span>
+          <span class="visitor-label">TODAY</span>
+        </div>
+        <div class="visitor-divider"></div>
+        <div class="visitor-stat">
+          <span class="visitor-num">${data.total.toLocaleString('en-US')}</span>
+          <span class="visitor-label">TOTAL</span>
+        </div>
+      `;
     })
     .catch(() => {
       document.getElementById('visitorBadge').style.display = 'none';
@@ -4079,10 +4194,21 @@ function selectPracticeSubMode(sub){
   practiceSubMode = sub;
   document.getElementById('practiceSubNormalBtn').classList.toggle('active', sub === 'normal');
   document.getElementById('practiceSubWeakBtn').classList.toggle('active', sub === 'weak');
+  document.getElementById('practiceSubCycleBtn').classList.toggle('active', sub === 'cycle');
   document.getElementById('weakCardPanel').style.display = (sub === 'weak') ? 'block' : 'none';
+  document.getElementById('cycleCardPanel').style.display = (sub === 'cycle') ? 'block' : 'none';
+  document.getElementById('cycleStatusPanel').style.display = (sub === 'cycle') ? 'block' : 'none';
+
+  // cycle practice draws automatically each round in its own self-contained
+  // UI, so the usual 카드뽑기/나의 해석/질문 만들기 sections are hidden entirely
+  document.getElementById('pickMethodToggle').style.display = (sub === 'cycle') ? 'none' : 'flex';
+  document.getElementById('fanSection').style.display = (sub === 'cycle') ? 'none' : '';
+  document.getElementById('drawStepPanel').style.display = (sub === 'cycle') ? 'none' : '';
+  document.getElementById('interpretStepPanel').style.display = (sub === 'cycle') ? 'none' : '';
 
   selections = [];
   adviceCardRequested = false;
+  resetCycleState();
 
   if(sub === 'weak'){
     renderWeakCardGrid();
@@ -4092,7 +4218,19 @@ function selectPracticeSubMode(sub){
   } else {
     weakCardChoice = null;
     weakCardPosIndex = null;
-    shuffled = shuffleArr(DECK); // restore the full pool in case weak mode had excluded a card
+  }
+
+  if(sub === 'cycle'){
+    // 순환 연습은 3카드 배열법 전용이라, 들어오는 순간 바로 그 배열법으로 고정한다
+    selectSpread('three');
+    renderCycleCardGrid();
+    updateCycleCardSelectedLabel();
+    renderCycleProgressDots();
+    document.getElementById('cycleRoundsContainer').innerHTML = '';
+    myInterpretationPanel.style.display = 'none';
+  } else {
+    shuffled = shuffleArr(DECK); // restore the full pool in case weak/cycle mode had excluded a card
+    if(currentMode === 'practice') myInterpretationPanel.style.display = 'block';
   }
 
   renderFan();
@@ -4103,6 +4241,7 @@ function selectPracticeSubMode(sub){
 }
 document.getElementById('practiceSubNormalBtn').addEventListener('click', ()=> selectPracticeSubMode('normal'));
 document.getElementById('practiceSubWeakBtn').addEventListener('click', ()=> selectPracticeSubMode('weak'));
+document.getElementById('practiceSubCycleBtn').addEventListener('click', ()=> selectPracticeSubMode('cycle'));
 document.getElementById('weakCardPositionSelect').addEventListener('change', (e)=>{
   const v = e.target.value;
   weakCardPosIndex = (v === '') ? null : Number(v);
@@ -4113,6 +4252,261 @@ document.getElementById('weakCardPositionSelect').addEventListener('change', (e)
   renderTray();
   updateProgress();
 });
+
+/* ---------------------------------------------------------
+   3a3. WEAK-CARD CYCLE PRACTICE (약점카드 순환 연습)
+   3카드 배열법 전용. 하나의 약점 카드를 1번→2번→3번 자리로 옮겨가며 세 번
+   리딩하고(질문은 동일), 완료된 회차는 그대로 아래에 쌓이고 다음 회차가 이어서
+   나타난다 (화면을 다시 위로 올릴 필요 없이 계속 아래로 진행되는 구조).
+--------------------------------------------------------- */
+let cycleWeakCard = null;    // 순환시킬 약점 카드
+let cycleRound = 1;          // 진행 중인 회차 (1~3)
+let cycleReadings = [];      // 완료된 회차: [{ cards:[{position,card}], interpretation }]
+let cycleActiveCards = null; // 현재 회차에서 뽑아둔(아직 확정 전) 카드
+
+function resetCycleState(){
+  cycleWeakCard = null;
+  cycleRound = 1;
+  cycleReadings = [];
+  cycleActiveCards = null;
+}
+
+function cycleThreePositions(){
+  return THREE_VARIANTS[currentThreeVariant].positions;
+}
+
+function renderCycleCardGrid(){
+  const grid = document.getElementById('cycleCardGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  DECK.forEach(card=>{
+    const selected = cycleWeakCard && cycleWeakCard.id === card.id;
+    const cell = document.createElement('div');
+    cell.className = 'choose-card' + (selected ? ' selected' : '');
+    cell.innerHTML = `
+      <div class="choose-card-img">
+        <img src="${card.img}" alt="${card.nameKr}" onerror="this.remove(); this.parentElement.querySelector('.choose-card-fallback').style.display='flex';">
+        <div class="choose-card-fallback">${card.nameKr}</div>
+      </div>
+      <div class="choose-card-name">${card.nameKr}</div>
+    `;
+    cell.addEventListener('click', ()=> onCycleCardPick(card));
+    grid.appendChild(cell);
+  });
+}
+
+function updateCycleCardSelectedLabel(){
+  const el = document.getElementById('cycleCardSelected');
+  if(!el) return;
+  if(!cycleWeakCard){
+    el.style.display = 'none';
+    return;
+  }
+  el.style.display = 'block';
+  el.innerHTML = `선택한 약점 카드: <strong>${escapeHtml(cycleWeakCard.nameKr)}</strong> (${escapeHtml(cycleWeakCard.nameEn)}) — 이 카드가 세 자리를 돌아가며 고정돼요.`;
+}
+
+function onCycleCardPick(card){
+  cycleWeakCard = card;
+  logWeakCard(card); // 약점카드 연습과 같은 빈도 기록을 공유
+  cycleRound = 1;
+  cycleReadings = [];
+  cycleActiveCards = null;
+
+  renderCycleCardGrid();
+  updateCycleCardSelectedLabel();
+  drawCurrentRound(); // 1회차를 바로 뽑아서 이어서 보여준다
+}
+
+function renderCycleProgressDots(){
+  const dotsEl = document.getElementById('cycleProgressDots');
+  if(!dotsEl) return;
+  let html = '';
+  for(let i = 1; i <= 3; i++){
+    let cls = 'cycle-dot';
+    if(cycleReadings.length >= i) cls += ' done';
+    else if(i === cycleRound && cycleReadings.length < 3) cls += ' active';
+    html += `<div class="${cls}">${cycleReadings.length >= i ? '✓' : i}</div>`;
+  }
+  dotsEl.innerHTML = html;
+}
+
+function cycleMiniCardHtml(c, isWeak){
+  return `
+    <div class="cycle-mini-card${isWeak ? ' weak' : ''}">
+      ${isWeak ? '<div class="cycle-mini-badge">🎯 약점카드</div>' : ''}
+      <div class="cycle-mini-card-img">
+        <img src="${c.card.img}" alt="${c.card.nameKr}" onerror="this.remove(); this.parentElement.querySelector('.cycle-mini-fallback').style.display='flex';">
+        <div class="cycle-mini-fallback">${c.card.nameKr}</div>
+      </div>
+      <div class="cycle-mini-pos">${escapeHtml(c.position)}</div>
+      <div class="cycle-mini-name">${escapeHtml(c.card.nameKr)}</div>
+    </div>`;
+}
+function cycleCardsRowHtml(cards){
+  return `<div class="cycle-mini-row">${cards.map(c => cycleMiniCardHtml(c, cycleWeakCard && c.card.id === cycleWeakCard.id)).join('')}</div>`;
+}
+
+// Draws one round: the weak card goes into this round's fixed slot, the
+// other two positions are drawn fresh at random each time (repeats across
+// rounds are fine — each round is an independent draw, same as any other
+// practice session). Doesn't commit anything yet — that happens in
+// confirmActiveRound(), so "다시 뽑기" can redraw the same round freely.
+function drawCurrentRound(){
+  if(!cycleWeakCard || currentSpreadKey !== 'three') return;
+  const positions = cycleThreePositions();
+  const weakIdx = cycleRound - 1;
+  const others = shuffleArr(DECK.filter(c => c.id !== cycleWeakCard.id)).slice(0, 2);
+  let oi = 0;
+  cycleActiveCards = positions.map((p, i)=>{
+    if(i === weakIdx) return { position: p, card: cycleWeakCard };
+    return { position: p, card: others[oi++] };
+  });
+  renderCycleRoundsUI();
+}
+
+// Rebuilds the whole rounds container from scratch: one read-only block per
+// completed round (in order), followed by the active round's cards +
+// textarea + buttons. New rounds are appended below the previous ones, so
+// the page just grows downward — never needs scrolling back up.
+function renderCycleRoundsUI(){
+  const container = document.getElementById('cycleRoundsContainer');
+  if(!container) return;
+
+  const question = document.getElementById('question').value.trim();
+  const questionHtml = question
+    ? `<div class="cycle-round-question">📌 ${escapeHtml(question)}</div>`
+    : '';
+
+  let html = '';
+
+  cycleReadings.forEach((r, i)=>{
+    html += `
+      <div class="cycle-round-block completed">
+        <div class="cycle-round-head">
+          <span class="cycle-round-num">✓ ${i+1}회차</span>
+          <span class="cycle-round-pos">약점카드 자리: "${escapeHtml(cycleThreePositions()[i])}"</span>
+        </div>
+        ${questionHtml}
+        ${cycleCardsRowHtml(r.cards)}
+        <div class="cycle-round-interp-label">나의 해석</div>
+        <div class="cycle-round-interp-text">${escapeHtml(r.interpretation)}</div>
+      </div>`;
+  });
+
+  if(cycleReadings.length < 3 && cycleActiveCards){
+    const roundNum = cycleRound;
+    html += `
+      <div class="cycle-round-block active">
+        <div class="cycle-round-head">
+          <span class="cycle-round-num">${roundNum}회차</span>
+          <span class="cycle-round-pos">약점카드 자리: "${escapeHtml(cycleThreePositions()[roundNum-1])}"</span>
+        </div>
+        ${questionHtml}
+        ${cycleCardsRowHtml(cycleActiveCards)}
+        <div class="cycle-round-interp-label">이번 회차 나의 해석</div>
+        <textarea id="cycleActiveInterpretation" placeholder="예) 이번 회차에서는 약점카드가 이 자리에 나왔는데..."></textarea>
+        <div class="cycle-round-actions">
+          <button class="action-btn" id="cycleRedrawBtn">🎲 이번 회차 카드 다시 뽑기</button>
+          <button class="interpret-btn" id="cycleConfirmBtn">${roundNum < 3 ? '다음 회차로' : '슈퍼비전 프롬프트 만들기'}</button>
+        </div>
+        <div class="validation" id="cycleValidation"></div>
+      </div>`;
+  }
+
+  container.innerHTML = html;
+  renderCycleProgressDots();
+
+  const redrawBtn = document.getElementById('cycleRedrawBtn');
+  if(redrawBtn) redrawBtn.addEventListener('click', drawCurrentRound);
+  const confirmBtn = document.getElementById('cycleConfirmBtn');
+  if(confirmBtn) confirmBtn.addEventListener('click', confirmActiveRound);
+
+  const activeBlock = container.querySelector('.cycle-round-block.active');
+  if(activeBlock) activeBlock.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function confirmActiveRound(){
+  const question = document.getElementById('question').value.trim();
+  const valEl = document.getElementById('cycleValidation');
+  if(!question){
+    if(valEl) valEl.textContent = '고민을 먼저 적어주세요.';
+    return;
+  }
+  const ta = document.getElementById('cycleActiveInterpretation');
+  const interpretation = ta ? ta.value.trim() : '';
+  if(!interpretation){
+    if(valEl) valEl.textContent = '이번 회차의 해석을 먼저 적어주세요.';
+    return;
+  }
+  if(valEl) valEl.textContent = '';
+
+  cycleReadings.push({ cards: cycleActiveCards.slice(), interpretation });
+  cycleActiveCards = null;
+
+  if(cycleReadings.length < 3){
+    cycleRound += 1;
+    drawCurrentRound(); // 다음 회차를 바로 이어서 아래에 그린다
+  } else {
+    renderCycleRoundsUI(); // 마지막 완료 블록까지 반영
+    finishCycle();
+  }
+}
+
+// 세 회차를 하나의 selections(9장)로 펼치고, 나의 해석도 하나로 합쳐서 저장해둔다 —
+// 이렇게 하면 저장하기/PDF/텍스트 저장/결과 보기/저장된 리딩 기능을 전부
+// 그대로 재사용할 수 있다 (순환 연습 전용으로 따로 만들 필요가 없어짐).
+function finishCycle(){
+  const flatSelections = [];
+  const combinedLines = [];
+  cycleReadings.forEach((r, i)=>{
+    r.cards.forEach(c=>{
+      flatSelections.push({ position: `${i+1}회차 · ${c.position}`, card: c.card, revealed: true });
+    });
+    combinedLines.push(`[${i+1}회차 · 약점카드가 "${cycleThreePositions()[i]}" 자리]`);
+    combinedLines.push(r.interpretation);
+    combinedLines.push('');
+  });
+  selections = flatSelections;
+  document.getElementById('myInterpretation').value = combinedLines.join('\n').trim();
+
+  const question = document.getElementById('question').value.trim();
+  const prompt = buildCyclePrompt(question);
+  promptBox.textContent = prompt;
+  claudeResult.innerHTML = '';
+  geminiResult.innerHTML = '';
+  resultPanel.classList.add('show');
+  resultPanel.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function buildCyclePrompt(question){
+  const variantLabel = THREE_VARIANTS[currentThreeVariant].label;
+  const roundsText = cycleReadings.map((r, i)=>{
+    const cardLines = r.cards.map(c => `- ${c.position}: ${c.card.nameKr} (${c.card.nameEn})`).join('\n');
+    return `[${i+1}회차 — 약점카드가 "${cycleThreePositions()[i]}" 자리]
+뽑힌 카드:
+${cardLines}
+
+제가 작성한 해석:
+${r.interpretation}`;
+  }).join('\n\n---\n\n');
+
+  return `당신은 대한민국 최고의 타로 상담사이자, 후배 상담사를 키우는 수퍼바이저입니다. 따뜻한 마음씨로 진심을 다해 아끼면서도, 필요할 땐 돌려 말하지 않고 핵심을 짚어주는 솔직한 피드백도 서슴지 않는 성격입니다.
+
+이번은 "약점카드 순환 연습"입니다. 저는 평소 해석이 어려운 카드 "${cycleWeakCard.nameKr}(${cycleWeakCard.nameEn})"를 3카드 배열법(${variantLabel})의 세 자리에 한 번씩 돌아가며 고정하고, 같은 질문에 대해 세 번의 리딩을 진행했습니다. 각 회차의 카드와 제 해석을 아래에 순서대로 적었습니다.
+
+질문: ${question}
+
+${roundsText}
+
+다음 기준으로 세 회차를 종합해서 피드백해주세요:
+1. 각 회차별로 잘 짚은 부분과 놓친 부분
+2. 같은 카드인데 자리가 바뀔 때마다 제 해석이 실제로 달라졌는지, 아니면 자리와 상관없이 비슷한 의미로만 반복해서 읽었는지 (이 부분이 이 훈련의 핵심입니다)
+3. 세 회차 중 가장 아쉬웠던 해석 하나를 골라, 베테랑 상담사라면 그 자리에서 이 카드를 어떻게 리딩했을지 완성된 예시로 보여주세요
+4. 맨 마지막에는 다른 항목들과 구분되는 별도 섹션으로 "🎯 약점 카드 총평"을 만들어서, 이번 세 번의 리딩을 종합했을 때 "${cycleWeakCard.nameKr}(${cycleWeakCard.nameEn})" 카드에 대한 제 해석 실력을 총평해주세요. 자리에 따라 해석이 얼마나 유연하게 바뀌었는지, 제가 이 카드를 대할 때 반복적으로 보이는 습관이나 맹점이 있다면 그것까지 짚어서 마무리해주세요.
+
+듣기 좋은 말만 하지 말고, 부족한 부분이 있다면 애정을 담아 직설적으로 짚어주세요. 한국어로 답변해주세요.`;
+}
 
 const myInterpretationPanel = document.getElementById('myInterpretationPanel');
 const resultHeading = document.getElementById('resultHeading');
@@ -4170,9 +4564,18 @@ function resetReadingState(){
   practiceSubMode = 'normal';
   weakCardChoice = null;
   weakCardPosIndex = null;
+  resetCycleState();
   document.getElementById('practiceSubNormalBtn').classList.add('active');
   document.getElementById('practiceSubWeakBtn').classList.remove('active');
+  document.getElementById('practiceSubCycleBtn').classList.remove('active');
   document.getElementById('weakCardPanel').style.display = 'none';
+  document.getElementById('cycleCardPanel').style.display = 'none';
+  document.getElementById('cycleStatusPanel').style.display = 'none';
+  document.getElementById('fanSection').style.display = '';
+  document.getElementById('pickMethodToggle').style.display = 'flex';
+  document.getElementById('drawStepPanel').style.display = '';
+  document.getElementById('interpretStepPanel').style.display = '';
+  document.getElementById('cycleRoundsContainer').innerHTML = '';
 
   document.getElementById('question').value = '';
   updateQuestionRecap();
@@ -5632,6 +6035,10 @@ Object.entries(THREE_VARIANTS).forEach(([vKey, v])=>{
 });
 
 function selectSpread(key){
+  if(practiceSubMode === 'cycle' && key !== 'three'){
+    showToast('약점카드 순환 연습은 3카드 배열법에서만 가능해요.');
+    return;
+  }
   currentSpreadKey = key;
   selections = [];
   adviceCardRequested = false;
@@ -5669,6 +6076,13 @@ function selectSpread(key){
   if(practiceSubMode === 'weak'){
     renderWeakCardPositionOptions();
   }
+  if(practiceSubMode === 'cycle'){
+    resetCycleState();
+    renderCycleCardGrid();
+    updateCycleCardSelectedLabel();
+    renderCycleProgressDots();
+    document.getElementById('cycleRoundsContainer').innerHTML = '';
+  }
 
   renderFan();
   renderChooseGrid();
@@ -5689,6 +6103,19 @@ function selectThreeVariant(vKey){
   refreshSpreadBtnLabel('three');
   if(practiceSubMode === 'weak'){
     renderWeakCardPositionOptions();
+  }
+  if(practiceSubMode === 'cycle'){
+    // 프레임이 바뀌면 자리 이름이 달라지므로 진행 중이던 회차를 처음부터 다시 시작한다
+    // (약점 카드 선택은 그대로 유지)
+    cycleRound = 1;
+    cycleReadings = [];
+    cycleActiveCards = null;
+    if(cycleWeakCard){
+      drawCurrentRound();
+    } else {
+      renderCycleProgressDots();
+      document.getElementById('cycleRoundsContainer').innerHTML = '';
+    }
   }
   renderFan();
   renderChooseGrid();
@@ -5994,6 +6421,9 @@ function buildPrompt(question, spread, myInterpretation){
   const weakCardNote = isWeakCardDrill
     ? `\n\n※ 이번 연습은 제가 평소 해석을 어려워하는 카드인 "${weakCardChoice.nameKr}(${weakCardChoice.nameEn})"를 일부러 ${weakCardPosIndex + 1}번 자리(${currentPositions()[weakCardPosIndex]})에 고정해두고 진행한 약점 카드 훈련입니다. 다른 카드들보다 이 카드에 대한 제 해석을 특히 더 꼼꼼하고 신랄하게 짚어주세요. 상투적이거나 피상적인 의미에만 머물렀는지, 이 자리(포지션)의 맥락과 제대로 연결짓지 못했는지 가차없이 지적해주세요.`
     : '';
+  const weakCardClosing = isWeakCardDrill
+    ? `\n5. 맨 마지막에는 다른 항목들과 구분되는 별도 섹션으로 "🎯 약점 카드 총평"을 만들어서, 이번 상담 전체를 놓고 봤을 때 "${weakCardChoice.nameKr}(${weakCardChoice.nameEn})" 카드에 대한 제 해석 실력을 종합적으로 총평해주세요. 이번 한 번의 리딩에 국한하지 말고, 이 카드를 대할 때 제가 반복적으로 보이는 습관이나 맹점이 있다면 그것까지 짚어서 마무리해주세요.`
+    : '';
 
   if(currentMode === 'practice'){
     return `당신은 대한민국 최고의 타로 상담사이자, 후배 상담사를 키우는 수퍼바이저입니다. 따뜻한 마음씨로 진심을 다해 아끼면서도, 필요할 땐 돌려 말하지 않고 핵심을 짚어주는 솔직한 피드백도 서슴지 않는 성격입니다.
@@ -6012,7 +6442,7 @@ ${myInterpretation}${weakCardNote}
 1. 잘 짚은 부분 (구체적으로 어떤 점이 좋았는지)
 2. 놓쳤거나 보완하면 좋을 부분 (카드의 다른 의미, 위치 간의 연결, 질문과의 연관성 등)
 3. 더 깊이 볼 수 있는 관점이나 질문 (제가 스스로 더 생각해볼 만한 지점)
-4. 마지막으로, 위 피드백과는 별도로 "고수의 리딩" 섹션을 추가해서, 같은 카드와 같은 질문을 가지고 경력 많은 베테랑 타로 상담사라면 실제로 어떻게 리딩했을지 하나의 완성된 해석 예시로 보여주세요. 제 해석을 고치는 게 아니라, 처음부터 새로 짜인 모범 답안처럼 작성해주세요.
+4. 마지막으로, 위 피드백과는 별도로 "고수의 리딩" 섹션을 추가해서, 같은 카드와 같은 질문을 가지고 경력 많은 베테랑 타로 상담사라면 실제로 어떻게 리딩했을지 하나의 완성된 해석 예시로 보여주세요. 제 해석을 고치는 게 아니라, 처음부터 새로 짜인 모범 답안처럼 작성해주세요.${weakCardClosing}
 
 듣기 좋은 말만 하지 말고, 부족한 부분이 있다면 애정을 담아 직설적으로 짚어주세요. 한국어로 답변해주세요.`;
   }
@@ -6178,17 +6608,23 @@ function setReadings(arr){
 
 function currentSpreadLabel(){
   if(!currentSpreadKey) return '';
-  return currentSpreadKey === 'three'
+  const base = currentSpreadKey === 'three'
     ? `${SPREADS.three.label} (${THREE_VARIANTS[currentThreeVariant].label})`
     : SPREADS[currentSpreadKey].label;
+  return (practiceSubMode === 'cycle') ? `${base} · 약점카드 순환 연습` : base;
 }
 
 function buildReadingRecord(){
+  const weakCardLabel = (currentMode === 'practice' && practiceSubMode === 'weak' && weakCardChoice)
+    ? weakCardChoice.nameKr
+    : (currentMode === 'practice' && practiceSubMode === 'cycle' && cycleWeakCard)
+      ? `${cycleWeakCard.nameKr} (순환 3회)`
+      : null;
   return {
     id: Date.now(),
     date: new Date().toLocaleString('ko-KR'),
     mode: currentMode,
-    weakCard: (currentMode === 'practice' && practiceSubMode === 'weak' && weakCardChoice) ? weakCardChoice.nameKr : null,
+    weakCard: weakCardLabel,
     question: document.getElementById('question').value.trim(),
     spreadLabel: currentSpreadLabel(),
     cards: selections.filter(Boolean).map(s => ({ position: s.position, nameKr: s.card.nameKr, nameEn: s.card.nameEn, img: s.card.img })),
